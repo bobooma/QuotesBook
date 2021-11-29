@@ -1,6 +1,13 @@
 {
     "language": "Española",
-    "hello": "Hola"
+    
+    "chooseLanguage": "lengua",
+    "share": "Comparte",
+    "save": "guarda",
+    "pleaseShare": "Por favor comparte",
+    "fixedQuote": "Es literalmente cierto que puede suceder mejor y más rápido al ayudar a otros a tener éxito."
 
-
+    , "spread": "Entonces ... preparado el bien y comparte en todas partes"
+    
+    
 }

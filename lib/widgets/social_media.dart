@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart';
+import 'package:metadata_fetch/metadata_fetch.dart';
+import 'package:share_plus/share_plus.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../constants.dart';
 
@@ -9,110 +16,127 @@ enum Social { facebook, twitter, email, linkedin, whatsapp }
 
 class SocialMedia extends StatelessWidget {
   final String img;
-  final Axis axis;
+  final NetworkImage networkImage;
 
-  const SocialMedia({
+  SocialMedia({
     Key? key,
     required this.img,
-    required this.axis,
+    required this.networkImage,
   }) : super(key: key);
+
+  Future<String?> fetch(String img) async {
+    var data = await MetadataFetch.extract(img);
+    return data!.image;
+  }
 
 // ****
 
+  // Future<void> share(Social platform) async {
+  //   const subject = " share everywhere  myQuotes";
 
-
-  Future<void> share(Social platform) async {
-    const subject = " share everywhere  myQuotes";
-    const txt = " share everywhere ";
-    final urlShare = Uri.encodeComponent(img);
-    final urls = {
-      Social.facebook:
-          "https://www.facebook.com/sharer/sharer.php?u=$urlShare&t=$txt",
-      Social.twitter:
-          "https://www.twitter.com/intent/tweet?url=$urlShare&t=$txt",
-      Social.email: "mailto:?subject=$subject&body=$txt\n\n$urlShare",
-      Social.linkedin:
-          "https://www.linkedin.com/shareArticle?mini=true&url=$urlShare",
-      Social.whatsapp: "https://www.api.whatsapp.com/send?text=$txt$urlShare",
-    };
-    final url = urls[platform]!;
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
-  }
+  //   final urlShare = Uri.encodeComponent(img);
+  //   final urls = {
+  //     Social.facebook:
+  //         "https://www.facebook.com/sharer/sharer.php?u=$urlShare&t=$txt",
+  //     Social.twitter:
+  //         "https://www.twitter.com/intent/tweet?url=$urlShare&t=$txt",
+  //     Social.email: "mailto:?subject=$subject&body=$txt\n\n$urlShare",
+  //     Social.linkedin:
+  //         "https://www.linkedin.com/shareArticle?mini=true&url=$urlShare",
+  //     Social.whatsapp: "https://www.api.whatsapp.com/send?text=$txt$urlShare",
+  //   };
+  //   final url = urls[platform]!;
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    axis;
+    // String txt = " Share Everywhere $img";
+    Future<String?> txt = fetch(img);
 
-    return Container(
-      height: 100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'SHARE',
-            style: TextStyle(
-              fontFamily: "Rubik",
-              fontSize: 21,
-              fontWeight: FontWeight.bold,
+    return FutureBuilder(
+      future: txt,
+      builder: (context, AsyncSnapshot<String?> snapshot) => Container(
+        width: double.infinity,
+        height: 80,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.pleaseShare,
+                  style: const TextStyle(
+                    fontFamily: "Rubik",
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: ()
+
+                      // !!!  refresh link
+
+                      {
+                    Share.share(snapshot.data ?? "");
+                  },
+                  icon: const Icon(
+                    Icons.share,
+                    color: Colors.white,
+                    semanticLabel: "Please Share",
+                    size: 30,
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(
-            width: 20,
-          ),
-          socialBtn(
-              icon: FontAwesomeIcons.facebookSquare,
-              color: facebookColor,
-              onclicked: () => share(Social.facebook)),
-          const SizedBox(
-            width: 10,
-          ),
-          socialBtn(
-              icon: FontAwesomeIcons.twitter,
-              color: twittetColor,
-              onclicked: () => share(Social.twitter)),
-          const SizedBox(
-            width: 10,
-          ),
-          socialBtn(
-              icon: Icons.mail,
-              color: mailColor,
-              onclicked: () => share(Social.email)),
-          const SizedBox(
-            width: 10,
-          ),
-          socialBtn(
-              icon: FontAwesomeIcons.linkedinIn,
-              color: linkedinColor,
-              onclicked: () => share(Social.linkedin)),
-          const SizedBox(
-            width: 10,
-          ),
-          socialBtn(
-              icon: FontAwesomeIcons.whatsapp,
-              color: whatsappColor,
-              onclicked: () => share(Social.whatsapp))
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  FontAwesomeIcons.facebookSquare,
+                  color: facebookColor,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Icon(
+                  FontAwesomeIcons.twitter,
+                  color: twittetColor,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Icon(
+                  Icons.mail,
+                  color: mailColor,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Icon(
+                  FontAwesomeIcons.linkedinIn,
+                  color: linkedinColor,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Icon(
+                  FontAwesomeIcons.whatsapp,
+                  color: whatsappColor,
+                ),
+                Icon(
+                  FontAwesomeIcons.instagram,
+                  color: instgramColor,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-Widget socialBtn({
-  required IconData icon,
-  required Color color,
-  required VoidCallback onclicked,
-}) =>
-    Expanded(
-      child: InkWell(
-        child: Center(
-          child: FaIcon(
-            icon,
-            color: color,
-            size: 40,
-          ),
-        ),
-        onTap: onclicked,
-      ),
-    );

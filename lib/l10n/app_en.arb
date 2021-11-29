@@ -3,11 +3,31 @@
     "@language":{
         "description": "The current Language"
     },
-     "helloWorld": "Hello World",
-    "@helloWorld": {
-        "description": "A programmer greetings"
+     
+ "chooseLanguage": "Language",
+    "@chooseLanguage": {
+        "description": "Choose languages"
+    },
+    "share": "Share",
+    "@share": {
+        "description": "Share"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Save"
+    },
+    "pleaseShare": "Please Share",
+    "@pleaseShare": {
+        "description": "Please Share"
+    },
+    "fixedQuote": "“It is literally true that you can succeed best and quickest by helping others to succeed.”",
+    "@fixedQuote": {
+        "description": "Fixed Quote"
+    },
+    "spread": "“so..Spread The Good and Share EveryWhere ”",
+    "@spread": {
+        "description": "Spread"
     }
-
 
 
 }

@@ -19,6 +19,7 @@ class _UploadScreenState extends State<UploadScreen> {
   File? file;
 
   String enteredVal = "";
+  late NetworkImage networkImage;
   String imgUrl = "";
   final controller = TextEditingController();
 
@@ -60,6 +61,7 @@ class _UploadScreenState extends State<UploadScreen> {
     final urlDownload = await snapshot.ref.getDownloadURL();
 
     setState(() {
+      networkImage = NetworkImage(imgUrl);
       imgUrl = urlDownload;
     });
 
