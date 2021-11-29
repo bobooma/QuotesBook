@@ -61,7 +61,6 @@ class _UploadScreenState extends State<UploadScreen> {
     final urlDownload = await snapshot.ref.getDownloadURL();
 
     setState(() {
-      networkImage = NetworkImage(imgUrl);
       imgUrl = urlDownload;
     });
 
@@ -168,6 +167,7 @@ class FirebaseApi {
   static UploadTask? uploadByte(String destinsation, Uint8List data) {
     try {
       final ref = FirebaseStorage.instance.ref(destinsation);
+
       return ref.putData(data);
     } on Exception catch (e) {
       return null;

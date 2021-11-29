@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -9,7 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:my_quotes/widgets/social_media.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class QuoteImage extends StatelessWidget {
+class QuoteImage extends StatefulWidget {
   QuoteImage({
     Key? key,
     required this.imgUrl,
@@ -20,20 +22,33 @@ class QuoteImage extends StatelessWidget {
   final String imgUrl;
   final NetworkImage networkImage;
 
-  // String url =
-  //     "https://image.freepik.com/free-vector/powder-holi-paints-frame-border-solated_1441-3793.jpg";
+  @override
+  State<QuoteImage> createState() => _QuoteImageState();
+}
+
+class _QuoteImageState extends State<QuoteImage> {
+  File? file;
 
   _save() async {
     var status = await Permission.storage.request();
     if (status.isGranted) {
-      var response = await Dio()
-          .get(imgUrl, options: Options(responseType: ResponseType.bytes));
+      var response = await Dio().get(widget.imgUrl,
+          options: Options(responseType: ResponseType.bytes));
       final result = await ImageGallerySaver.saveImage(
           Uint8List.fromList(response.data),
           quality: 60,
           name: DateTime.now().toString());
-      print(result);
     }
+  }
+
+  Future<void> shareFile() async {
+    await _save();
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+    );
+    if (result == null) return;
+    final path = result.files.single.path!;
+    setState(() => file = File(path));
   }
 
   @override
@@ -97,7 +112,7 @@ class QuoteImage extends StatelessWidget {
                 Expanded(
                   child: Image(
                     image: NetworkImage(
-                      imgUrl,
+                      widget.imgUrl,
                     ),
                     width: MediaQuery.of(context).size.height * 0.7,
                     fit: BoxFit.fill,
@@ -123,8 +138,8 @@ class QuoteImage extends StatelessWidget {
             ),
           ),
           SocialMedia(
-            networkImage: networkImage,
-            img: imgUrl,
+            networkImage: widget.networkImage,
+            img: widget.imgUrl,
           ),
         ],
       ),

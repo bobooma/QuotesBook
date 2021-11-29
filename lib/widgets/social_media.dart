@@ -1,11 +1,17 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:metadata_fetch/metadata_fetch.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,7 +20,7 @@ import '../constants.dart';
 
 enum Social { facebook, twitter, email, linkedin, whatsapp }
 
-class SocialMedia extends StatelessWidget {
+class SocialMedia extends StatefulWidget {
   final String img;
   final NetworkImage networkImage;
 
@@ -24,37 +30,20 @@ class SocialMedia extends StatelessWidget {
     required this.networkImage,
   }) : super(key: key);
 
+  @override
+  State<SocialMedia> createState() => _SocialMediaState();
+}
+
+class _SocialMediaState extends State<SocialMedia> {
   Future<String?> fetch(String img) async {
     var data = await MetadataFetch.extract(img);
     return data!.image;
   }
 
-// ****
-
-  // Future<void> share(Social platform) async {
-  //   const subject = " share everywhere  myQuotes";
-
-  //   final urlShare = Uri.encodeComponent(img);
-  //   final urls = {
-  //     Social.facebook:
-  //         "https://www.facebook.com/sharer/sharer.php?u=$urlShare&t=$txt",
-  //     Social.twitter:
-  //         "https://www.twitter.com/intent/tweet?url=$urlShare&t=$txt",
-  //     Social.email: "mailto:?subject=$subject&body=$txt\n\n$urlShare",
-  //     Social.linkedin:
-  //         "https://www.linkedin.com/shareArticle?mini=true&url=$urlShare",
-  //     Social.whatsapp: "https://www.api.whatsapp.com/send?text=$txt$urlShare",
-  //   };
-  //   final url = urls[platform]!;
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     // String txt = " Share Everywhere $img";
-    Future<String?> txt = fetch(img);
+    Future<String?> txt = fetch(widget.img);
 
     return FutureBuilder(
       future: txt,
@@ -76,12 +65,18 @@ class SocialMedia extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: ()
+                  onPressed: () async {
+                    // !!!  refresh link
 
-                      // !!!  refresh link
+                    final url = Uri.parse(widget.img);
+                    final response = await get(url);
+                    final bytes = response.bodyBytes;
 
-                      {
-                    Share.share(snapshot.data ?? "");
+                    final temp = await getTemporaryDirectory();
+                    final path = "${temp.path}/img.jpg";
+                    File(path).writeAsBytesSync(bytes);
+                    // ! revision
+                    Share.shareFiles([path], text: "الحمد لله");
                   },
                   icon: const Icon(
                     Icons.share,
