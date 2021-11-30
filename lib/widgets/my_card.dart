@@ -11,6 +11,7 @@ class MyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context).size;
     final content = Provider.of<LocaleProvider>(context).langeSwitch(details);
     return Provider.of<LocaleProvider>(context).locale.languageCode == "ar"
         ? FutureBuilder(
@@ -20,7 +21,7 @@ class MyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 7,
-                  margin: const EdgeInsets.only(right: 70),
+                  margin: EdgeInsets.only(right: media.width * 0.15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   child: Padding(
@@ -31,13 +32,14 @@ class MyCard extends StatelessWidget {
                         child: Text(
                           snapshot.data ?? "",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             //
                             // ***
                             // TODO rEVISION
                             //overflow: TextOverflow.ellipsis,
-                            fontSize: 13,
+                            fontSize: media.width * 0.035,
                             // letterSpacing: 2,
+                            fontWeight: FontWeight.bold,
                             fontFamily: "RobotoCondensed",
                           ),
                         ),
@@ -55,7 +57,7 @@ class MyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 7,
-                  margin: const EdgeInsets.only(left: 70),
+                  margin: EdgeInsets.only(left: media.width * 0.15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   child: Padding(
@@ -68,12 +70,13 @@ class MyCard extends StatelessWidget {
                           child: Text(
                             snapshot.data ?? "",
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               //
                               // ***
                               // TODO rEVISION
                               //overflow: TextOverflow.ellipsis,
-                              fontSize: 13,
+                              fontSize: media.width * .035,
+                              fontWeight: FontWeight.bold,
                               // letterSpacing: 2,
                               fontFamily: "RobotoCondensed",
                             ),

@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.pink,
               textTheme: const TextTheme(
                       headline6: TextStyle(
-                        fontSize: 25,
+                        fontSize: 20,
                         letterSpacing: 2,
                       ),
                       bodyText2: TextStyle(),

@@ -22,13 +22,14 @@ enum Social { facebook, twitter, email, linkedin, whatsapp }
 
 class SocialMedia extends StatefulWidget {
   final String img;
-  final NetworkImage networkImage;
 
   SocialMedia({
     Key? key,
     required this.img,
-    required this.networkImage,
+    required this.height,
   }) : super(key: key);
+
+  final double height;
 
   @override
   State<SocialMedia> createState() => _SocialMediaState();
@@ -45,89 +46,97 @@ class _SocialMediaState extends State<SocialMedia> {
     // String txt = " Share Everywhere $img";
     Future<String?> txt = fetch(widget.img);
 
+    final media = MediaQuery.of(context).size;
+
     return FutureBuilder(
       future: txt,
       builder: (context, AsyncSnapshot<String?> snapshot) => Container(
         width: double.infinity,
-        height: 80,
+        height: media.height * 0.1,
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.pleaseShare,
-                  style: const TextStyle(
-                    fontFamily: "Rubik",
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+            Container(
+              height: media.height * 0.05,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.pleaseShare,
+                    style: TextStyle(
+                      fontFamily: "Rubik",
+                      fontSize: media.width * 0.04,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    // !!!  refresh link
+                  IconButton(
+                    onPressed: () async {
+                      // !!!  refresh link
 
-                    final url = Uri.parse(widget.img);
-                    final response = await get(url);
-                    final bytes = response.bodyBytes;
+                      final url = Uri.parse(widget.img);
+                      final response = await get(url);
+                      final bytes = response.bodyBytes;
 
-                    final temp = await getTemporaryDirectory();
-                    final path = "${temp.path}/img.jpg";
-                    File(path).writeAsBytesSync(bytes);
-                    // ! revision
-                    Share.shareFiles([path], text: "الحمد لله");
-                  },
-                  icon: const Icon(
-                    Icons.share,
-                    color: Colors.white,
-                    semanticLabel: "Please Share",
-                    size: 30,
+                      final temp = await getTemporaryDirectory();
+                      final path = "${temp.path}/img.jpg";
+                      File(path).writeAsBytesSync(bytes);
+                      // ! revision
+                      Share.shareFiles([path], text: "الحمد لله");
+                    },
+                    icon: Icon(
+                      Icons.share,
+                      size: media.width * .06,
+                      color: Colors.white,
+                      semanticLabel: "Please Share",
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  FontAwesomeIcons.facebookSquare,
-                  color: facebookColor,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Icon(
-                  FontAwesomeIcons.twitter,
-                  color: twittetColor,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Icon(
-                  Icons.mail,
-                  color: mailColor,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Icon(
-                  FontAwesomeIcons.linkedinIn,
-                  color: linkedinColor,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Icon(
-                  FontAwesomeIcons.whatsapp,
-                  color: whatsappColor,
-                ),
-                Icon(
-                  FontAwesomeIcons.instagram,
-                  color: instgramColor,
-                ),
-              ],
+            Container(
+              height: media.height * 0.05,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    FontAwesomeIcons.facebookSquare,
+                    color: facebookColor,
+                  ),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Icon(
+                    FontAwesomeIcons.twitter,
+                    color: twittetColor,
+                  ),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Icon(
+                    Icons.mail,
+                    color: mailColor,
+                  ),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Icon(
+                    FontAwesomeIcons.linkedinIn,
+                    color: linkedinColor,
+                  ),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Icon(
+                    FontAwesomeIcons.whatsapp,
+                    color: whatsappColor,
+                  ),
+                  Icon(
+                    FontAwesomeIcons.instagram,
+                    color: instgramColor,
+                  ),
+                ],
+              ),
             ),
           ],
         ),

@@ -27,6 +27,10 @@
     "spread": "“so..Spread The Good and Share EveryWhere ”",
     "@spread": {
         "description": "Spread"
+    },
+    "newQuote": "New Wisdoms\nEveryDay",
+    "@newQuote": {
+        "description": "New Quotes"
     }
 
 

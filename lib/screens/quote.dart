@@ -6,21 +6,24 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:my_quotes/widgets/social_media.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class QuoteImage extends StatefulWidget {
   QuoteImage({
     Key? key,
     required this.imgUrl,
-    required this.networkImage,
+    required this.content,
+
     // required this.conclusion,
   }) : super(key: key);
 
   final String imgUrl;
-  final NetworkImage networkImage;
+  final String content;
 
   @override
   State<QuoteImage> createState() => _QuoteImageState();
@@ -53,96 +56,118 @@ class _QuoteImageState extends State<QuoteImage> {
 
   @override
   Widget build(BuildContext context) {
-    // final isLarge = MediaQuery.of(context).size.width >= 600;
-
-    // if (isLarge) {
-    //   return Scaffold(
-    //     appBar: AppBar(
-    //       actions: [
-    //
-    // )
-    //       ],
-    //     ),
-    //     backgroundColor: Colors.blueGrey[900],
-    //     body: Row(
-    //       children: [
-    //         SocialMedia(
-    //           axis: Axis.vertical,
-    //           img: imgUrl,
-    //         ),
-    //         Expanded(
-    //           child: Image(
-    //             image: NetworkImage(imgUrl),
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // } else {
+    final media = MediaQuery.of(context).size;
+    final content =
+        Provider.of<LocaleProvider>(context).langeSwitch(widget.content);
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Row(
-            children: [
-              Text(
-                AppLocalizations.of(context)!.save,
-                style: const TextStyle(
-                  fontFamily: "Rubik",
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                onPressed: _save,
-                icon: const Icon(Icons.download),
-              ),
-            ],
-          )
-        ],
-      ),
-      backgroundColor: Colors.pink[300],
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: Column(
+        appBar: AppBar(
+          actions: [
+            Row(
               children: [
-                Expanded(
-                  child: Image(
-                    image: NetworkImage(
-                      widget.imgUrl,
-                    ),
-                    width: MediaQuery.of(context).size.height * 0.7,
-                    fit: BoxFit.fill,
+                Text(
+                  AppLocalizations.of(context)!.save,
+                  style: const TextStyle(
+                    fontFamily: "Rubik",
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                // Positioned(
-                //   bottom: 60,
-                //   left: MediaQuery.of(context).size.width / 10,
-                //   right: MediaQuery.of(context).size.width / 10,
-                //   child: Text(
-                //       '“It is literally true that you can succeed best and quickest by helping others to succeed.”'),
-                // ),
-                // Positioned(
-                //   bottom: 5,
-                //   left: MediaQuery.of(context).size.width / 10,
-                //   right: MediaQuery.of(context).size.width / 10,
-                //   child: SocialMedia(
-                //     axis: Axis.horizontal,
-                //     img: imgUrl,
-                //   ),
-                // ),
+                IconButton(
+                  onPressed: _save,
+                  icon: const Icon(Icons.download),
+                ),
               ],
-            ),
-          ),
-          SocialMedia(
-            networkImage: widget.networkImage,
-            img: widget.imgUrl,
-          ),
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+        backgroundColor: Colors.pink[300],
+        body: Provider.of<LocaleProvider>(context).locale.languageCode == "en"
+            ? Column(
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Image(
+                            image: NetworkImage(
+                              widget.imgUrl,
+                            ),
+                            width: media.height * 0.7,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SocialMedia(
+                    height: media.height * 0.1,
+                    img: widget.imgUrl,
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Image(
+                            image: NetworkImage(
+                              widget.imgUrl,
+                            ),
+                            width: MediaQuery.of(context).size.height * 0.7,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        FutureBuilder(
+                          future: content,
+                          builder: (context, AsyncSnapshot<String> snapshot) {
+                            return Card(
+                              elevation: 7,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 3,
+                                  right: 3,
+                                ),
+                                child: Center(
+                                  child: Container(
+                                    height: media.height * .09,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.vertical,
+                                      child: Text(
+                                        snapshot.data ?? "",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          //
+                                          // ***
+                                          // TODO rEVISION
+                                          //overflow: TextOverflow.ellipsis,
+                                          fontSize: media.width * .04,
+                                          fontWeight: FontWeight.bold,
+                                          // letterSpacing: 2,
+                                          fontFamily: "RobotoCondensed",
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  SocialMedia(
+                    height: media.height * 0.1,
+                    img: widget.imgUrl,
+                  ),
+                ],
+              ));
   }
 }

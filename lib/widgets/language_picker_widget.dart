@@ -8,6 +8,7 @@ class LangPickWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context).size;
     final provider = Provider.of<LocaleProvider>(context, listen: false);
     final locale = provider.locale;
     return DropdownButtonHideUnderline(
@@ -19,7 +20,8 @@ class LangPickWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 locale.languageCode,
-                style: const TextStyle(color: Colors.black, fontSize: 13),
+                style: TextStyle(
+                    color: Colors.black, fontSize: media.width * 0.025),
               ),
             ),
             value: locale,
