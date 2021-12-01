@@ -28,7 +28,7 @@ class MyCard extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.only(right: 70),
+                        padding: EdgeInsets.only(right: media.width * 0.19),
                         child: Text(
                           snapshot.data ?? "",
                           textAlign: TextAlign.center,
@@ -57,14 +57,14 @@ class MyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 7,
-                  margin: EdgeInsets.only(left: media.width * 0.15),
+                  margin: EdgeInsets.only(left: media.width * 0.17),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
                       child: Container(
-                        padding: const EdgeInsets.only(left: 70),
+                        padding: EdgeInsets.only(left: media.width * 0.2),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
                           child: Text(

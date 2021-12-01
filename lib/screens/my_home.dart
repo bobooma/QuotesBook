@@ -145,9 +145,9 @@ class _MyHomePageState extends State<MyHomePage> {
         padding:
             Provider.of<LocaleProvider>(context).locale.languageCode == "ar"
                 ? EdgeInsets.only(
-                    right: 10, left: media.width * .15, top: 5, bottom: 5)
+                    right: 10, left: media.width * .21, top: 5, bottom: 5)
                 : EdgeInsets.only(
-                    right: media.width * .15, left: 10, top: 5, bottom: 5),
+                    right: media.width * .17, left: 10, top: 5, bottom: 5),
         decoration: BoxDecoration(color: Colors.pink[300]),
         child: SingleChildScrollView(
           child: Column(
@@ -159,9 +159,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 // minFontSize: 10,
                 // maxFontSize: 13,
                 style: TextStyle(
-                    fontSize: media.width * .025,
+                    fontSize: media.width * .018,
                     color: Colors.black,
-                    fontWeight: FontWeight.bold,
+                    // 7w7
                     fontFamily: "Raleway"),
               ),
               AutoSizeText(
@@ -170,12 +170,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 // minFontSize: media.width * .03,
                 // maxFontSize: media.width * .05,
                 style: TextStyle(
-                  fontSize: media.width * 0.04,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  // fontFamily: "Raleway"
-                  fontFamily: "RobotoCondensed",
-                ),
+                    fontSize: media.width * 0.04,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Raleway"
+                    // fontFamily: "RobotoCondensed",
+                    ),
               ),
             ],
           ),
