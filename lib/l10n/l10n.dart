@@ -16,6 +16,13 @@ class L10n {
     const Locale("ko"),
     const Locale("it"),
     const Locale("de"),
+    const Locale("bn"),
+    const Locale("pt"),
+    const Locale("vi"),
+    const Locale("ur"),
+    const Locale("tr"),
+    const Locale("fa"),
+    const Locale("ms"),
   ];
 
 //   static String getTranslation(String code, String detail) {

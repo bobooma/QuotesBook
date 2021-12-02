@@ -136,10 +136,10 @@ class _QuoteImageState extends State<QuoteImage> {
                                 ),
                                 child: Center(
                                   child: Container(
-                                    height: media.height * .09,
+                                    height: media.height * .13,
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.vertical,
-                                      child: Text(
+                                      child: SelectableText(
                                         snapshot.data ?? "",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -164,7 +164,7 @@ class _QuoteImageState extends State<QuoteImage> {
                     ),
                   ),
                   SocialMedia(
-                    height: media.height * 0.1,
+                    height: media.height * 0.08,
                     img: widget.imgUrl,
                   ),
                 ],

@@ -19,7 +19,7 @@
   </intent>
 </queries>
    <application
-        android:label="my_quotes"
+        android:label="QuotesBook"
         
         android:icon="@mipmap/ic_launcher"
 

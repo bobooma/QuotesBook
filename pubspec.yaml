@@ -44,6 +44,7 @@ dependencies:
   http: ^0.13.4
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
+
   metadata_fetch: ^0.4.1
   path: ^1.8.0
   path_provider: ^2.0.6
@@ -54,9 +55,15 @@ dependencies:
   url_launcher: ^6.0.12
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.9.2
   flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/quote-icon-png-7.jpg"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

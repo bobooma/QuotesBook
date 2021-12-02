@@ -49,13 +49,13 @@ class MyApp extends StatelessWidget {
               cardColor: Colors.pink[100],
             ),
             supportedLocales: L10n.all,
-            localizationsDelegates: [
+            localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
             ],
-            home: MyHomePage(),
+            home: const MyHomePage(),
           );
         });
   }

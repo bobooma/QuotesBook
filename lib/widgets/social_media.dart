@@ -94,7 +94,7 @@ class _SocialMediaState extends State<SocialMedia> {
               ),
             ),
             Container(
-              height: media.height * 0.05,
+              height: media.height * 0.03,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,

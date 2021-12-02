@@ -142,12 +142,16 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       bottomSheet: Container(
         height: media.height * .1,
-        padding:
-            Provider.of<LocaleProvider>(context).locale.languageCode == "ar"
-                ? EdgeInsets.only(
-                    right: 10, left: media.width * .21, top: 5, bottom: 5)
-                : EdgeInsets.only(
-                    right: media.width * .17, left: 10, top: 5, bottom: 5),
+        width: media.width,
+        padding: Provider.of<LocaleProvider>(context).locale.languageCode ==
+                    "ar" ||
+                Provider.of<LocaleProvider>(context).locale.languageCode ==
+                    "fa" ||
+                Provider.of<LocaleProvider>(context).locale.languageCode == "ur"
+            ? EdgeInsets.only(
+                right: 10, left: media.width * .21, top: 10, bottom: 5)
+            : EdgeInsets.only(
+                right: media.width * .24, left: 10, top: 10, bottom: 5),
         decoration: BoxDecoration(color: Colors.pink[300]),
         child: SingleChildScrollView(
           child: Column(
@@ -159,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 // minFontSize: 10,
                 // maxFontSize: 13,
                 style: TextStyle(
-                    fontSize: media.width * .018,
+                    fontSize: media.width * .02,
                     color: Colors.black,
                     // 7w7
                     fontFamily: "Raleway"),
@@ -190,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
           label: Text(
             AppLocalizations.of(context)!.share,
             style: TextStyle(
-              fontSize: media.width * 0.035,
+              fontSize: media.width * 0.02,
               color: Colors.black,
               fontWeight: FontWeight.bold,
               // fontFamily: "Raleway"

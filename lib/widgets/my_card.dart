@@ -13,7 +13,9 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
     final content = Provider.of<LocaleProvider>(context).langeSwitch(details);
-    return Provider.of<LocaleProvider>(context).locale.languageCode == "ar"
+    return Provider.of<LocaleProvider>(context).locale.languageCode == "ar" ||
+            Provider.of<LocaleProvider>(context).locale.languageCode == "fa" ||
+            Provider.of<LocaleProvider>(context).locale.languageCode == "ur"
         ? FutureBuilder(
             future: content,
             builder: (context, AsyncSnapshot<String> snapshot) {
@@ -29,7 +31,7 @@ class MyCard extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: EdgeInsets.only(right: media.width * 0.19),
-                        child: Text(
+                        child: SelectableText(
                           snapshot.data ?? "",
                           textAlign: TextAlign.center,
                           style: TextStyle(
