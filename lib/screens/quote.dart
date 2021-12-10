@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:my_quotes/constants%20copy.dart';
+
 import 'package:my_quotes/providers/locale_provider.dart';
+import 'package:my_quotes/widgets/my_drawer.dart';
 import 'package:my_quotes/widgets/translations_card.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -16,6 +17,8 @@ import 'package:my_quotes/widgets/social_media.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../constants.dart';
 
 class QuoteImage extends StatefulWidget {
   QuoteImage({
@@ -82,6 +85,7 @@ class _QuoteImageState extends State<QuoteImage> {
     final content =
         Provider.of<LocaleProvider>(context).langeSwitch(widget.content);
     return Scaffold(
+        drawer: MyDrawer(),
         appBar: AppBar(
           title: Container(
             height: media.height * 0.035,
