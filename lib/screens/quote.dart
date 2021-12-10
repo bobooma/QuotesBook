@@ -136,6 +136,8 @@ class _QuoteImageState extends State<QuoteImage> {
                     fontSize: media.width * .035,
                     fontWeight: FontWeight.bold,
                   ),
+
+                  // ggg
                 ),
                 IconButton(
                   onPressed: _save,
