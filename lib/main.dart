@@ -37,9 +37,9 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.pink,
               textTheme: const TextTheme(
                       headline6: TextStyle(
-                        fontSize: 20,
-                        letterSpacing: 2,
-                      ),
+                          // fontSize: 20,
+                          // letterSpacing: ,
+                          ),
                       bodyText2: TextStyle(),
                       button: TextStyle(letterSpacing: 3))
                   .apply(

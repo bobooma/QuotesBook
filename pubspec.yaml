@@ -31,7 +31,6 @@ dependencies:
   cloud_firestore: ^2.5.4
   cupertino_icons: ^1.0.2
   dio: ^4.0.1
-  
   file_picker: ^3.0.1
   firebase_core: ^1.7.0
   firebase_database: ^8.0.0
@@ -40,16 +39,17 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_slidable: ^1.1.0
   font_awesome_flutter: ^9.2.0
   http: ^0.13.4
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0
-
   metadata_fetch: ^0.4.1
   path: ^1.8.0
   path_provider: ^2.0.6
   permission_handler: ^8.2.6
   provider: ^6.0.1
+  screenshot: ^1.2.3
   share_plus: ^3.0.4
   translator: ^0.1.7
   url_launcher: ^6.0.12

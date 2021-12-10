@@ -22,7 +22,7 @@ class L10n {
     const Locale("ur"),
     const Locale("tr"),
     const Locale("fa"),
-    const Locale("ms"),
+    const Locale("pa"),
   ];
 
 //   static String getTranslation(String code, String detail) {

@@ -23,7 +23,7 @@ class MyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 7,
-                  margin: EdgeInsets.only(right: media.width * 0.15),
+                  margin: EdgeInsets.only(right: media.width * 0.19),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   child: Padding(
@@ -59,7 +59,7 @@ class MyCard extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
                   elevation: 7,
-                  margin: EdgeInsets.only(left: media.width * 0.17),
+                  margin: EdgeInsets.only(left: media.width * 0.19),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   child: Padding(

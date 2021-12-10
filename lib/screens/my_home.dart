@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
 
 import 'package:my_quotes/screens/quote.dart';
@@ -34,16 +35,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: media.width * 0.1,
-        backgroundColor: Colors.pink[600],
+        toolbarHeight: media.height * 0.1,
+        backgroundColor: Colors.pink[500],
         // Theme.of(context).colorScheme.primaryVariant,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: media.width * .25,
+              width: media.width * .35,
               child: FittedBox(
-                child: Text('QuotesBook'),
+                child: Text(
+                  'QuotesBook',
+                  style: TextStyle(
+                      fontFamily: "Lobster",
+                      fontSize: media.width * .025,
+                      color: Colors.white),
+                ),
               ),
             ),
             SizedBox(
@@ -54,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 AppLocalizations.of(context)!.newQuote,
                 style: TextStyle(
                     fontFamily: "RobotoCondensed",
-                    fontSize: media.width * .025,
+                    fontSize: media.width * .029,
                     color: Colors.black),
               ),
             ),
@@ -68,8 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Text(
                 AppLocalizations.of(context)!.chooseLanguage,
                 style: TextStyle(
-                    fontFamily: "RobotoCondensed",
-                    fontSize: media.width * .025),
+                    fontFamily: "RobotoCondensed", fontSize: media.width * .03),
               ),
               SizedBox(
                 width: 5,
@@ -101,39 +107,76 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (BuildContext context, int index) {
                   String content = snapshot.data.docs[index]["content"];
 
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QuoteImage(
-                              content: content,
-                              imgUrl: snapshot.data.docs[index]["imgUrl"]),
+                  return Slidable(
+                    key: UniqueKey(),
+                    // startActionPane: ActionPane(
+                    //   motion: const DrawerMotion(),
+                    //   extentRatio: 0.25,
+                    //   children: [
+                    //     SlidableAction(
+                    //       label: 'Archive',
+                    //       backgroundColor: Colors.blue,
+                    //       icon: Icons.archive,
+                    //       onPressed: (context) {},
+                    //     ),
+                    //   ],
+                    // ),
+                    endActionPane: ActionPane(
+                      dismissible: DismissiblePane(
+                        onDismissed: () async {
+                          await FirebaseFirestore.instance.runTransaction(
+                              (Transaction myTransaction) async {
+                            myTransaction
+                                .delete(snapshot.data.docs[index].reference);
+                          });
+                          // Remove this Slidable from the widget tree.
+                        },
+                      ),
+                      motion: const DrawerMotion(),
+                      extentRatio: 0.25,
+                      children: [
+                        SlidableAction(
+                          label: 'Delete',
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          onPressed: (context) {},
                         ),
-                      );
-                    },
-                    child: SizedBox(
-                      width: media.width,
-                      height: media.height * 0.2,
-                      child: Stack(children: [
-                        Positioned(child: MyCard(details: content)),
-                        Positioned(
-                          top: 5,
-                          child: Container(
-                            height: media.height * 0.2,
-                            width: media.height * 0.2,
-                            decoration: BoxDecoration(
-                              boxShadow: const [BoxShadow(blurRadius: 2)],
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    snapshot.data.docs[index]["imgUrl"]),
+                      ],
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QuoteImage(
+                                content: content,
+                                imgUrl: snapshot.data.docs[index]["imgUrl"]),
+                          ),
+                        );
+                      },
+                      child: SizedBox(
+                        width: media.width,
+                        height: media.height * 0.2,
+                        child: Stack(children: [
+                          Positioned(child: MyCard(details: content)),
+                          Positioned(
+                            top: 5,
+                            child: Container(
+                              height: media.height * 0.2,
+                              width: media.height * 0.2,
+                              decoration: BoxDecoration(
+                                boxShadow: const [BoxShadow(blurRadius: 2)],
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                      snapshot.data.docs[index]["imgUrl"]),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     ),
                   );
                 });
@@ -194,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
           label: Text(
             AppLocalizations.of(context)!.share,
             style: TextStyle(
-              fontSize: media.width * 0.02,
+              fontSize: media.width * 0.03,
               color: Colors.black,
               fontWeight: FontWeight.bold,
               // fontFamily: "Raleway"
@@ -207,7 +250,8 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (context) => const UploadScreen(),
             ));
             // ! user
-            // Share.share("link");
+            // Share.share(
+            //     "https://www.dropbox.com/sh/jrst0je1ssct69u/AAD7C2S28pHZus5OnhKEFVpGa?dl=0");
           }),
     );
   }

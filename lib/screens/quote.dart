@@ -4,14 +4,18 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:my_quotes/constants%20copy.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
+import 'package:my_quotes/widgets/translations_card.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:my_quotes/widgets/social_media.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class QuoteImage extends StatefulWidget {
   QuoteImage({
@@ -54,6 +58,24 @@ class _QuoteImageState extends State<QuoteImage> {
     setState(() => file = File(path));
   }
 
+  Future<void> contact(Social platform) async {
+    final urls = {
+      Social.facebook:
+          "https://www.facebook.com/profile.php?id=100005943935205",
+      // Social.twitter:
+      //     "https://www.twitter.com/intent/tweet?url=$urlShare&t=$txt",
+      // Social.email: "mailto:?subject=$subject&body=$txt\n\n$urlShare",
+      // Social.linkedin:
+      // "https://www.linkedin.com/shareArticle?mini=true&url=$urlShare",
+      // Social.whatsapp: "https://www.api.whatsapp.com/send?text=$txt$urlShare",
+      // Social.instgram: "https://www.api.whatsapp.com/send?text=$txt$urlShare",
+    };
+    final url = urls[platform]!;
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
@@ -61,14 +83,53 @@ class _QuoteImageState extends State<QuoteImage> {
         Provider.of<LocaleProvider>(context).langeSwitch(widget.content);
     return Scaffold(
         appBar: AppBar(
+          title: Container(
+            height: media.height * 0.035,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 3,
+                ),
+                InkWell(
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.center,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Contact Me",
+                        style: TextStyle(
+                            fontSize: media.width * .04, color: Colors.white),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        FontAwesomeIcons.facebookMessenger,
+                        color: facebookColor,
+                        size: media.width * .045,
+                      ),
+                      Text(
+                        " 😊",
+                        style: TextStyle(
+                            fontSize: media.width * .04, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  onTap: () => contact(Social.facebook),
+                )
+              ],
+            ),
+          ),
           actions: [
             Row(
               children: [
                 Text(
                   AppLocalizations.of(context)!.save,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: "Rubik",
-                    fontSize: 19,
+                    fontSize: media.width * .035,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -103,6 +164,7 @@ class _QuoteImageState extends State<QuoteImage> {
                     ),
                   ),
                   SocialMedia(
+                    content: widget.content,
                     height: media.height * 0.1,
                     img: widget.imgUrl,
                   ),
@@ -111,62 +173,32 @@ class _QuoteImageState extends State<QuoteImage> {
             : Column(
                 children: [
                   Expanded(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: Image(
-                            image: NetworkImage(
-                              widget.imgUrl,
-                            ),
-                            width: MediaQuery.of(context).size.height * 0.7,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        FutureBuilder(
-                          future: content,
-                          builder: (context, AsyncSnapshot<String> snapshot) {
-                            return Card(
-                              elevation: 7,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 3,
-                                  right: 3,
-                                ),
-                                child: Center(
-                                  child: Container(
-                                    height: media.height * .13,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.vertical,
-                                      child: SelectableText(
-                                        snapshot.data ?? "",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          //
-                                          // ***
-                                          // TODO rEVISION
-                                          //overflow: TextOverflow.ellipsis,
-                                          fontSize: media.width * .04,
-                                          fontWeight: FontWeight.bold,
-                                          // letterSpacing: 2,
-                                          fontFamily: "RobotoCondensed",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      ],
+                    child: Image(
+                      image: NetworkImage(
+                        widget.imgUrl,
+                      ),
+                      width: MediaQuery.of(context).size.height * 0.7,
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  SocialMedia(
-                    height: media.height * 0.08,
-                    img: widget.imgUrl,
-                  ),
+                  FutureBuilder(
+                    future: content,
+                    builder: (context, AsyncSnapshot<String> snapshot) {
+                      return Column(
+                        children: [
+                          TranslationCard(
+                            media: media,
+                            data: snapshot.data ?? "",
+                          ),
+                          SocialMedia(
+                            content: snapshot.data ?? "",
+                            height: media.height * 0.03,
+                            img: widget.imgUrl,
+                          ),
+                        ],
+                      );
+                    },
+                  )
                 ],
               ));
   }
