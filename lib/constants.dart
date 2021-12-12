@@ -19,3 +19,7 @@ TextStyle whiteSty(double fs, String ff) {
 const myFBAccount = "https://www.facebook.com/profile.php?id=100005943935205";
 
 const myFBPage = "https://www.facebook.com/AmazPic7/";
+const myWeb = "https://amazpic7.blogspot.com/";
+const myChannel = "https://www.youtube.com/channel/UCVPTWnz5faeoGR8ByLo7bkQ";
+const myVideosPg = "https://www.facebook.com/amzvidss";
+const mytelegramChannel = "https://t.me/amazpic7";

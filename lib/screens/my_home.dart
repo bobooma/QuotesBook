@@ -10,9 +10,9 @@ import 'package:my_quotes/screens/upload_screen.dart';
 import 'package:my_quotes/widgets/language_picker_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../widgets/my_card.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -245,13 +245,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           onPressed: () {
-            // ! admin
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const UploadScreen(),
-            ));
+            // // ! admin
+            // Navigator.of(context).push(MaterialPageRoute(
+            //   builder: (context) => const UploadScreen(),
+            // ));
             // ! user
-            // Share.share(
-            //     "https://www.dropbox.com/sh/jrst0je1ssct69u/AAD7C2S28pHZus5OnhKEFVpGa?dl=0");
+            Share.share(
+                "https://www.dropbox.com/sh/jrst0je1ssct69u/AAD7C2S28pHZus5OnhKEFVpGa?dl=0");
           }),
     );
   }

@@ -69,7 +69,7 @@ class MyCard extends StatelessWidget {
                         padding: EdgeInsets.only(left: media.width * 0.2),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
-                          child: Text(
+                          child: SelectableText(
                             snapshot.data ?? "",
                             textAlign: TextAlign.center,
                             style: TextStyle(

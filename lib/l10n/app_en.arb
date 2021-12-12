@@ -31,7 +31,33 @@
     "newQuote": "New Wisdoms\nEveryDay",
     "@newQuote": {
         "description": "New Quotes"
+    },
+    "shareImage": "Share Image",
+    "@shareImage": {
+        "description": "Share Image"
+    },
+    "contactMe": "Contact Me",
+    "@contactMe": {
+        "description": "Contact Me"
+    },
+    "myWebsite": "My Website",
+    "@myWebsite": {
+        "description": "My Website"
+    },
+    
+    "youtubeChannel": "Youtube Channel",
+    "@youtubeChannel": {
+        "description": "Youtube Channel"
+    },
+     "myVideospage": "Amazing Videos",
+    "@myVideospage": {
+        "description": "Amazing Videos"
+    },
+    "telegramChanel": "Telegram Chanel ",
+    "@telegramChanel": {
+        "description": "Telegram Chanel "
     }
+    
 
 
 }

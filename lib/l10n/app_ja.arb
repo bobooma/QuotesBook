@@ -11,5 +11,21 @@
     , "spread": "「それで、よく善と共有してください」"
     ,"newQuote": "毎日新\nしい知恵"
 
+,"shareImage": 
+    "画像を共有します",
+   
+    "contactMe": 
+    "私に連絡して",
+    
+    "myWebsite": 
+    "私のウェブサイト",
+    
+    
+    "youtubeChannel": 
+    "YouTubeチャネル",
+    
+     "myVideospage":
+      "素晴らしいビデオ"
+,"telegramChanel": "テレグラムチャンネル"
 
 }

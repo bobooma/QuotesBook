@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class TranslationCard extends StatelessWidget {
@@ -13,32 +14,30 @@ class TranslationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 7,
+      // elevation: 7,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 3,
-          right: 3,
-        ),
-        child: Center(
-          child: Container(
-            height: media.height * .14,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SelectableText(
-                data,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  //
-                  // ***
-                  // TODO rEVISION
-                  //overflow: TextOverflow.ellipsis,
-                  fontSize: media.width * .04,
-                  fontWeight: FontWeight.bold,
-                  // letterSpacing: 2,
-                  fontFamily: "RobotoCondensed",
-                ),
-              ),
+      child: Center(
+        child: Container(
+          padding: EdgeInsets.only(top: 20, right: 5, left: 5),
+          color: Colors.white,
+          height: media.height * .15,
+          child: AutoSizeText(
+            (data),
+            textAlign: TextAlign.center,
+            maxLines: 5,
+            minFontSize: 8,
+            // maxFontSize: 50,
+            style: TextStyle(
+              // overflow: TextOverflow.visible,
+              //
+              // ***
+              // TODO rEVISION
+              //overflow: TextOverflow.ellipsis,
+              fontSize: media.width * .04,
+              fontWeight: FontWeight.bold,
+
+              // letterSpacing: 2,
+              fontFamily: "RobotoCondensed",
             ),
           ),
         ),
