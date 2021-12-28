@@ -110,25 +110,7 @@ class _QuoteImageState extends State<QuoteImage> {
     img.writeAsBytesSync(captureImg!);
     Share.shareFiles([img.path], subject: widget.content, text: widget.content);
     print(widget.content);
-
-    // final result = await FilePicker.platform.pickFiles(
-    //   allowMultiple: false,
-    // );
-    // if (result == null) return;
-    // final path = result.files.single.path!;
-    // setState(() => file = File(path));
   }
-
-  // Future<void> contact(Social platform) async {
-  //   final urls = {
-  //     Social.facebook:
-  //         "https://www.facebook.com/profile.php?id=100005943935205",
-  //   };
-  //   final url = urls[platform]!;
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -146,67 +128,8 @@ class _QuoteImageState extends State<QuoteImage> {
       ),
       appBar: AppBar(
         toolbarHeight: media.height * 0.05,
-        // title: Container(
-        //   height: media.height * 0.035,
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.center,
-        //     crossAxisAlignment: CrossAxisAlignment.center,
-        //     children: [
-        //       const SizedBox(
-        //         width: 3,
-        //       ),
-        //       InkWell(
-        //         child: Row(
-        //           // mainAxisAlignment: MainAxisAlignment.center,
-        //           // crossAxisAlignment: CrossAxisAlignment.center,
-        //           children: [
-        //             Text(
-        //               "Contact Me",
-        //               style: TextStyle(
-        //                   fontSize: media.width * .04, color: Colors.white),
-        //             ),
-        //             SizedBox(
-        //               width: 5,
-        //             ),
-        //             Icon(
-        //               FontAwesomeIcons.facebookMessenger,
-        //               color: facebookColor,
-        //               size: media.width * .045,
-        //             ),
-        //             Text(
-        //               " 😊",
-        //               style: TextStyle(
-        //                   fontSize: media.width * .04, color: Colors.white),
-        //             ),
-        //           ],
-        //         ),
-        //         onTap: () => contact(Social.facebook),
-        //       )
-        //     ],
-        //   ),
-        // ),
-        // actions: [
-        //   Row(
-        //     children: [
-        //       Text(
-        //         AppLocalizations.of(context)!.save,
-        //         style: TextStyle(
-        //           fontFamily: "Rubik",
-        //           fontSize: media.width * .035,
-        //           fontWeight: FontWeight.bold,
-        //         ),
-
-        //         // ggg
-        //       ),
-        //       IconButton(
-        //         onPressed: _save,
-        //         icon: const Icon(Icons.download),
-        //       ),
-        //     ],
-        //   )
-        // ],
       ),
-      backgroundColor: Colors.pink[300],
+      // backgroundColor: Colors.pink[300],
       body: Provider.of<LocaleProvider>(context).locale.languageCode == "en"
           ? Column(
               children: [
@@ -266,16 +189,6 @@ class _QuoteImageState extends State<QuoteImage> {
             Icons.share,
             size: media.width * 0.05,
           ),
-          // label: Text(
-          //   AppLocalizations.of(context)!.share,
-          //   style: TextStyle(
-          //     fontSize: media.width * 0.03,
-          //     color: Colors.black,
-          //     fontWeight: FontWeight.bold,
-          //     // fontFamily: "Raleway"
-          //     fontFamily: "RobotoCondensed",
-          //   ),
-          // ),
           onPressed: () {
             // ! user
             shareFile();

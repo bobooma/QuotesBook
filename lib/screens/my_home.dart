@@ -7,6 +7,7 @@ import 'package:my_quotes/providers/locale_provider.dart';
 
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/screens/upload_screen.dart';
+import 'package:my_quotes/widgets/change_theme.dart';
 import 'package:my_quotes/widgets/language_picker_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -36,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: media.height * 0.1,
-        backgroundColor: Colors.pink[500],
+        // backgroundColor: Colors.pink[500],
         // Theme.of(context).colorScheme.primaryVariant,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -46,10 +47,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: FittedBox(
                 child: Text(
                   'QuotesBook',
-                  style: TextStyle(
-                      fontFamily: "Lobster",
-                      fontSize: media.width * .025,
-                      color: Colors.white),
+                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                        fontFamily: "Lobster",
+                        fontSize: media.width * .025,
+                      ),
+                  // TextStyle(
+                  //     fontFamily: "Lobster",
+                  //     fontSize: media.width * .025,
+                  //     // color: Colors.white
+                  //     ),
                 ),
               ),
             ),
@@ -59,28 +65,59 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Text(
                 AppLocalizations.of(context)!.newQuote,
-                style: TextStyle(
-                    fontFamily: "RobotoCondensed",
-                    fontSize: media.width * .029,
-                    color: Colors.black),
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontFamily: "RobotoCondensed",
+                      fontSize: media.width * .029,
+                    ),
+
+                //  TextStyle(
+                //     fontFamily: "RobotoCondensed",
+                //     fontSize: media.width * .029,
+                //     color: Colors.black),
               ),
             ),
           ],
         ),
         actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          Column(
             children: [
-              Text(
-                AppLocalizations.of(context)!.chooseLanguage,
-                style: TextStyle(
-                    fontFamily: "RobotoCondensed", fontSize: media.width * .03),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.chooseLanguage,
+                    style: Theme.of(context).textTheme.headline5!.copyWith(
+                          fontFamily: "RobotoCondensed",
+                          fontSize: media.width * .03,
+                        ),
+
+                    // TextStyle(
+
+                    //     fontFamily: "RobotoCondensed", fontSize: media.width * .03),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  LangPickWidget(),
+                ],
               ),
-              SizedBox(
-                width: 5,
-              ),
-              LangPickWidget(),
+              Expanded(
+                child: Container(
+                  child: Row(
+                    children: [
+                      Text(
+                        "Dark Theme",
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
+                              fontFamily: "RobotoCondensed",
+                              fontSize: media.width * .03,
+                            ),
+                      ),
+                      ChangeTheme(),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
           SizedBox(
@@ -195,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 right: 10, left: media.width * .21, top: 10, bottom: 5)
             : EdgeInsets.only(
                 right: media.width * .24, left: 10, top: 10, bottom: 5),
-        decoration: BoxDecoration(color: Colors.pink[300]),
+        // decoration: BoxDecoration(color: Colors.pink[300]),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -205,24 +242,34 @@ class _MyHomePageState extends State<MyHomePage> {
                 maxLines: 2,
                 // minFontSize: 10,
                 // maxFontSize: 13,
-                style: TextStyle(
-                    fontSize: media.width * .02,
-                    color: Colors.black,
-                    // 7w7
-                    fontFamily: "Raleway"),
+                style: Theme.of(context).textTheme.headline6!.copyWith(
+                      //  fontFamily: "RobotoCondensed",
+                      fontSize: media.width * .029,
+                    ),
+
+                //  TextStyle(
+                //     fontSize: media.width * .02,
+                //     color: Colors.black,
+                //     // 7w7
+                //     fontFamily: "Raleway"),
               ),
               AutoSizeText(
                 AppLocalizations.of(context)!.spread,
                 maxLines: 1,
                 // minFontSize: media.width * .03,
                 // maxFontSize: media.width * .05,
-                style: TextStyle(
-                    fontSize: media.width * 0.04,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Raleway"
-                    // fontFamily: "RobotoCondensed",
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontSize: media.width * 0.04,
+                      fontWeight: FontWeight.bold,
                     ),
+
+                //  TextStyle(
+                //     fontSize: media.width * 0.04,
+                //     fontWeight: FontWeight.bold,
+                //     color: Colors.black,
+                //     fontFamily: "Raleway"
+                //     // fontFamily: "RobotoCondensed",
+                //     ),
               ),
             ],
           ),
@@ -233,16 +280,24 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: Icon(
             Icons.share,
             size: media.width * 0.04,
+            color: MediaQuery.of(context).platformBrightness == ThemeMode.dark
+                ? Colors.white
+                : Colors.black,
           ),
           label: Text(
             AppLocalizations.of(context)!.share,
-            style: TextStyle(
-              fontSize: media.width * 0.03,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              // fontFamily: "Raleway"
-              fontFamily: "RobotoCondensed",
-            ),
+            style: Theme.of(context).textTheme.headline5!.copyWith(
+                  fontSize: media.width * 0.03,
+                  fontWeight: FontWeight.bold,
+                ),
+
+            //  TextStyle(
+            //   fontSize: media.width * 0.03,
+            //   color: Colors.black,
+            //   fontWeight: FontWeight.bold,
+            //   // fontFamily: "Raleway"
+            //   fontFamily: "RobotoCondensed",
+            // ),
           ),
           onPressed: () {
             // // ! admin

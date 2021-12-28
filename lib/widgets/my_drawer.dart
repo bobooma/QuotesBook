@@ -127,14 +127,20 @@ class _MyDrawerState extends State<MyDrawer> {
           Container(
             padding: EdgeInsets.only(left: 10, right: 10),
             color: Colors.black45,
-            child: Text(appLoc!.chooseLanguage,
-                style: TextStyle(
-                    fontSize: media.width * .03,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "LimeLihgt")
-                // media.width * .035,
-                ),
+            child: Text(
+              appLoc!.chooseLanguage,
+
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                  fontSize: media.width * 0.03,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "LimeLihgt"),
+              //  TextStyle(
+              //     fontSize: media.width * .03,
+              //     color: Colors.white,
+              //     fontWeight: FontWeight.bold,
+              //     fontFamily: "LimeLihgt")
+              // media.width * .035,
+            ),
           ),
           const SizedBox(
             width: 5,
@@ -174,10 +180,12 @@ class _MyDrawerState extends State<MyDrawer> {
             // ),
             Container(
               padding: EdgeInsets.only(left: 10, right: 10),
-              color: Colors.black54,
+              // color: Colors.black54,
               child: Text(
                 txt,
-                style: whiteSty(media.width * .02, "Limelight"),
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                    fontSize: media.width * 0.02, fontFamily: "LimeLihgt"),
+                //  whiteSty(media.width * .02, "Limelight"),
               ),
             ),
             const SizedBox(

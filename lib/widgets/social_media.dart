@@ -133,11 +133,17 @@ class _SocialMediaState extends State<SocialMedia> {
                     children: [
                       Text(
                         "Like My Page",
-                        style: TextStyle(
-                            fontSize: media.height * 0.025,
+                        style: Theme.of(context).textTheme.headline4!.copyWith(
+                            fontSize: media.width * 0.025,
                             color: facebookColor,
-                            fontFamily: "Rubik",
-                            fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Rubik"),
+
+                        //  TextStyle(
+                        //     fontSize: media.height * 0.025,
+                        //     color: facebookColor,
+                        //     fontFamily: "Rubik",
+                        //     fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         width: 5,
@@ -150,36 +156,6 @@ class _SocialMediaState extends State<SocialMedia> {
                   ),
                   onTap: () => contact(Social.facebook),
                 )
-
-                // Icon(
-                //   FontAwesomeIcons.twitter,
-                //   color: twittetColor,
-                // ),
-                // const SizedBox(
-                //   width: 3,
-                // ),
-                // Icon(
-                //   Icons.mail,
-                //   color: mailColor,
-                // ),
-                // const SizedBox(
-                //   width: 3,
-                // ),
-                // Icon(
-                //   FontAwesomeIcons.linkedinIn,
-                //   color: linkedinColor,
-                // ),
-                // const SizedBox(
-                //   width: 3,
-                // ),
-                // Icon(
-                //   FontAwesomeIcons.whatsapp,
-                //   color: whatsappColor,
-                // ),
-                // Icon(
-                //   FontAwesomeIcons.instagram,
-                //   color: instgramColor,
-                // ),
               ],
             ),
           ],

@@ -72,16 +72,23 @@ class MyCard extends StatelessWidget {
                           child: SelectableText(
                             snapshot.data ?? "",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              //
-                              // ***
-                              // TODO rEVISION
-                              //overflow: TextOverflow.ellipsis,
-                              fontSize: media.width * .035,
-                              fontWeight: FontWeight.bold,
-                              // letterSpacing: 2,
-                              fontFamily: "RobotoCondensed",
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(
+                                    fontSize: media.width * 0.035,
+                                    fontWeight: FontWeight.bold),
+
+                            //  TextStyle(
+                            //   //
+                            //   // ***
+                            //   // TODO rEVISION
+                            //   //overflow: TextOverflow.ellipsis,
+                            //   fontSize: media.width * .035,
+                            //   fontWeight: FontWeight.bold,
+                            //   // letterSpacing: 2,
+                            //   fontFamily: "RobotoCondensed",
+                            // ),
                           ),
                         ),
                       ),

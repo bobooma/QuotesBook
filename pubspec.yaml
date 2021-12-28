@@ -41,6 +41,7 @@ dependencies:
     sdk: flutter
   flutter_slidable: ^1.1.0
   font_awesome_flutter: ^9.2.0
+  google_fonts: ^2.1.1
   http: ^0.13.4
   image_gallery_saver: ^1.7.1
   intl: ^0.17.0

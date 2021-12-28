@@ -14,8 +14,8 @@ class LangPickWidget extends StatelessWidget {
     return DropdownButtonHideUnderline(
       child: DropdownButton(
         icon: Icon(
-          Icons.arrow_right,
-          color: Colors.black,
+          Icons.language,
+          // color: Colors.black,
           size: media.width * .07,
         ),
         value: locale,
@@ -24,8 +24,13 @@ class LangPickWidget extends StatelessWidget {
             child: Center(
               child: Text(
                 locale.languageCode,
-                style: TextStyle(
-                    color: Colors.black, fontSize: media.width * 0.03),
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontSize: media.width * 0.03,
+                      // fontWeight: FontWeight.bold,
+                    ),
+
+                //  TextStyle(
+                //     color: Colors.black, fontSize: media.width * 0.03),
               ),
             ),
             value: locale,
