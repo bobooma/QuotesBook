@@ -15,7 +15,6 @@ class LangPickWidget extends StatelessWidget {
       child: DropdownButton(
         icon: Icon(
           Icons.language,
-          // color: Colors.black,
           size: media.width * .07,
         ),
         value: locale,
