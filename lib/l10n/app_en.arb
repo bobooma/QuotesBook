@@ -4,14 +4,8 @@
         "description": "The current Language"
     },
      
- "chooseLanguage": "Language",
-    "@chooseLanguage": {
-        "description": "Choose languages"
-    },
-    "share": "Share",
-    "@share": {
-        "description": "Share"
-    },
+ 
+  
     "save": "Save",
     "@save": {
         "description": "Save"
@@ -56,8 +50,15 @@
     "telegramChanel": "Telegram Chanel ",
     "@telegramChanel": {
         "description": "Telegram Chanel "
+    },
+      "share": "Share",
+    "@share": {
+        "description": "Share"
+    },
+    "chooseLanguage": "Language",
+    "@chooseLanguage": {
+        "description": "Choose languages"
     }
-    
 
 
 }

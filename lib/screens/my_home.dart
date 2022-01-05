@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -7,6 +8,7 @@ import 'package:my_quotes/providers/locale_provider.dart';
 
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/screens/upload_screen.dart';
+import 'package:my_quotes/services/local_notification_service.dart';
 import 'package:my_quotes/widgets/change_theme.dart';
 import 'package:my_quotes/widgets/language_picker_widget.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +31,18 @@ class _MyHomePageState extends State<MyHomePage> {
       .collection("quotes")
       .orderBy("time", descending: true)
       .snapshots();
+
+  @override
+  void initState() {
+    LocalNotificationService.initialize(context);
+    FirebaseMessaging.instance.getInitialMessage();
+    FirebaseMessaging.onMessage.listen((message) {
+      LocalNotificationService.display(message);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
