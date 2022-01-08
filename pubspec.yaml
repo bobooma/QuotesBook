@@ -28,7 +28,6 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   auto_size_text: ^3.0.0
-
   cloud_firestore: ^2.5.4
   cupertino_icons: ^1.0.2
   dio: ^4.0.1
@@ -39,6 +38,7 @@ dependencies:
   firebase_storage: ^10.0.6
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^9.2.0
   flutter_localizations:
     sdk: flutter
   flutter_slidable: ^1.1.0
