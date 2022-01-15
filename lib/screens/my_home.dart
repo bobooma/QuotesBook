@@ -51,12 +51,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: media.height * 0.1,
-        // backgroundColor: Colors.pink[500],
-        // Theme.of(context).colorScheme.primaryVariant,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               width: media.width * .35,
               child: FittedBox(
                 child: Text(
@@ -65,15 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontFamily: "Lobster",
                         fontSize: media.width * .025,
                       ),
-                  // TextStyle(
-                  //     fontFamily: "Lobster",
-                  //     fontSize: media.width * .025,
-                  //     // color: Colors.white
-                  //     ),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               width: 5,
             ),
             Expanded(
@@ -83,11 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontFamily: "RobotoCondensed",
                       fontSize: media.width * .029,
                     ),
-
-                //  TextStyle(
-                //     fontFamily: "RobotoCondensed",
-                //     fontSize: media.width * .029,
-                //     color: Colors.black),
               ),
             ),
           ],
@@ -105,15 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           fontFamily: "RobotoCondensed",
                           fontSize: media.width * .03,
                         ),
-
-                    // TextStyle(
-
-                    //     fontFamily: "RobotoCondensed", fontSize: media.width * .03),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
-                  LangPickWidget(),
+                  const LangPickWidget(),
                 ],
               ),
               Expanded(

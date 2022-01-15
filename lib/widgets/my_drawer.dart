@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:multilevel_drawer/multilevel_drawer.dart';
 import 'package:my_quotes/constants.dart';
+import 'package:my_quotes/providers/themes.dart';
+import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -31,14 +33,11 @@ class _MyDrawerState extends State<MyDrawer> {
 
   Future<void> contact(String url, BuildContext context) async {
     Navigator.of(context).pop();
-  
 
     if (await canLaunch(url)) {
       await launch(url);
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +47,27 @@ class _MyDrawerState extends State<MyDrawer> {
     return MultiLevelDrawer(
         // itemHeight: media.width * 0.1,
         header: Container(),
-        gradient: LinearGradient(colors: [
-          Colors.pink.shade200,
-          Colors.white,
-        ]),
+        gradient: !Provider.of<ThemeProvider>(context).isDarkMode
+            ? LinearGradient(colors: [
+                Colors.pink.shade200,
+                Colors.white,
+              ])
+            : LinearGradient(colors: [
+                Colors.pink.shade200,
+                Colors.black,
+              ]),
         children: [
           MMLLang(appLoc, media),
           mLMitem(media, "${AppLocalizations.of(context)!.share} ♾",
               Icons.share, kSecondaryColor, widget.screenShare),
-          mLMitem(media, "${AppLocalizations.of(context)!.save} ⏬",
-              Icons.download, Colors.black, widget.save),
+          mLMitem(
+              media,
+              "${AppLocalizations.of(context)!.save} ⏬",
+              Icons.download,
+              !Provider.of<ThemeProvider>(context).isDarkMode
+                  ? Colors.black
+                  : Colors.white,
+              widget.save),
           mLMitem(
               media,
               "${AppLocalizations.of(context)!.contactMe} 😊",
@@ -84,7 +94,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Icons.send_and_archive_sharp,
               Colors.blueAccent.shade200,
               () => contact(mytelegramChannel, context)),
-          MLMenuItem(content:const Text(""), onClick: () {})
+          MLMenuItem(content: const Text(""), onClick: () {})
         ]);
   }
 
@@ -102,26 +112,25 @@ class _MyDrawerState extends State<MyDrawer> {
               padding: const EdgeInsets.only(left: 10, right: 10),
               child: Text(
                 appLoc!.chooseLanguage,
-
-                style: Theme.of(context).textTheme.headline4!.copyWith(
-                   
-                    fontFamily: "LimeLihgt"),
-              
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontFamily: "LimeLihgt"),
               ),
             ),
             // const SizedBox(
             //  width: 5,
             // ),
-            Icon(
-              Icons.language,
-              color: Colors.black,
-              size: media.width * .04,
-            ),
+            // Icon(
+            //   Icons.language,
+            //   color: Colors.black,
+            //   size: media.width * .04,
+            // ),
           ],
         ),
       ),
       trailing: const LangPickWidget(),
-//      
+//
 //       ),
     );
   }
@@ -158,7 +167,7 @@ class _MyDrawerState extends State<MyDrawer> {
               // color: Colors.black54,
               child: Text(
                 txt,
-                style: Theme.of(context).textTheme.headline4!.copyWith(
+                style: Theme.of(context).textTheme.headline5!.copyWith(
                     // fontSize: media.width * 0.02,
 
                     fontFamily: "LimeLihgt"),

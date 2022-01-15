@@ -51,24 +51,8 @@ class MyApp extends StatelessWidget {
             title: 'QuotesBook',
             locale: provider.locale,
             themeMode: themeProvider.themeMode,
-
             theme: lightThemeData(context),
             darkTheme: darkThemeData(context),
-            // theme: ThemeData(
-            //   primarySwatch: Colors.pink,
-            //   textTheme: const TextTheme(
-            //           headline6: TextStyle(
-            //               // fontSize: 20,
-            //               // letterSpacing: ,
-            //               ),
-            //           bodyText2: TextStyle(),
-            //           button: TextStyle(letterSpacing: 3))
-            //       .apply(
-            //     fontFamily: "Lobster",
-            //   ),
-            //   scaffoldBackgroundColor: Colors.pink[300],
-            //   cardColor: Colors.pink[100],
-            // ),
             supportedLocales: L10n.all,
             localizationsDelegates: const [
               AppLocalizations.delegate,

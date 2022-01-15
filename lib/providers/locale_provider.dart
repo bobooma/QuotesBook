@@ -81,6 +81,27 @@ class LocaleProvider extends ChangeNotifier {
       case "pa":
         var trans = await translator.translate(content, from: "en", to: "pa");
         return content = trans.text;
+      case "gu":
+        var trans = await translator.translate(content, from: "en", to: "gu");
+        return content = trans.text;
+      case "mr":
+        var trans = await translator.translate(content, from: "en", to: "mr");
+        return content = trans.text;
+      case "ms":
+        var trans = await translator.translate(content, from: "en", to: "ms");
+        return content = trans.text;
+      case "sw":
+        var trans = await translator.translate(content, from: "en", to: "sw");
+        return content = trans.text;
+      case "ta":
+        var trans = await translator.translate(content, from: "en", to: "ta");
+        return content = trans.text;
+      case "te":
+        var trans = await translator.translate(content, from: "en", to: "te");
+        return content = trans.text;
+      case "th":
+        var trans = await translator.translate(content, from: "en", to: "th");
+        return content = trans.text;
 
       case "zh":
         var trans =

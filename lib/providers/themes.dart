@@ -23,35 +23,24 @@ ThemeData lightThemeData(BuildContext context) {
       primaryColor: kPrimaryColor,
       scaffoldBackgroundColor: kPrimaryColor[300],
       appBarTheme: appBarTheme,
-      iconTheme: IconThemeData(color: kContentColorLightTheme),
+      iconTheme: const IconThemeData(color: kContentColorLightTheme),
       textTheme: GoogleFonts.ralewayTextTheme(Theme.of(context).textTheme)
           .apply(bodyColor: kContentColorLightTheme),
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: kPrimaryColor,
         secondary: kSecondaryColor,
         error: kErrorColor,
       ),
       bottomSheetTheme:
           BottomSheetThemeData(backgroundColor: kPrimaryColor[300]),
-      // bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      //   backgroundColor: Colors.white,
-      //   selectedItemColor: kContentColorLightTheme.withOpacity(0.7),
-      //   unselectedItemColor: kContentColorLightTheme.withOpacity(0.32),
-      //   selectedIconTheme: IconThemeData(color: kPrimaryColor),
-      //   showUnselectedLabels: true,
-      // ),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(primary: kPrimaryColor)));
 }
 
 ThemeData darkThemeData(BuildContext context) {
-  // Bydefault flutter provie us light and dark theme
-  // we just modify it as our need
   return ThemeData.dark().copyWith(
-    // bottomSheetTheme: BottomSheetThemeData(backgroundColor: Color(0xFF1D1D35)),
     cardColor: kPrimaryColor,
     primaryColor: kPrimaryColor[100],
-    // scaffoldBackgroundColor: kPrimaryColor[300],
     appBarTheme: appBarTheme,
     iconTheme: IconThemeData(color: kContentColorDarkTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
@@ -61,16 +50,6 @@ ThemeData darkThemeData(BuildContext context) {
       secondary: kSecondaryColor,
       error: kErrorColor,
     ),
-    // floatingActionButtonTheme: FloatingActionButtonThemeData(
-    //     backgroundColor: kContentColorLightTheme.withOpacity(0.7)),
-
-    // bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    //   backgroundColor: kContentColorLightTheme,
-    //   selectedItemColor: Colors.white70,
-    //   unselectedItemColor: kContentColorDarkTheme.withOpacity(0.32),
-    //   selectedIconTheme: IconThemeData(color: kPrimaryColor),
-    //   showUnselectedLabels: true,
-    // ),
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(primary: kPrimaryColor)),
   );
