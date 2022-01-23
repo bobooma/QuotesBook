@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -16,6 +17,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../widgets/my_card.dart';
+import 'blessings.dart';
+import 'funny_pg.dart';
+import 'inspiration.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -48,264 +52,304 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: media.height * 0.1,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: media.width * .35,
-              child: FittedBox(
-                child: Text(
-                  'QuotesBook',
-                  style: Theme.of(context).textTheme.headline5!.copyWith(
-                        fontFamily: "Lobster",
-                        fontSize: media.width * .025,
-                      ),
-                ),
-              ),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(tabs: [
+            Tab(
+              icon: Icon(Icons.home),
+              // text: "Home",
             ),
-            const SizedBox(
-              width: 5,
+            Tab(
+              // icon: Icon(Icons.fu),
+              text: "Funny",
             ),
-            Expanded(
-              child: Text(
-                AppLocalizations.of(context)!.newQuote,
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontFamily: "RobotoCondensed",
-                      fontSize: media.width * .029,
-                    ),
-              ),
+            Tab(
+              // icon: Icon(Icons.fu),
+              text: "Inspiration",
             ),
-          ],
-        ),
-        actions: [
-          Column(
+            Tab(
+              // icon: Icon(Icons.fu),
+              text: "Blessings",
+            ),
+          ]),
+          toolbarHeight: media.height * 0.05,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.chooseLanguage,
+              SizedBox(
+                width: media.width * .35,
+                child: FittedBox(
+                  child: Text(
+                    'QuotesBook',
                     style: Theme.of(context).textTheme.headline5!.copyWith(
-                          fontFamily: "RobotoCondensed",
-                          fontSize: media.width * .03,
+                          fontFamily: "Lobster",
+                          fontSize: media.width * .025,
                         ),
                   ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  const LangPickWidget(),
-                ],
+                ),
+              ),
+              const SizedBox(
+                width: 5,
               ),
               Expanded(
-                child: Container(
-                  child: Row(
-                    children: [
-                      Text(
-                        "Dark Theme",
-                        style: Theme.of(context).textTheme.headline5!.copyWith(
-                              fontFamily: "RobotoCondensed",
-                              fontSize: media.width * .03,
-                            ),
+                child: Text(
+                  AppLocalizations.of(context)!.newQuote,
+                  style: Theme.of(context).textTheme.headline5!.copyWith(
+                        fontFamily: "RobotoCondensed",
+                        fontSize: media.width * .029,
                       ),
-                      ChangeTheme(),
-                    ],
-                  ),
                 ),
-              )
+              ),
             ],
           ),
-          SizedBox(
-            width: 12,
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: StreamBuilder(
-          stream: quotes,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasError) {
-              return const Text('error .....');
-            }
-            if (!snapshot.hasData ||
-                snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String content = snapshot.data.docs[index]["content"];
-
-                  return Slidable(
-                    key: UniqueKey(),
-                    // startActionPane: ActionPane(
-                    //   motion: const DrawerMotion(),
-                    //   extentRatio: 0.25,
-                    //   children: [
-                    //     SlidableAction(
-                    //       label: 'Archive',
-                    //       backgroundColor: Colors.blue,
-                    //       icon: Icons.archive,
-                    //       onPressed: (context) {},
-                    //     ),
-                    //   ],
-                    // ),
-                    endActionPane: ActionPane(
-                      dismissible: DismissiblePane(
-                        onDismissed: () async {
-                          await FirebaseFirestore.instance.runTransaction(
-                              (Transaction myTransaction) async {
-                            myTransaction
-                                .delete(snapshot.data.docs[index].reference);
-                          });
-                          // Remove this Slidable from the widget tree.
-                        },
-                      ),
-                      motion: const DrawerMotion(),
-                      extentRatio: 0.25,
+          actions: [
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.chooseLanguage,
+                      style: Theme.of(context).textTheme.headline5!.copyWith(
+                            fontFamily: "RobotoCondensed",
+                            fontSize: media.width * .03,
+                          ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    // const LangPickWidget(),
+                  ],
+                ),
+                Expanded(
+                  child: Container(
+                    child: Row(
                       children: [
-                        SlidableAction(
-                          label: 'Delete',
-                          backgroundColor: Colors.red,
-                          icon: Icons.delete,
-                          onPressed: (context) {},
+                        Text(
+                          "Dark Theme",
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    fontFamily: "RobotoCondensed",
+                                    fontSize: media.width * .03,
+                                  ),
                         ),
+                        // ChangeTheme(),
                       ],
                     ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QuoteImage(
-                                content: content,
-                                imgUrl: snapshot.data.docs[index]["imgUrl"]),
-                          ),
-                        );
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              width: 12,
+            )
+          ],
+        ),
+        body: TabBarView(
+          children: [
+            HomePage(quotes: quotes, media: media),
+            FunnyPage(),
+            Inspiration(),
+            Blessings()
+          ],
+        ),
+        // bottomSheet: Container(
+        //   height: media.height * .1,
+        //   width: media.width,
+        //   padding: Provider.of<LocaleProvider>(context).locale.languageCode ==
+        //               "ar" ||
+        //           Provider.of<LocaleProvider>(context).locale.languageCode ==
+        //               "fa" ||
+        //           Provider.of<LocaleProvider>(context).locale.languageCode == "ur"
+        //       ? EdgeInsets.only(
+        //           right: 10, left: media.width * .21, top: 10, bottom: 5)
+        //       : EdgeInsets.only(
+        //           right: media.width * .24, left: 10, top: 10, bottom: 5),
+        //   // decoration: BoxDecoration(color: Colors.pink[300]),
+        //   child: SingleChildScrollView(
+        //     child: Column(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         AutoSizeText(
+        //           AppLocalizations.of(context)!.fixedQuote,
+        //           maxLines: 2,
+        //           // minFontSize: 10,
+        //           // maxFontSize: 13,
+        //           style: Theme.of(context).textTheme.headline6!.copyWith(
+        //                 //  fontFamily: "RobotoCondensed",
+        //                 fontSize: media.width * .029,
+        //               ),
+
+        //           //  TextStyle(
+        //           //     fontSize: media.width * .02,
+        //           //     color: Colors.black,
+        //           //     // 7w7
+        //           //     fontFamily: "Raleway"),
+        //         ),
+        //         AutoSizeText(
+        //           AppLocalizations.of(context)!.spread,
+        //           maxLines: 1,
+        //           // minFontSize: media.width * .03,
+        //           // maxFontSize: media.width * .05,
+        //           style: Theme.of(context).textTheme.headline5!.copyWith(
+        //                 fontSize: media.width * 0.04,
+        //                 fontWeight: FontWeight.bold,
+        //               ),
+
+        //           //  TextStyle(
+        //           //     fontSize: media.width * 0.04,
+        //           //     fontWeight: FontWeight.bold,
+        //           //     color: Colors.black,
+        //           //     fontFamily: "Raleway"
+        //           //     // fontFamily: "RobotoCondensed",
+        //           //     ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniEndDocked,
+        floatingActionButton: FloatingActionButton.extended(
+            icon: Icon(
+              Icons.share,
+              size: media.width * 0.04,
+              color: MediaQuery.of(context).platformBrightness == ThemeMode.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+            label: Text(
+              AppLocalizations.of(context)!.share,
+              style: Theme.of(context).textTheme.headline5!.copyWith(
+                    fontSize: media.width * 0.03,
+                    fontWeight: FontWeight.bold,
+                  ),
+
+              //  TextStyle(
+              //   fontSize: media.width * 0.03,
+              //   color: Colors.black,
+              //   fontWeight: FontWeight.bold,
+              //   // fontFamily: "Raleway"
+              //   fontFamily: "RobotoCondensed",
+              // ),
+            ),
+            onPressed: () {
+              // // ! admin
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const UploadScreen(),
+              ));
+              // ! user
+              // Share.share(
+              //     "https://www.dropbox.com/sh/7pliobihh9fmrcz/AAAv4U7AStdQefp3GTf26E82a?dl=0");
+            }),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({
+    Key? key,
+    required this.quotes,
+    required this.media,
+  }) : super(key: key);
+
+  final Stream<QuerySnapshot<Map<String, dynamic>>> quotes;
+  final Size media;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: StreamBuilder(
+        stream: quotes,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasError) {
+            return const Text('error .....');
+          }
+          if (!snapshot.hasData ||
+              snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return ListView.builder(
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                String content = snapshot.data.docs[index]["content"];
+                String quoteId = snapshot.data.docs[index].id;
+
+                return Slidable(
+                  key: UniqueKey(),
+                  endActionPane: ActionPane(
+                    dismissible: DismissiblePane(
+                      onDismissed: () async {
+                        await FirebaseFirestore.instance
+                            .runTransaction((Transaction myTransaction) async {
+                          myTransaction
+                              .delete(snapshot.data.docs[index].reference);
+                        });
+                        await FirebaseStorage.instance
+                            .refFromURL(snapshot.data.docs[index]["imgUrl"])
+                            .delete();
+                        // Remove this Slidable from the widget tree.
                       },
-                      child: SizedBox(
-                        width: media.width,
-                        height: media.height * 0.2,
-                        child: Stack(children: [
-                          Positioned(child: MyCard(details: content)),
-                          Positioned(
-                            top: 5,
-                            child: Container(
-                              height: media.height * 0.2,
-                              width: media.height * 0.2,
-                              decoration: BoxDecoration(
-                                boxShadow: const [BoxShadow(blurRadius: 2)],
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                      snapshot.data.docs[index]["imgUrl"]),
-                                ),
+                    ),
+                    motion: const DrawerMotion(),
+                    extentRatio: 0.25,
+                    children: [
+                      SlidableAction(
+                        label: 'Delete',
+                        backgroundColor: Colors.red,
+                        icon: Icons.delete,
+                        onPressed: (context) {},
+                      ),
+                    ],
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QuoteImage(
+                            content: content,
+                            imgUrl: snapshot.data.docs[index]["imgUrl"],
+                            docId: quoteId,
+                          ),
+                        ),
+                      );
+                    },
+                    child: SizedBox(
+                      width: media.width,
+                      height: media.height * 0.2,
+                      child: Stack(children: [
+                        Positioned(child: MyCard(details: content)),
+                        Positioned(
+                          top: 5,
+                          child: Container(
+                            height: media.height * 0.2,
+                            width: media.height * 0.2,
+                            decoration: BoxDecoration(
+                              boxShadow: const [BoxShadow(blurRadius: 2)],
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                    snapshot.data.docs[index]["imgUrl"]),
                               ),
                             ),
                           ),
-                        ]),
-                      ),
+                        ),
+                      ]),
                     ),
-                  );
-                });
-          },
-        ),
+                  ),
+                );
+              });
+        },
       ),
-      bottomSheet: Container(
-        height: media.height * .1,
-        width: media.width,
-        padding: Provider.of<LocaleProvider>(context).locale.languageCode ==
-                    "ar" ||
-                Provider.of<LocaleProvider>(context).locale.languageCode ==
-                    "fa" ||
-                Provider.of<LocaleProvider>(context).locale.languageCode == "ur"
-            ? EdgeInsets.only(
-                right: 10, left: media.width * .21, top: 10, bottom: 5)
-            : EdgeInsets.only(
-                right: media.width * .24, left: 10, top: 10, bottom: 5),
-        // decoration: BoxDecoration(color: Colors.pink[300]),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AutoSizeText(
-                AppLocalizations.of(context)!.fixedQuote,
-                maxLines: 2,
-                // minFontSize: 10,
-                // maxFontSize: 13,
-                style: Theme.of(context).textTheme.headline6!.copyWith(
-                      //  fontFamily: "RobotoCondensed",
-                      fontSize: media.width * .029,
-                    ),
-
-                //  TextStyle(
-                //     fontSize: media.width * .02,
-                //     color: Colors.black,
-                //     // 7w7
-                //     fontFamily: "Raleway"),
-              ),
-              AutoSizeText(
-                AppLocalizations.of(context)!.spread,
-                maxLines: 1,
-                // minFontSize: media.width * .03,
-                // maxFontSize: media.width * .05,
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontSize: media.width * 0.04,
-                      fontWeight: FontWeight.bold,
-                    ),
-
-                //  TextStyle(
-                //     fontSize: media.width * 0.04,
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.black,
-                //     fontFamily: "Raleway"
-                //     // fontFamily: "RobotoCondensed",
-                //     ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-      floatingActionButton: FloatingActionButton.extended(
-          icon: Icon(
-            Icons.share,
-            size: media.width * 0.04,
-            color: MediaQuery.of(context).platformBrightness == ThemeMode.dark
-                ? Colors.white
-                : Colors.black,
-          ),
-          label: Text(
-            AppLocalizations.of(context)!.share,
-            style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontSize: media.width * 0.03,
-                  fontWeight: FontWeight.bold,
-                ),
-
-            //  TextStyle(
-            //   fontSize: media.width * 0.03,
-            //   color: Colors.black,
-            //   fontWeight: FontWeight.bold,
-            //   // fontFamily: "Raleway"
-            //   fontFamily: "RobotoCondensed",
-            // ),
-          ),
-          onPressed: () {
-            // // ! admin
-            // Navigator.of(context).push(MaterialPageRoute(
-            //   builder: (context) => const UploadScreen(),
-            // ));
-            // ! user
-            Share.share(
-                "https://www.dropbox.com/sh/7pliobihh9fmrcz/AAAv4U7AStdQefp3GTf26E82a?dl=0");
-          }),
     );
   }
 }

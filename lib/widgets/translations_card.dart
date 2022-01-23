@@ -19,7 +19,7 @@ class TranslationCard extends StatelessWidget {
       child: Center(
         child: Container(
           padding: EdgeInsets.only(top: 20, right: 5, left: 5),
-          color: Colors.white,
+          // color: Colors.white,
           height: media.height * .15,
           child: AutoSizeText(
             (data),

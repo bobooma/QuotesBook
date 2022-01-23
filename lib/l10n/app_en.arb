@@ -58,6 +58,10 @@
     "chooseLanguage": "Language",
     "@chooseLanguage": {
         "description": "Choose languages"
+    },
+    "changeTheme": "Change Theme",
+    "@changeTheme":{
+        "description": "Change Theme"
     }
 
 

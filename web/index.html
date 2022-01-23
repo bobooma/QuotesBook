@@ -30,9 +30,37 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-messaging.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
+
+
+
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script type="module">
+     
+        const firebaseConfig = {
+          apiKey: "AIzaSyDKmWU-NeukFI3m4OqLF0-a7F1TycUX0Fg",
+          authDomain: "quotesbook-1ae2f.firebaseapp.com",
+          databaseURL: "https://quotesbook-1ae2f-default-rtdb.firebaseio.com",
+          projectId: "quotesbook-1ae2f",
+          storageBucket: "quotesbook-1ae2f.appspot.com",
+          messagingSenderId: "270873062703",
+          appId: "1:270873062703:web:b80958734eeb1aba2805da",
+          measurementId: "G-B4X3F0N7F8"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+  </script>   
+
+
+
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;

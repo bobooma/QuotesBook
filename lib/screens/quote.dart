@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -29,12 +31,14 @@ class QuoteImage extends StatefulWidget {
     Key? key,
     required this.imgUrl,
     required this.content,
+    required this.docId,
 
     // required this.conclusion,
   }) : super(key: key);
 
   final String imgUrl;
   final String content;
+  final String docId;
 
   @override
   State<QuoteImage> createState() => _QuoteImageState();
@@ -112,6 +116,66 @@ class _QuoteImageState extends State<QuoteImage> {
     print(widget.content);
   }
 
+  // IconData favIcon = Icons.favorite_border_outlined;
+
+  bool isFav = false;
+
+  toggleFav() {
+    setState(() {
+      isFav = !isFav;
+      // favIcon = favIcon == Icons.favorite
+      //     ? Icons.favorite_border_outlined
+      //     : Icons.favorite;
+    });
+  }
+
+  UserCredential? userCredential;
+  String? userId;
+
+  CollectionReference favorite =
+      FirebaseFirestore.instance.collection("favorite");
+
+  String newId = "";
+
+  getId() async {
+    userCredential = await FirebaseAuth.instance.signInAnonymously();
+    userId = userCredential!.user!.uid;
+
+    newId = "${widget.docId}$userId";
+
+    var fav = await favorite.doc(newId).get().then((value) => value.exists);
+    if (fav) {
+      setState(() {
+        isFav = true;
+      });
+    }
+  }
+
+  Future addRemoveUser() async {
+    try {
+      isFav
+          ? favorite.doc(newId).delete()
+          : favorite.doc(newId).set({"quoteId": newId, "userId": userId});
+    } on Exception catch (e) {
+      print(e);
+    }
+
+    toggleFav();
+
+    // .add({"quoteId": widget.docId, "userId": useId});
+
+    // FirebaseFirestore.instance
+    //     .collection("favorite")
+    //     .where("quoteId", isEqualTo: widget.docId);
+  }
+
+  @override
+  void initState() {
+    getId();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
@@ -137,20 +201,43 @@ class _QuoteImageState extends State<QuoteImage> {
                 //   height: 20,
                 // ),
                 Expanded(
-                  child: Column(
+                  child: Image(
+                    image: NetworkImage(
+                      widget.imgUrl,
+                    ),
+                    // height: media.height * 0.9,
+                    width: double.infinity,
+                    //  MediaQuery.of(context).size.height * 1.4,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+                Container(
+                  height: media.height * 0.05,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Expanded(
-                        child: Image(
-                          image: NetworkImage(
-                            widget.imgUrl,
-                          ),
-                          width: media.height * 0.7,
-                          fit: BoxFit.fill,
+                      IconButton(
+                        onPressed: () {
+                          addRemoveUser();
+                        },
+                        icon: Icon(
+                          isFav
+                              ? Icons.favorite
+                              : Icons.favorite_border_outlined,
+                          color: Colors.pink,
+                          size: 30,
                         ),
                       ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.share),
+                      )
                     ],
                   ),
                 ),
+                Container(
+                  height: 50,
+                )
                 // SocialMedia(
                 //   content: widget.content,
                 //   height: media.height * 0.1,
@@ -176,10 +263,29 @@ class _QuoteImageState extends State<QuoteImage> {
                       image: NetworkImage(
                         widget.imgUrl,
                       ),
-                      width: MediaQuery.of(context).size.height * 1.4,
+                      width: double.infinity,
                       fit: BoxFit.fill,
                     ),
                   ),
+                  Container(
+                    height: media.height * 0.05,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.favorite_border_outlined),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.share),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 50,
+                  )
                 ],
               ),
             ),

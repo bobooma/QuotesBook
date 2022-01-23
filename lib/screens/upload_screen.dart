@@ -21,14 +21,17 @@ class _UploadScreenState extends State<UploadScreen> {
   String enteredVal = "";
   late NetworkImage networkImage;
   String imgUrl = "";
+  String category = "no";
   final controller = TextEditingController();
+  final controller2 = TextEditingController();
 
   void addFile() {
     try {
       FirebaseFirestore.instance.collection("quotes").add({
         "content": enteredVal,
         "imgUrl": imgUrl,
-        "time": Timestamp.now()
+        "time": Timestamp.now(),
+        "category": category
 
         // "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/Screenshot_1633357413.png?alt=media&token=bd9615b8-b066-4972-b38c-8c39a1166f56"
       });
@@ -134,6 +137,24 @@ class _UploadScreenState extends State<UploadScreen> {
                         onChanged: (value) {
                           setState(() {
                             enteredVal = value;
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: controller2,
+                        decoration: const InputDecoration(
+                            labelText: "category",
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                            ),
+                            border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.white, width: 3))),
+                        onChanged: (value) {
+                          setState(() {
+                            category = value;
                           });
                         },
                       ),
