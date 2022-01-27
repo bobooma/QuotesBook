@@ -155,7 +155,12 @@ class _QuoteImageState extends State<QuoteImage> {
     try {
       isFav
           ? favorite.doc(newId).delete()
-          : favorite.doc(newId).set({"quoteId": newId, "userId": userId});
+          : favorite.doc(newId).set({
+              "imgUrl": widget.imgUrl,
+              "content": widget.content,
+              "userId": userId,
+              "time": Timestamp.now(),
+            });
     } on Exception catch (e) {
       print(e);
     }
@@ -181,8 +186,9 @@ class _QuoteImageState extends State<QuoteImage> {
     final media = MediaQuery.of(context).size;
     final content =
         Provider.of<LocaleProvider>(context).langeSwitch(widget.content);
+    final lang = Provider.of<LocaleProvider>(context).locale.languageCode;
     return Scaffold(
-      drawer: MyDrawer(
+      endDrawer: MyDrawer(
         imgUrl: widget.imgUrl,
         screenShare:
             Provider.of<LocaleProvider>(context).locale.languageCode == "en"
@@ -191,6 +197,14 @@ class _QuoteImageState extends State<QuoteImage> {
         save: _save,
       ),
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: lang == "ar" || lang == "fa" || lang == "ur"
+              ? Icon(Icons.arrow_back_ios_rounded)
+              : Icon(Icons.arrow_back_ios_new),
+        ),
         toolbarHeight: media.height * 0.05,
       ),
       // backgroundColor: Colors.pink[300],
@@ -289,7 +303,7 @@ class _QuoteImageState extends State<QuoteImage> {
                 ],
               ),
             ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterTop,
       floatingActionButton: FloatingActionButton(
           child: Icon(
             Icons.share,
@@ -297,7 +311,8 @@ class _QuoteImageState extends State<QuoteImage> {
           ),
           onPressed: () {
             // ! user
-            shareFile();
+            Share.share(
+                "https://play.google.com/store/apps/details?id=com.DrHamaida.quotesBook");
           }),
     );
   }

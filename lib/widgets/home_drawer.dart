@@ -13,23 +13,19 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'change_theme.dart';
 import 'language_picker_widget.dart';
 
-class MyDrawer extends StatefulWidget {
-  const MyDrawer(
-      {Key? key,
-      required this.imgUrl,
-      required this.screenShare,
-      required this.save})
-      : super(key: key);
+class HomeDrawer extends StatefulWidget {
+  const HomeDrawer({
+    Key? key,
+    required this.shareApp,
+  }) : super(key: key);
 
-  final String imgUrl;
-  final VoidCallback screenShare;
-  final VoidCallback save;
+  final VoidCallback shareApp;
 
   @override
-  State<MyDrawer> createState() => _MyDrawerState();
+  State<HomeDrawer> createState() => _HomeDrawerState();
 }
 
-class _MyDrawerState extends State<MyDrawer> {
+class _HomeDrawerState extends State<HomeDrawer> {
   File? file;
 
   Future<void> contact(String url, BuildContext context) async {
@@ -43,6 +39,8 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final provider = Provider.of<ThemeProvider>(context, listen: false);
 
     final appLoc = AppLocalizations.of(context);
     return MultiLevelDrawer(
@@ -61,17 +59,20 @@ class _MyDrawerState extends State<MyDrawer> {
           // mLMitem(media, "${AppLocalizations.of(context)!.changeTheme} 🔲", Icons.change_circle_outlined, !Provider.of<ThemeProvider>(context).isDarkMode
           //         ? Colors.black
           //         : Colors.white,()=> const ChangeTheme(),),
-          MMLLang(appLoc, media),
-          mLMitem(media, "${AppLocalizations.of(context)!.share} ✅",
-              Icons.share, kSecondaryColor, widget.screenShare),
+
           mLMitem(
               media,
-              "${AppLocalizations.of(context)!.save} ⏬",
-              Icons.download,
-              !Provider.of<ThemeProvider>(context).isDarkMode
-                  ? Colors.black
-                  : Colors.white,
-              widget.save),
+              "${AppLocalizations.of(context)!.changeTheme} 💥",
+              Icons.color_lens,
+              kSecondaryColor,
+              () => provider.toggleTheme(themeProvider.isDarkMode)
+              //  const ChangeTheme()
+              ),
+          MMLLang(appLoc, media),
+          // ! SHARE APP
+          mLMitem(media, "${AppLocalizations.of(context)!.share} ✅",
+              Icons.share, kSecondaryColor, widget.shareApp),
+
           mLMitem(
               media,
               "${AppLocalizations.of(context)!.contactMe} 😊",
