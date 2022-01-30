@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/screens/fav_screen.dart';
 import 'package:my_quotes/screens/make_quote.dart';
 
@@ -15,6 +16,7 @@ import 'package:my_quotes/services/local_notification_service.dart';
 import 'package:my_quotes/widgets/carousal_screen.dart';
 import 'package:my_quotes/widgets/change_theme.dart';
 import 'package:my_quotes/widgets/home_drawer.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -36,6 +38,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String? userId;
   UserCredential? userCredential;
+
   getUserId() async {
     userCredential = await FirebaseAuth.instance.signInAnonymously();
     userId = userCredential!.user!.uid;
@@ -298,6 +301,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Locale? locale;
+
+  // @override
+  // void didChangeDependencies() {
+  //   locale = Localizations.localeOf(context);
+
+  //   super.didChangeDependencies();
+  // }
+
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;

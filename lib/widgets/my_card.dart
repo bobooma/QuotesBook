@@ -11,8 +11,12 @@ class MyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Locale locale = Localizations.localeOf(context);
+    // Provider.of<LocaleProvider>(context, listen: false).setLocale(locale);
+
     final media = MediaQuery.of(context).size;
-    final content = Provider.of<LocaleProvider>(context).langeSwitch(details);
+    final content =
+        Provider.of<LocaleProvider>(context).langeSwitch(details, context);
     return Provider.of<LocaleProvider>(context).locale.languageCode == "ar" ||
             Provider.of<LocaleProvider>(context).locale.languageCode == "fa" ||
             Provider.of<LocaleProvider>(context).locale.languageCode == "ur"

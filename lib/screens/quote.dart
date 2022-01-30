@@ -185,8 +185,8 @@ class _QuoteImageState extends State<QuoteImage> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
-    final content =
-        Provider.of<LocaleProvider>(context).langeSwitch(widget.content);
+    final content = Provider.of<LocaleProvider>(context)
+        .langeSwitch(widget.content, context);
     final lang = Provider.of<LocaleProvider>(context).locale.languageCode;
     return Scaffold(
       endDrawer: MyDrawer(

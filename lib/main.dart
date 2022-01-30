@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
-import 'package:my_quotes/providers/quote_model_provider.dart';
 import 'package:my_quotes/providers/themes.dart';
+import 'package:my_quotes/screens/first_screen.dart';
 
 import 'package:provider/provider.dart';
 
@@ -19,6 +19,8 @@ Future<void> bgHandler(RemoteMessage message) async {
   print(message.notification!.title);
 }
 
+bool isLogin = false;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -27,6 +29,8 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(bgHandler);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  User? user = FirebaseAuth.instance.currentUser;
+  isLogin = user == null ? false : true;
 
   runApp(const MyApp());
 }
@@ -52,9 +56,10 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           final provider = Provider.of<LocaleProvider>(context);
           final themeProvider = Provider.of<ThemeProvider>(context);
+
           return MaterialApp(
             title: 'QuotesBook',
-            locale: provider.locale,
+            locale: provider.locale2,
             themeMode: themeProvider.themeMode,
             theme: lightThemeData(context),
             darkTheme: darkThemeData(context),
@@ -65,7 +70,10 @@ class MyApp extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
             ],
-            home: const MyHomePage(),
+            home:
+                //  FirstScreen(),
+                // isLogin?
+                const MyHomePage(),
           );
         });
   }
