@@ -1,43 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/widgets/my_card.dart';
 
-class FavScreen extends StatefulWidget {
-  @override
-  _FavScreenState createState() => _FavScreenState();
-}
+class PageBody extends StatelessWidget {
+  const PageBody({
+    Key? key,
+    required this.quotes,
+    required this.media,
+  }) : super(key: key);
 
-class _FavScreenState extends State<FavScreen> {
-  String? userId;
-
-  late User user;
-
-  getUser() {
-    user = FirebaseAuth.instance.currentUser!;
-    userId = user.uid;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUser();
-    print("user id is: $userId");
-    print("===========");
-  }
-
-  late Stream<QuerySnapshot<Map<String, dynamic>>> quotes;
+  final Stream<QuerySnapshot<Map<String, dynamic>>> quotes;
+  final Size media;
 
   @override
   Widget build(BuildContext context) {
-    quotes = FirebaseFirestore.instance
-        .collection("favorite")
-        .where("userId", isEqualTo: userId)
-        .orderBy("time", descending: true)
-        .snapshots();
-    final media = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: StreamBuilder(

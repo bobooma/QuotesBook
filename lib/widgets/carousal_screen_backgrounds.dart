@@ -3,8 +3,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class Sliders extends StatelessWidget {
-  Sliders({
+class BackgrounSliders extends StatelessWidget {
+  BackgrounSliders({
     required this.imgs,
   });
 
@@ -27,9 +27,11 @@ class Sliders extends StatelessWidget {
                   itemCount: imgs.data.docs.length,
                   itemBuilder: (ctx, i, _) {
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pop(imgs.data.docs[i]["b"]);
+                      },
                       child: CachedNetworkImage(
-                        imageUrl: imgs.data.docs[i]["imgUrl"],
+                        imageUrl: imgs.data.docs[i]["b"],
                         imageBuilder: (_, p) {
                           return Container(
                             margin: const EdgeInsets.all(1),
@@ -59,9 +61,9 @@ class Sliders extends StatelessWidget {
                     );
                   },
                   options: CarouselOptions(
-                      height: 150,
+                      height: 400,
                       autoPlay: true,
-                      viewportFraction: 0.3,
+                      viewportFraction: 0.7,
                       // enlargeStrategy: CenterPageEnlargeStrategy.height,
 
                       enlargeCenterPage: true,

@@ -45,11 +45,13 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_slidable: ^1.1.0
+  flutter_speed_dial: ^5.0.0+1
   flutter_spinkit: ^5.1.0
   font_awesome_flutter: ^9.2.0
   google_fonts: ^2.1.1
   http: ^0.13.4
   image_gallery_saver: ^1.7.1
+  image_picker: ^0.8.4+5
   intl: ^0.17.0
   metadata_fetch: ^0.4.1
   multilevel_drawer: ^2.0.0
@@ -59,6 +61,7 @@ dependencies:
   provider: ^6.0.1
   screenshot: ^1.2.3
   share_plus: ^3.0.4
+  text_editor: ^0.7.0
   translator: ^0.1.7
   url_launcher: ^6.0.18
 
@@ -83,32 +86,89 @@ flutter:
   uses-material-design: true
   generate: true
 
+  assets:
+    - assets/
+
   fonts:
     - family: Lobster
       fonts:
-        - asset: assets/fonts/Lobster-Regular.ttf
+        - asset: fonts/Lobster-Regular.ttf
     #       - asset: fonts/Schyler-Italic.ttf
     - family: Rubik
       fonts:
-        - asset: assets\fonts\Rubik-Italic-VariableFont_wght.ttf
+        - asset: fonts/Rubik-Italic-VariableFont_wght.ttf
           style: italic
-        - asset: assets\fonts\Rubik-VariableFont_wght.ttf
+        - asset: fonts/Rubik-VariableFont_wght.ttf
 
     - family: RubikMonoOne
       fonts:
-        - asset: assets\fonts\RubikMonoOne-Regular.ttf
+        - asset: fonts/RubikMonoOne-Regular.ttf
           weight: 700
     - family: RobotoCondensed
       fonts:
-        - asset: assets\fonts\RobotoCondensed-Regular.ttf
+        - asset: fonts/RobotoCondensed-Regular.ttf
 
     - family: Raleway
       fonts:
-        - asset: assets\fonts\Raleway-Medium.ttf
+        - asset: fonts/Raleway-Medium.ttf
 
     - family: JetBrainsMono
       fonts:
-        - asset: assets\fonts\JetBrainsMono-VariableFont_wght.ttf
+        - asset: fonts/JetBrainsMono-VariableFont_wght.ttf
+    - family: Billabong
+      fonts:
+        - asset: fonts/Billabong.ttf
+    - family: GrandHotel
+      fonts:
+        - asset: fonts/GrandHotel.otf
+    - family: OpenSans
+      fonts:
+        - asset: fonts/OpenSans.ttf
+    - family: Oswald
+      fonts:
+        - asset: fonts/Oswald.ttf
+    - family: Quicksand
+      fonts:
+        - asset: fonts/Quicksand.otf
+    - family: BeautifulPeople
+      fonts:
+        - asset: fonts/BeautifulPeople.ttf
+    - family: BeautyMountains
+      fonts:
+        - asset: fonts/BeautyMountains.ttf
+    - family: BiteChocolate
+      fonts:
+        - asset: fonts/BiteChocolate.ttf
+    - family: BlackberryJam
+      fonts:
+        - asset: fonts/BlackberryJam.ttf
+    - family: Tomatoes
+      fonts:
+        - asset: fonts/Tomatoes.ttf
+    - family: BunchBlossoms
+      fonts:
+        - asset: fonts/BunchBlossoms.ttf
+    - family: CinderelaRegular
+      fonts:
+        - asset: fonts/CinderelaRegular.ttf
+    - family: Countryside
+      fonts:
+        - asset: fonts/Countryside.ttf
+    - family: Halimun
+      fonts:
+        - asset: fonts/Halimun.ttf
+    - family: LemonJelly
+      fonts:
+        - asset: fonts/LemonJelly.ttf
+    - family: QuiteMagicalRegular
+      fonts:
+        - asset: fonts/QuiteMagicalRegular.ttf
+    - family: TropicalAsianDemoRegular
+      fonts:
+        - asset: fonts/TropicalAsianDemoRegular.ttf
+    - family: VeganStyle
+      fonts:
+        - asset: fonts/VeganStyle.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #   - family: Trajan Pro
   #     fonts:

@@ -139,6 +139,7 @@ class _QuoteImageState extends State<QuoteImage> {
 
   getId() async {
     userCredential = await FirebaseAuth.instance.signInAnonymously();
+
     userId = userCredential!.user!.uid;
 
     newId = "${widget.docId}$userId";
@@ -303,17 +304,17 @@ class _QuoteImageState extends State<QuoteImage> {
                 ],
               ),
             ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterTop,
-      floatingActionButton: FloatingActionButton(
-          child: Icon(
-            Icons.share,
-            size: media.width * 0.05,
-          ),
-          onPressed: () {
-            // ! user
-            Share.share(
-                "https://play.google.com/store/apps/details?id=com.DrHamaida.quotesBook");
-          }),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterTop,
+      // floatingActionButton: FloatingActionButton(
+      //     child: Icon(
+      //       Icons.share,
+      //       size: media.width * 0.05,
+      //     ),
+      //     onPressed: () {
+      //       // ! user
+      //       Share.share(
+      //           "https://play.google.com/store/apps/details?id=com.DrHamaida.quotesBook");
+      //     }),
     );
   }
 }

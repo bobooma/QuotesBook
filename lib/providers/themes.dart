@@ -18,7 +18,11 @@ class ThemeProvider extends ChangeNotifier {
 }
 
 ThemeData lightThemeData(BuildContext context) {
-  return ThemeData.light().copyWith(
+  var copyWith = ThemeData.light().copyWith(
+      textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+              primary: kContentColorLightTheme,
+              textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
       cardColor: kPrimaryColor[100],
       primaryColor: kPrimaryColor,
       scaffoldBackgroundColor: kPrimaryColor[300],
@@ -35,17 +39,22 @@ ThemeData lightThemeData(BuildContext context) {
           BottomSheetThemeData(backgroundColor: kPrimaryColor[300]),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(primary: kPrimaryColor)));
+  return copyWith;
 }
 
 ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
+    textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+            primary: kContentColorDarkTheme,
+            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
     cardColor: kPrimaryColor,
     primaryColor: kPrimaryColor[100],
     appBarTheme: appBarTheme,
-    iconTheme: IconThemeData(color: kContentColorDarkTheme),
+    iconTheme: const IconThemeData(color: kContentColorDarkTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
         .apply(bodyColor: kContentColorDarkTheme),
-    colorScheme: ColorScheme.dark().copyWith(
+    colorScheme: const ColorScheme.dark().copyWith(
       primary: kPrimaryColor,
       secondary: kSecondaryColor,
       error: kErrorColor,
@@ -55,7 +64,7 @@ ThemeData darkThemeData(BuildContext context) {
   );
 }
 
-final appBarTheme = AppBarTheme(
+const appBarTheme = AppBarTheme(
   centerTitle: false,
   elevation: 0,
 );

@@ -10,8 +10,8 @@ const Color instgramColor = Color(0xff833AB4);
 
 const kPrimaryColor = Colors.pink;
 // const kPrimaryColor = Color(0xFF00BF6D);
-const kSecondaryColor = Color(0xff00d856);
-// const kSecondaryColor = Color(0xFFFE9901);
+// const kSecondaryColor = Color(0xff00d856);
+const kSecondaryColor = Color(0xFFFE9901);
 const kContentColorLightTheme = Colors.black;
 // const kContentColorLightTheme = Color(0xFF1D1D35);
 const kContentColorDarkTheme = Color(0xFFF5FCF9);
