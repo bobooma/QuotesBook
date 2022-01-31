@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
+import 'package:my_quotes/providers/utils.dart';
 import 'package:my_quotes/screens/fav_screen.dart';
 import 'package:my_quotes/screens/make_quote.dart';
 
@@ -18,6 +19,7 @@ import 'package:my_quotes/services/local_notification_service.dart';
 import 'package:my_quotes/widgets/carousal_screen.dart';
 import 'package:my_quotes/widgets/change_theme.dart';
 import 'package:my_quotes/widgets/home_drawer.dart';
+import 'package:my_quotes/widgets/speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -161,37 +163,10 @@ class _MyHomePageState extends State<MyHomePage> {
               //
             ],
           ),
-          floatingActionButton: SpeedDial(
-            // useRotationAnimation: true,
-            // switchLabelPosition: true,
-            openCloseDial: isDialOpen,
-            overlayColor: Colors.transparent,
-            animatedIcon: AnimatedIcons.add_event,
-            animatedIconTheme: const IconThemeData(size: 30),
-            children: [
-              SpeedDialChild(
-                  backgroundColor: Colors.pink[100],
-                  child: Icon(Icons.share),
-                  label: lang.shareApp,
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                  onTap: () {
-                    Share.share(
-                        "https://play.google.com/store/apps/details?id=com.DrHamaida.quotesBook");
-                  }),
-              SpeedDialChild(
-                  backgroundColor: Colors.pink[100],
-                  child: Icon(Icons.imagesearch_roller),
-                  label: "Make Your\n Own Quote",
-                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => MakeQuote()));
-                  }),
-            ],
-          ),
-          // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+          floatingActionButton:
+              CustomSpeedDial(isDialOpen: isDialOpen, lang: lang),
           floatingActionButtonLocation:
-              lang2 == "ar" || lang == "fa" || lang == "ur"
+              lang2 == "ar" || lang2 == "fa" || lang2 == "ur"
                   ? FloatingActionButtonLocation.startFloat
                   : FloatingActionButtonLocation.endFloat,
           body: TabBarView(
@@ -204,97 +179,6 @@ class _MyHomePageState extends State<MyHomePage> {
               HealthScreen(),
             ],
           ),
-          // bottomSheet: Container(
-          //   height: media.height * .1,
-          //   width: media.width,
-          //   padding: Provider.of<LocaleProvider>(context).locale.languageCode ==
-          //               "ar" ||
-          //           Provider.of<LocaleProvider>(context).locale.languageCode ==
-          //               "fa" ||
-          //           Provider.of<LocaleProvider>(context).locale.languageCode == "ur"
-          //       ? EdgeInsets.only(
-          //           right: 10, left: media.width * .21, top: 10, bottom: 5)
-          //       : EdgeInsets.only(
-          //           right: media.width * .24, left: 10, top: 10, bottom: 5),
-          //   // decoration: BoxDecoration(color: Colors.pink[300]),
-          //   child: SingleChildScrollView(
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         AutoSizeText(
-          //           AppLocalizations.of(context)!.fixedQuote,
-          //           maxLines: 2,
-          //           // minFontSize: 10,
-          //           // maxFontSize: 13,
-          //           style: Theme.of(context).textTheme.headline6!.copyWith(
-          //                 //  fontFamily: "RobotoCondensed",
-          //                 fontSize: media.width * .029,
-          //               ),
-
-          //           //  TextStyle(
-          //           //     fontSize: media.width * .02,
-          //           //     color: Colors.black,
-          //           //     // 7w7
-          //           //     fontFamily: "Raleway"),
-          //         ),
-          //         AutoSizeText(
-          //           AppLocalizations.of(context)!.spread,
-          //           maxLines: 1,
-          //           // minFontSize: media.width * .03,
-          //           // maxFontSize: media.width * .05,
-          //           style: Theme.of(context).textTheme.headline5!.copyWith(
-          //                 fontSize: media.width * 0.04,
-          //                 fontWeight: FontWeight.bold,
-          //               ),
-
-          //           //  TextStyle(
-          //           //     fontSize: media.width * 0.04,
-          //           //     fontWeight: FontWeight.bold,
-          //           //     color: Colors.black,
-          //           //     fontFamily: "Raleway"
-          //           //     // fontFamily: "RobotoCondensed",
-          //           //     ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.miniEndDocked,
-          // floatingActionButton:
-
-          //  FloatingActionButton(
-          //     child: Icon(
-          //       Icons.share,
-          //       size: media.width * 0.05,
-          //       color: MediaQuery.of(context).platformBrightness == ThemeMode.dark
-          //           ? Colors.white
-          //           : Colors.black,
-          //     ),
-          // label: Text(
-          //   AppLocalizations.of(context)!.share,
-          //   style: Theme.of(context).textTheme.headline5!.copyWith(
-          //         fontSize: media.width * 0.02,
-          //         fontWeight: FontWeight.bold,
-          //       ),
-
-          //   //  TextStyle(
-          //   //   fontSize: media.width * 0.03,
-          //   //   color: Colors.black,
-          //   //   fontWeight: FontWeight.bold,
-          //   //   // fontFamily: "Raleway"
-          //   //   fontFamily: "RobotoCondensed",
-          //   // ),
-          // ),
-          // onPressed: () {
-          //   // // ! admin
-          //   Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (context) => const UploadScreen(),
-          //   ));
-          //   // ! user
-          //   // Share.share(
-          //   //     "https://play.google.com/store/apps/details?id=com.DrHamaida.quotesBook");
-          // }
         ),
       ),
     );
@@ -317,13 +201,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Locale? locale;
-
-  // @override
-  // void didChangeDependencies() {
-  //   locale = Localizations.localeOf(context);
-
-  //   super.didChangeDependencies();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -349,35 +226,59 @@ class _HomePageState extends State<HomePage> {
                 child: ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (BuildContext context, int index) {
-                      String content = snapshot.data.docs[index]["content"];
-                      String quoteId = snapshot.data.docs[index].id;
+                      final doc = snapshot.data.doc[index];
+                      String content = doc["content"];
+                      String quoteId = doc[index].id;
 
                       return Slidable(
                         key: UniqueKey(),
                         endActionPane: ActionPane(
                           dismissible: DismissiblePane(
-                            onDismissed: () async {
-                              await FirebaseFirestore.instance.runTransaction(
-                                  (Transaction myTransaction) async {
-                                myTransaction.delete(
-                                    snapshot.data.docs[index].reference);
-                              });
-                              await FirebaseStorage.instance
-                                  .refFromURL(
-                                      snapshot.data.docs[index]["imgUrl"])
-                                  .delete();
-                              // Remove this Slidable from the widget tree.
-                            },
+                            onDismissed: ()
+                                // async
+                                {},
                           ),
                           motion: const DrawerMotion(),
                           extentRatio: 0.25,
                           children: [
                             SlidableAction(
-                              label: 'Delete',
-                              backgroundColor: Colors.red,
-                              icon: Icons.delete,
-                              onPressed: (context) {},
+                              label: 'Download',
+                              backgroundColor: Colors.amber,
+                              icon: Icons.download,
+                              onPressed: (context) {
+                                Utils.save(doc["imgUrl"], context);
+                              },
                             ),
+
+// !  Admin
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            //! return Slidable(
+                            //   key: UniqueKey(),
+                            //   endActionPane: ActionPane(
+                            //     dismissible: DismissiblePane(
+                            //       onDismissed: () async {
+                            //         await FirebaseFirestore.instance.runTransaction(
+                            //             (Transaction myTransaction) async {
+                            //           myTransaction.delete(
+                            //               doc.reference);
+                            //         });
+                            //         await FirebaseStorage.instance
+                            //             .refFromURL(
+                            //                 doc["imgUrl"])
+                            //             .delete();
+                            //         // Remove this Slidable from the widget tree.
+                            //       },
+                            //     ),
+                            //     motion: const DrawerMotion(),
+                            //     extentRatio: 0.25,
+                            //     children: [
+                            //       SlidableAction(
+                            //         label: 'Delete',
+                            //         backgroundColor: Colors.red,
+                            //         icon: Icons.delete,
+                            //         onPressed: (context) {},
+                            //       ),
+                            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                           ],
                         ),
                         child: InkWell(
@@ -387,7 +288,7 @@ class _HomePageState extends State<HomePage> {
                               MaterialPageRoute(
                                 builder: (context) => QuoteImage(
                                   content: content,
-                                  imgUrl: snapshot.data.docs[index]["imgUrl"],
+                                  imgUrl: doc["imgUrl"],
                                   docId: quoteId,
                                 ),
                               ),
@@ -408,8 +309,7 @@ class _HomePageState extends State<HomePage> {
                                     shape: BoxShape.circle,
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          snapshot.data.docs[index]["imgUrl"]),
+                                      image: NetworkImage(doc["imgUrl"]),
                                     ),
                                   ),
                                 ),
