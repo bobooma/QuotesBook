@@ -109,29 +109,15 @@ class _HomeDrawerState extends State<HomeDrawer> {
         // LangPickWidget();
       },
       content: FittedBox(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Text(
-                appLoc!.chooseLanguage,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontFamily: "LimeLihgt"),
-              ),
-            ),
-            // const SizedBox(
-            //  width: 5,
-            // ),
-            // Icon(
-            //   Icons.language,
-            //   color: Colors.black,
-            //   size: media.width * .04,
-            // ),
-          ],
+        child: Container(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Text(
+            appLoc!.chooseLanguage,
+            style: Theme.of(context)
+                .textTheme
+                .headline5!
+                .copyWith(fontFamily: "LimeLihgt"),
+          ),
         ),
       ),
       trailing: const LangPickWidget(),

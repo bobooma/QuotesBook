@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -16,15 +15,9 @@ import 'package:my_quotes/widgets/translations_card.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:my_quotes/widgets/social_media.dart';
-
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuoteImage extends StatefulWidget {
   QuoteImage({

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_quotes/l10n/l10n.dart';
 import 'package:translator/translator.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Locale myLocale = Localizations.localeOf(context);
 class LocaleProvider extends ChangeNotifier {
@@ -13,15 +12,6 @@ class LocaleProvider extends ChangeNotifier {
 
   Locale get locale => _locale;
   Locale? get locale2 => _locale2;
-
-  // void setLocale2(Locale locale) {
-  //   if (!L10n.all.contains(locale)) return;
-  //   _locale = locale;
-
-  //   _locale2 = _locale;
-
-  //   notifyListeners();
-  // }
 
   void setLocale(Locale locale) {
     if (!L10n.all.contains(locale)) return;
@@ -134,20 +124,6 @@ class LocaleProvider extends ChangeNotifier {
       // setState(() {
       // });
 
-    }
-  }
-
-  Future<String> langSwitch2(
-    String lang,
-  ) async {
-    switch (lang) {
-      case "en":
-        return "English";
-
-      case "ar":
-        return "العربية";
-      default:
-        return "";
     }
   }
 

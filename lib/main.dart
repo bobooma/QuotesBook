@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/providers/themes.dart';
-import 'package:my_quotes/screens/first_screen.dart';
 
 import 'package:provider/provider.dart';
 

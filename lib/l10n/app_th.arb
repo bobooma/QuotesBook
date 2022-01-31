@@ -31,7 +31,25 @@
     "chooseLanguage": "ภาษา"
     ,"changeTheme": "เปลี่ยนธีม"
  
-
+,
+    "funny": "ตลก",
+   
+    "inspiring": "ที่เป็นแรงบันดาลใจ",
+    
+    "blessings": "พร",
+   
+    "favorites": "รายการโปรด",
+   
+    "health": "ที่อยู่อาศัย",
+   
+    "makeQuote": "ทำใบเสนอราคา",
+   
+    "shareApp": "แชร์แอป",
+  
+    "myApps": "แอพของฉัน",
+  
+    "backgrounds": "พื้นหลัง"
+   
 
    
     

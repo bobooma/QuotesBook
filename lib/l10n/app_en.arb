@@ -1,4 +1,4 @@
-{
+ {
     "language": "English",
     "@language":{
         "description": "The current Language"
@@ -62,7 +62,54 @@
     "changeTheme": "Change Theme",
     "@changeTheme":{
         "description": "Change Theme"
+
+    },
+    "funny": "Funny",
+    "@funny":{
+        "description": "Funny"
+
+    },
+    "inspiring": "Inspiring",
+    "@inspiring":{
+        "description": "Inspiring"
+
+    },
+    "blessings": "Blessings",
+    "@blessings":{
+        "description": "Blessings"
+
+    },
+    "favorites": "Favorites",
+    "@favorites":{
+        "description": "Favorites"
+
+    },
+    "health": "Heath",
+    "@health":{
+        "description": "Heath"
+
+    },
+    "makeQuote": "Make Your Own Quote",
+    "@makeQuote":{
+        "description": "Make Your Own Quote"
+
+    },
+    "shareApp": "Share App",
+    "@shareApp":{
+        "description": "Share App"
+
+    },
+    "myApps": "My Apps",
+    "@myApps":{
+        "description": "My Apps"
+
+    },
+    "backgrounds": "Backgrounds",
+    "@backgrounds":{
+        "description": "Backgrounds"
+
     }
+
 
 
 }

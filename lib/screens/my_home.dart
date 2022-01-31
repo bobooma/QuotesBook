@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -42,14 +44,14 @@ class _MyHomePageState extends State<MyHomePage> {
   getUserId() async {
     userCredential = await FirebaseAuth.instance.signInAnonymously();
     userId = userCredential!.user!.uid;
-
-    print(userId);
   }
 
   final quotes = FirebaseFirestore.instance
       .collection("quotes")
       .orderBy("time", descending: true)
       .snapshots();
+
+  final isDialOpen = ValueNotifier(false);
 
   @override
   void initState() {
@@ -64,11 +66,12 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  final isDialOpen = ValueNotifier(false);
-
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context).size;
+
+    final lang = AppLocalizations.of(context)!;
+    final lang2 = Provider.of<LocaleProvider>(context).locale.languageCode;
 
     return DefaultTabController(
       length: 6,
@@ -84,40 +87,45 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Scaffold(
           drawer: HomeDrawer(shareApp: () => Share.share("")),
           appBar: AppBar(
-            bottom: const TabBar(isScrollable: true,
-
-                // automaticIndicatorColorAdjustment: false,
-                // indicatorColor: Colors.white,
-                tabs: [
-                  Tab(
-                    icon: Icon(Icons.home),
-                    // text: "Home",
-                  ),
-                  Tab(
-                    child: Text(
-                      "Funny",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    // icon: Icon(Icons.fu),
-                    // text: "Funny",
-                  ),
-                  Tab(
-                    // icon: Icon(Icons.fu),
-                    text: "Inspiration",
-                  ),
-                  Tab(
-                    // icon: Icon(Icons.fu),
-                    text: "Blessings",
-                  ),
-                  Tab(
-                    // icon: Icon(Icons.fu),
-                    text: "Favorites",
-                  ),
-                  Tab(
-                    // icon: Icon(Icons.fu),
-                    text: "Heath",
-                  ),
-                ]),
+            bottom: TabBar(isScrollable: true, tabs: [
+              const Tab(
+                icon: Icon(Icons.home),
+              ),
+              Tab(
+                child: Text(
+                  lang.funny,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Tab(
+                // icon: Icon(Icons.fu),
+                child: Text(
+                  lang.favorites,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Tab(
+                // icon: Icon(Icons.fu),
+                child: Text(
+                  lang.health,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Tab(
+                // icon: Icon(Icons.fu),
+                child: Text(
+                  lang.blessings,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Tab(
+                // icon: Icon(Icons.fu),
+                child: Text(
+                  lang.inspiring,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ]),
             toolbarHeight: media.height * 0.05,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -154,15 +162,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
           floatingActionButton: SpeedDial(
+            // useRotationAnimation: true,
+            // switchLabelPosition: true,
             openCloseDial: isDialOpen,
             overlayColor: Colors.transparent,
             animatedIcon: AnimatedIcons.add_event,
-            animatedIconTheme: IconThemeData(size: 30),
+            animatedIconTheme: const IconThemeData(size: 30),
             children: [
               SpeedDialChild(
                   backgroundColor: Colors.pink[100],
                   child: Icon(Icons.share),
-                  label: "Share App",
+                  label: lang.shareApp,
                   labelStyle: TextStyle(fontWeight: FontWeight.bold),
                   onTap: () {
                     Share.share(
@@ -179,6 +189,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
             ],
           ),
+          // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+          floatingActionButtonLocation:
+              lang2 == "ar" || lang == "fa" || lang == "ur"
+                  ? FloatingActionButtonLocation.startFloat
+                  : FloatingActionButtonLocation.endFloat,
           body: TabBarView(
             children: [
               HomePage(quotes: quotes, media: media),

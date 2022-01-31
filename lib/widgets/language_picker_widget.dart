@@ -11,6 +11,7 @@ class LangPickWidget extends StatelessWidget {
     final media = MediaQuery.of(context).size;
     final provider = Provider.of<LocaleProvider>(context, listen: false);
     final locale = provider.locale;
+
     return DropdownButtonHideUnderline(
       child: DropdownButton(
         icon: Icon(
@@ -19,10 +20,12 @@ class LangPickWidget extends StatelessWidget {
         ),
         value: locale,
         items: L10n.all.map((locale) {
+          final lang = L10n.getLang(locale.languageCode);
+
           return DropdownMenuItem(
             child: Center(
               child: Text(
-                locale.languageCode,
+                lang,
                 style: Theme.of(context).textTheme.headline5!.copyWith(
                       fontSize: media.width * 0.03,
                       // fontWeight: FontWeight.bold,
@@ -39,6 +42,10 @@ class LangPickWidget extends StatelessWidget {
           );
         }).toList(),
         onChanged: (_) {},
+        borderRadius: BorderRadius.circular(15),
+        style: const TextStyle(fontWeight: FontWeight.bold),
+        focusColor: Colors.pink,
+        underline: Divider(),
       ),
     );
   }

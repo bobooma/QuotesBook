@@ -27,4 +27,23 @@
 
       ,"telegramChanel": "Телеграмма канал"
 ,"changeTheme": "Менять тему"
+,
+    "funny": "Смешной",
+   
+    "inspiring": "Вдохновляя",
+    
+    "blessings": "Благословение",
+   
+    "favorites": "Фавориты",
+   
+    "health": "Веревич",
+   
+    "makeQuote": "Делать цитату",
+   
+    "shareApp": "Поделиться приложением",
+  
+    "myApps": "Мои приложения",
+  
+    "backgrounds": "Фоны"
+   
 }
