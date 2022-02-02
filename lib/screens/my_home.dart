@@ -5,13 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/providers/utils.dart';
 import 'package:my_quotes/screens/fav_screen.dart';
-import 'package:my_quotes/screens/make_quote.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/services/local_notification_service.dart';
@@ -22,8 +20,8 @@ import 'package:my_quotes/widgets/home_drawer.dart';
 import 'package:my_quotes/widgets/speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../widgets/admin.dart';
 import '../widgets/my_card.dart';
 import 'blessings.dart';
 import 'funny_pg.dart';
@@ -55,15 +53,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final isDialOpen = ValueNotifier(false);
 
+  initialMessage() async {
+    final message = FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MyHomePage(),
+          ));
+    }
+  }
+
   @override
   void initState() {
     getUserId();
     LocalNotificationService.initialize(context);
-    FirebaseMessaging.instance.getInitialMessage();
     FirebaseMessaging.onMessage.listen((message) {
       LocalNotificationService.display(message);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    Utils.getToken();
 
     super.initState();
   }
@@ -128,7 +137,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ]),
-            toolbarHeight: media.height * 0.05,
+            // !!!!!!!!!!!AMIN
+            toolbarHeight: media.height * 0.08,
+            // !!!!!!!!!!!!user
+            // toolbarHeight: media.height * 0.05,
+
             title: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -158,8 +171,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            actions: const [
-              ChangeTheme(),
+            actions: [
+              Column(
+                children: const [
+                  Expanded(child: ChangeTheme()),
+                  Expanded(child: AdminBtn()),
+                ],
+              )
+
               //
             ],
           ),
@@ -226,58 +245,59 @@ class _HomePageState extends State<HomePage> {
                 child: ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final doc = snapshot.data.doc[index];
-                      String content = doc["content"];
-                      String quoteId = doc[index].id;
+                      // final doc = snapshot.data.doc[index];
+                      String content = snapshot.data.docs[index]["content"];
+                      String quoteId = snapshot.data.docs[index].id;
 
+                      // return Slidable(
+                      //   key: UniqueKey(),
+                      //   endActionPane: ActionPane(
+                      //     dismissible: DismissiblePane(
+                      //       onDismissed: ()
+                      //           // async
+                      //           {},
+                      //     ),
+                      //     motion: const DrawerMotion(),
+                      //     extentRatio: 0.25,
+                      //     children: [
+                      //       SlidableAction(
+                      //         label: 'Download',
+                      //         backgroundColor: Colors.amber,
+                      //         icon: Icons.download,
+                      //         onPressed: (context) {
+                      //           Utils.save(snapshot.data.docs[index]["imgUrl"],
+                      //               context);
+                      //         },
+                      //       ),
+
+// !  Admin
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                       return Slidable(
                         key: UniqueKey(),
                         endActionPane: ActionPane(
                           dismissible: DismissiblePane(
-                            onDismissed: ()
-                                // async
-                                {},
+                            onDismissed: () async {
+                              await FirebaseFirestore.instance.runTransaction(
+                                  (Transaction myTransaction) async {
+                                myTransaction.delete(
+                                    snapshot.data.docs[index].reference);
+                              });
+                              await FirebaseStorage.instance
+                                  .refFromURL(
+                                      snapshot.data.docs[index]["imgUrl"])
+                                  .delete();
+                              // Remove this Slidable from the widget tree.
+                            },
                           ),
                           motion: const DrawerMotion(),
                           extentRatio: 0.25,
                           children: [
                             SlidableAction(
-                              label: 'Download',
-                              backgroundColor: Colors.amber,
-                              icon: Icons.download,
-                              onPressed: (context) {
-                                Utils.save(doc["imgUrl"], context);
-                              },
+                              label: 'Delete',
+                              backgroundColor: Colors.red,
+                              icon: Icons.delete,
+                              onPressed: (context) {},
                             ),
-
-// !  Admin
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            //! return Slidable(
-                            //   key: UniqueKey(),
-                            //   endActionPane: ActionPane(
-                            //     dismissible: DismissiblePane(
-                            //       onDismissed: () async {
-                            //         await FirebaseFirestore.instance.runTransaction(
-                            //             (Transaction myTransaction) async {
-                            //           myTransaction.delete(
-                            //               doc.reference);
-                            //         });
-                            //         await FirebaseStorage.instance
-                            //             .refFromURL(
-                            //                 doc["imgUrl"])
-                            //             .delete();
-                            //         // Remove this Slidable from the widget tree.
-                            //       },
-                            //     ),
-                            //     motion: const DrawerMotion(),
-                            //     extentRatio: 0.25,
-                            //     children: [
-                            //       SlidableAction(
-                            //         label: 'Delete',
-                            //         backgroundColor: Colors.red,
-                            //         icon: Icons.delete,
-                            //         onPressed: (context) {},
-                            //       ),
                             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                           ],
                         ),
@@ -288,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                               MaterialPageRoute(
                                 builder: (context) => QuoteImage(
                                   content: content,
-                                  imgUrl: doc["imgUrl"],
+                                  imgUrl: snapshot.data.docs[index]["imgUrl"],
                                   docId: quoteId,
                                 ),
                               ),
@@ -309,7 +329,8 @@ class _HomePageState extends State<HomePage> {
                                     shape: BoxShape.circle,
                                     image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: NetworkImage(doc["imgUrl"]),
+                                      image: NetworkImage(
+                                          snapshot.data.docs[index]["imgUrl"]),
                                     ),
                                   ),
                                 ),

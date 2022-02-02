@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:my_quotes/providers/utils.dart';
 import 'package:path/path.dart';
 
 class UploadScreen extends StatefulWidget {
@@ -22,6 +23,11 @@ class _UploadScreenState extends State<UploadScreen> {
   late NetworkImage networkImage;
   String imgUrl = "";
   String category = "no";
+  String title = "Have a New Quote , Have a Blessed Day 😊";
+
+  String serverToken =
+      "AAAAPxFK7S8:APA91bGOnpETUHJhPVYegc3-fC3OwOKQ0w5NMCOZpOaR10udI48DANWa62t3kJ3Am_hVHy78jAkQPfF3kDAL_fuqiWpYaccg3xRiVHCt4h4nUnVgMX0EbDbJzL319IWmGQ_xDR4TvT8L";
+  String id = "id";
   final controller = TextEditingController();
   final controller2 = TextEditingController();
 
@@ -68,6 +74,27 @@ class _UploadScreenState extends State<UploadScreen> {
     });
 
     print("url:  ..$urlDownload");
+  }
+
+  // final tokens = FirebaseFirestore.instance.collection("tokens").snapshots();
+
+  notify() async {
+    try {
+      final tokensGetRef = FirebaseFirestore.instance.collection("tokens");
+
+      await tokensGetRef.get().then((value) => value.docs.forEach((element) {
+            Utils.sendNotify(
+                title: title,
+                body: enteredVal,
+                id: id,
+                serverToken: serverToken,
+                token: element.data()["token"].toString());
+          }));
+    } on Exception catch (e) {
+      print("error is: $e");
+    }
+
+    // final list = await tokensGet;
   }
 
   @override
@@ -121,53 +148,67 @@ class _UploadScreenState extends State<UploadScreen> {
                         },
                       )
                     : Container(),
-                Row(
+                Column(
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        decoration: const InputDecoration(
-                            labelText: "content upload",
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            ),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 3))),
-                        onChanged: (value) {
-                          setState(() {
-                            enteredVal = value;
-                          });
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: controller2,
-                        decoration: const InputDecoration(
-                            labelText: "category",
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            ),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.white, width: 3))),
-                        onChanged: (value) {
-                          setState(() {
-                            category = value;
-                          });
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: enteredVal.trim().isEmpty
-                          ? null
-                          : () {
-                              FocusScope.of(context).unfocus();
-                              addFile();
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            decoration: const InputDecoration(
+                                labelText: "content upload",
+                                labelStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white, width: 3))),
+                            onChanged: (value) {
+                              setState(() {
+                                enteredVal = value;
+                              });
                             },
-                      icon: const Icon(Icons.send),
-                    )
+                          ),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: controller2,
+                            decoration: const InputDecoration(
+                                labelText: "category",
+                                labelStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.white, width: 3))),
+                            onChanged: (value) {
+                              setState(() {
+                                category = value;
+                              });
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          onPressed:
+                              enteredVal.trim().isEmpty || imgUrl.trim().isEmpty
+                                  ? null
+                                  : () {
+                                      FocusScope.of(context).unfocus();
+                                      addFile();
+                                      notify();
+
+                                      // Utils.sendNotify(
+                                      //     title: title,
+                                      //     body: enteredVal,
+                                      //     id: id,
+                                      //     serverToken: serverToken,
+                                      //     token: snapshot.data.docs()[""]);
+                                    },
+                          icon: const Icon(Icons.send),
+                        )
+                      ],
+                    ),
+                    //       }
                   ],
                 )
               ]),

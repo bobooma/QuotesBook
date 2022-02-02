@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,7 @@ Future<void> bgHandler(RemoteMessage message) async {
   print(message.notification!.title);
 }
 
-bool isLogin = false;
+// bool isLogin = false;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +28,28 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(bgHandler);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  User? user = FirebaseAuth.instance.currentUser;
-  isLogin = user == null ? false : true;
+  // User? user = FirebaseAuth.instance.currentUser;
+  // isLogin = user == null ? false : true;
+// AwesomeNotifications().initialize(
+//   // set the icon to null if you want to use the default app icon
+//   null,
+//   [
+//     NotificationChannel(
+//         channelGroupKey: 'basic_channel_group',
+//         channelKey: 'basic_channel',
+//         channelName: 'Basic notifications',
+//         channelDescription: 'Notification channel for basic tests',
+//         defaultColor: Color(0xFF9D50DD),
+//         ledColor: Colors.white)
+//   ],
+//   // Channel groups are only visual and are not required
+//   channelGroups: [
+//     NotificationChannelGroup(
+//         channelGroupkey: 'basic_channel_group',
+//         channelGroupName: 'Basic group')
+//   ],
+//   debug: true
+// );
 
   runApp(const MyApp());
 }

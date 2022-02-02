@@ -84,9 +84,9 @@
         "description": "Favorites"
 
     },
-    "health": "Heath",
+    "health": "Health",
     "@health":{
-        "description": "Heath"
+        "description": "Health"
 
     },
     "makeQuote": "Make Your Own Quote",

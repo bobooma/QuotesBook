@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +13,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:text_editor/text_editor.dart';
 
 class MakeQuote extends StatefulWidget {
+  const MakeQuote({Key? key}) : super(key: key);
+
   @override
   _MakeQuoteState createState() => _MakeQuoteState();
 }
@@ -179,6 +181,8 @@ class _MakeQuoteState extends State<MakeQuote> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = AppLocalizations.of(context)!;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -192,48 +196,64 @@ class _MakeQuoteState extends State<MakeQuote> {
                 children: [
                   TextButton.icon(
                     onPressed: () async {
-                      final data = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => Backgrounds(),
-                            ),
-                          ) ??
-                          "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/backgrounds%2Fpexels-alex-andrews-816608.jpg?alt=media&token=48b567af-cbe2-4fcf-8729-3955a3263211";
-                      setState(() {
-                        img = Image.network(data);
-                      });
+                      try {
+                        final data = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => Backgrounds(),
+                              ),
+                            ) ??
+                            "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/backgrounds%2Fpexels-alex-andrews-816608.jpg?alt=media&token=48b567af-cbe2-4fcf-8729-3955a3263211";
+                        setState(() {
+                          img = Image.network(data);
+                        });
+                      } on Exception catch (e) {
+                        return;
+                      }
                     },
                     icon: const Icon(
                       Icons.search_off_rounded,
                       // color: Colors.black,
                     ),
-                    label: const Text(
-                      "Backgrounds",
+                    label: Text(
+                      lang.backgrounds,
                       // style: TextStyle(
                       //     color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
                   IconButton(
                     onPressed: () {
-                      pickImg(ImageSource.gallery);
+                      try {
+                        pickImg(ImageSource.gallery);
+                      } on Exception catch (e) {
+                        return;
+                      }
                     },
-                    icon: Icon(Icons.image),
+                    icon: const Icon(Icons.image),
                   ),
                   IconButton(
                     onPressed: () {
-                      pickImg(ImageSource.camera);
+                      try {
+                        pickImg(ImageSource.camera);
+                      } on Exception catch (e) {
+                        return;
+                      }
                     },
-                    icon: Icon(Icons.camera),
+                    icon: const Icon(Icons.camera),
                   ),
                   IconButton(
                     onPressed: () {
-                      screenCapture();
+                      try {
+                        screenCapture();
+                      } on Exception catch (e) {
+                        return;
+                      }
                     },
-                    icon: Icon(Icons.download),
+                    icon: const Icon(Icons.download),
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.share),
+                    icon: const Icon(Icons.share),
                   ),
                 ],
               ),

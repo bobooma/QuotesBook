@@ -61,7 +61,7 @@ class BackgrounSliders extends StatelessWidget {
                     );
                   },
                   options: CarouselOptions(
-                      height: 400,
+                      height: 600,
                       autoPlay: true,
                       viewportFraction: 0.7,
                       // enlargeStrategy: CenterPageEnlargeStrategy.height,

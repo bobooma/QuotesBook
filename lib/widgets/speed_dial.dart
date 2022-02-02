@@ -34,14 +34,13 @@ class CustomSpeedDial extends StatelessWidget {
         SpeedDialChild(
             backgroundColor: Colors.pink[300],
             child: const Icon(
-              Icons.imagesearch_roller,
+              Icons.app_registration_outlined,
               size: 40,
             ),
-            label: "Make Your\n Own Quote",
+            label: lang.myApps,
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => MakeQuote()));
+              launchApp();
             }),
         SpeedDialChild(
             backgroundColor: Colors.pink[300],
@@ -61,10 +60,11 @@ class CustomSpeedDial extends StatelessWidget {
               Icons.imagesearch_roller,
               size: 40,
             ),
-            label: "My Apps",
+            label: lang.makeQuote,
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             onTap: () {
-              launchApp();
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => MakeQuote()));
             }),
       ],
     );
