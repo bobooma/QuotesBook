@@ -109,8 +109,16 @@ class _MakeQuoteState extends State<MakeQuote> {
     color: Colors.white,
     fontFamily: 'Billabong',
   );
+  TextStyle _textStyle2 = const TextStyle(
+    fontSize: 50,
+    color: Colors.white,
+    fontFamily: 'Billabong',
+  );
   String _text = 'Sample Text';
+  String _text2 = 'Sample Text';
   TextAlign _textAlign = TextAlign.center;
+
+  bool isVisible = false;
 
   void _tapHandler(text, textStyle, textAlign) {
     try {
@@ -156,6 +164,50 @@ class _MakeQuoteState extends State<MakeQuote> {
     }
   }
 
+  void _tapHandler2(text, textStyle, textAlign) {
+    try {
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        transitionDuration: const Duration(
+          milliseconds: 400,
+        ), // how long it takes to popup dialog after button click
+        pageBuilder: (_, __, ___) {
+          // your widget implementation
+          return Container(
+            color: Colors.black.withOpacity(0.4),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SafeArea(
+                // top: false,
+                child: Container(
+                  child: TextEditor(
+                    fonts: fonts,
+                    text: text,
+                    textStyle: textStyle,
+                    textAlingment: textAlign,
+                    minFontSize: 10,
+                    onEditCompleted: (style, align, text) {
+                      setState(() {
+                        _text2 = text;
+                        _textStyle2 = style;
+                        _textAlign = align;
+                      });
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } on Exception catch (e) {
+      print(e);
+      // TODO
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -164,20 +216,20 @@ class _MakeQuoteState extends State<MakeQuote> {
 
   late bool isOne;
 
-  Widget buildNewText(BuildContext context) {
-    return Positioned(
-      child: InteractiveViewer(
-        child: GestureDetector(
-          onTap: () => _tapHandler(_text, _textStyle, _textAlign),
-          child: Text(
-            _text,
-            style: _textStyle,
-            textAlign: _textAlign,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget buildNewText(BuildContext context) {
+  //   return Positioned(
+  //     child: InteractiveViewer(
+  //       child: GestureDetector(
+  //         onTap: () => _tapHandler(_text, _textStyle, _textAlign),
+  //         child: Text(
+  //           _text,
+  //           style: _textStyle,
+  //           textAlign: _textAlign,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -188,40 +240,43 @@ class _MakeQuoteState extends State<MakeQuote> {
       body: SafeArea(
         // top: false,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton.icon(
-                    onPressed: () async {
-                      try {
-                        final data = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => Backgrounds(),
-                              ),
-                            ) ??
-                            "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/backgrounds%2Fpexels-alex-andrews-816608.jpg?alt=media&token=48b567af-cbe2-4fcf-8729-3955a3263211";
-                        setState(() {
-                          img = Image.network(data);
-                        });
-                      } on Exception catch (e) {
-                        return;
-                      }
-                    },
-                    icon: const Icon(
-                      Icons.search_off_rounded,
-                      // color: Colors.black,
-                    ),
-                    label: Text(
-                      lang.backgrounds,
-                      // style: TextStyle(
-                      //     color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  IconButton(
+            Container(
+              height: 35,
+              child: TextButton.icon(
+                onPressed: () async {
+                  try {
+                    final data = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Backgrounds(),
+                          ),
+                        ) ??
+                        "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/backgrounds%2Fpexels-alex-andrews-816608.jpg?alt=media&token=48b567af-cbe2-4fcf-8729-3955a3263211";
+                    setState(() {
+                      img = Image.network(data);
+                    });
+                  } on Exception catch (e) {
+                    return;
+                  }
+                },
+                icon: const Icon(
+                  Icons.search_off_rounded,
+                  // color: Colors.black,
+                ),
+                label: Text(
+                  lang.backgrounds,
+                  // style: TextStyle(
+                  //     color: Colors.black, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: IconButton(
                     onPressed: () {
                       try {
                         pickImg(ImageSource.gallery);
@@ -231,7 +286,9 @@ class _MakeQuoteState extends State<MakeQuote> {
                     },
                     icon: const Icon(Icons.image),
                   ),
-                  IconButton(
+                ),
+                Expanded(
+                  child: IconButton(
                     onPressed: () {
                       try {
                         pickImg(ImageSource.camera);
@@ -241,7 +298,19 @@ class _MakeQuoteState extends State<MakeQuote> {
                     },
                     icon: const Icon(Icons.camera),
                   ),
-                  IconButton(
+                ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isVisible = !isVisible;
+                      });
+                    },
+                    icon: const Icon(Icons.share),
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
                     onPressed: () {
                       try {
                         screenCapture();
@@ -251,12 +320,14 @@ class _MakeQuoteState extends State<MakeQuote> {
                     },
                     icon: const Icon(Icons.download),
                   ),
-                  IconButton(
+                ),
+                Expanded(
+                  child: IconButton(
                     onPressed: () {},
                     icon: const Icon(Icons.share),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             Expanded(
               child: Screenshot(
@@ -264,23 +335,27 @@ class _MakeQuoteState extends State<MakeQuote> {
                 child: Container(
                   // width: double.infinity,
                   color: Colors.black,
-                  child: Stack(
-                    // fit: StackFit.expand,
-                    // alignment: Alignment.center,
-                    children: [
-                      Positioned(
-                        width: MediaQuery.of(context).size.width,
-                        child: InteractiveViewer(
-                          child: img ??
-                              Image.asset(
-                                'assets/quote-icon-png-7.jpg',
-                                // fit: BoxFit.fill,
-                              ),
+                  child: Center(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          width: MediaQuery.of(context).size.width,
+                          child: InteractiveViewer(
+                            child: img ??
+                                Image.asset(
+                                  'assets/quote-icon-png-7.jpg',
+                                  // fit: BoxFit.fill,
+                                ),
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        child: InteractiveViewer(
-                          child: Center(
+                        Positioned(
+                          // height: MediaQuery.of(context).size.height,
+                          top: 100,
+                          // bottom: 50,
+                          child: InteractiveViewer(
+                            clipBehavior: Clip.hardEdge,
                             child: GestureDetector(
                               onTap: () =>
                                   _tapHandler(_text, _textStyle, _textAlign),
@@ -292,8 +367,24 @@ class _MakeQuoteState extends State<MakeQuote> {
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Visibility(
+                          visible: isVisible,
+                          child: Positioned(
+                            child: InteractiveViewer(
+                              child: GestureDetector(
+                                onTap: () => _tapHandler2(
+                                    _text2, _textStyle, _textAlign),
+                                child: Text(
+                                  _text2,
+                                  style: _textStyle2,
+                                  textAlign: _textAlign,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import 'package:my_quotes/providers/locale_provider.dart';
+import 'package:my_quotes/providers/quote_model_provider.dart';
 import 'package:my_quotes/widgets/my_drawer.dart';
 import 'package:my_quotes/widgets/translations_card.dart';
 import 'package:path_provider/path_provider.dart';
@@ -111,16 +112,17 @@ class _QuoteImageState extends State<QuoteImage> {
 
   // IconData favIcon = Icons.favorite_border_outlined;
 
-  bool isFav = false;
+  // bool isFav = false;
 
-  toggleFav() {
-    setState(() {
-      isFav = !isFav;
-      // favIcon = favIcon == Icons.favorite
-      //     ? Icons.favorite_border_outlined
-      //     : Icons.favorite;
-    });
-  }
+  // toggleFav() {
+  //   setState(() {
+  //     isFav = !isFav;
+  //     // favIcon = favIcon == Icons.favorite
+  //     //     ? Icons.favorite_border_outlined
+  //     //     : Icons.favorite;
+  //   });
+
+  // }
 
   UserCredential? userCredential;
   String? userId;
@@ -135,31 +137,64 @@ class _QuoteImageState extends State<QuoteImage> {
 
     userId = userCredential!.user!.uid;
 
-    newId = "${widget.docId}$userId";
+    var fav = await favorite
+        .where("userId", isEqualTo: userId)
+        .where("quoteId", isEqualTo: widget.docId)
+        .get()
+        .then((value) => value.docs.isNotEmpty);
 
-    var fav = await favorite.doc(newId).get().then((value) => value.exists);
-    if (fav) {
+    // newId = "${widget.docId}$userId";
+
+    // var fav = await favorite
+    //     .get()
+    //     .then((value) => value.docs.any((element) => element.id == newId));
+
+    //
+    //   return value.id == newId;
+    // });
+
+    if (fav == true) {
       setState(() {
-        isFav = true;
+        Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
       });
     }
   }
 
   Future addRemoveUser() async {
     try {
-      isFav
-          ? favorite.doc(newId).delete()
-          : favorite.doc(newId).set({
-              "imgUrl": widget.imgUrl,
-              "content": widget.content,
-              "userId": userId,
-              "time": Timestamp.now(),
-            });
+      if (Provider.of<QuoteModelProvider>(context, listen: false).isFav ==
+          true) {
+        favorite.get().then((value) {
+          var fo = value.docs.firstWhere((element) {
+            print("*********");
+            print(element["userId"]);
+            return element["userId"].toString() == userId &&
+                element["quoteId"] == widget.docId;
+          });
+          fo.reference.delete();
+        });
+
+        // await favorite.doc(newId).delete();
+        setState(() {
+          Provider.of<QuoteModelProvider>(context, listen: false).isFavFalse();
+        });
+      } else {
+        await favorite.doc().set({
+          "imgUrl": widget.imgUrl,
+          "content": widget.content,
+          "userId": userId,
+          "time": Timestamp.now(),
+          "quoteId": widget.docId
+        });
+        setState(() {
+          Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
+        });
+      }
     } on Exception catch (e) {
       print(e);
     }
 
-    toggleFav();
+    // Provider.of<QuoteModelProvider>(context, listen: false).toggleFav();
 
     // .add({"quoteId": widget.docId, "userId": useId});
 
@@ -226,10 +261,15 @@ class _QuoteImageState extends State<QuoteImage> {
                     children: [
                       IconButton(
                         onPressed: () {
-                          addRemoveUser();
+                          setState(() {
+                            addRemoveUser();
+                          });
                         },
                         icon: Icon(
-                          isFav
+                          Provider.of<QuoteModelProvider>(context,
+                                          listen: false)
+                                      .isFav ==
+                                  true
                               ? Icons.favorite
                               : Icons.favorite_border_outlined,
                           color: Colors.pink,
@@ -281,8 +321,21 @@ class _QuoteImageState extends State<QuoteImage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.favorite_border_outlined),
+                          onPressed: () {
+                            setState(() {
+                              addRemoveUser();
+                            });
+                          },
+                          icon: Icon(
+                            Provider.of<QuoteModelProvider>(context,
+                                            listen: false)
+                                        .isFav ==
+                                    true
+                                ? Icons.favorite
+                                : Icons.favorite_border_outlined,
+                            color: Colors.pink,
+                            size: 30,
+                          ),
                         ),
                         IconButton(
                           onPressed: () {},
@@ -297,17 +350,6 @@ class _QuoteImageState extends State<QuoteImage> {
                 ],
               ),
             ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterTop,
-      // floatingActionButton: FloatingActionButton(
-      //     child: Icon(
-      //       Icons.share,
-      //       size: media.width * 0.05,
-      //     ),
-      //     onPressed: () {
-      //       // ! user
-      //       Share.share(
-      //           "https://play.google.com/store/apps/details?id=com.DrHamaida.quotesBook");
-      //     }),
     );
   }
 }
