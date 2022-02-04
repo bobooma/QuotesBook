@@ -1,10 +1,10 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
+import 'package:my_quotes/providers/quote_model_provider.dart';
 import 'package:my_quotes/providers/themes.dart';
 
 import 'package:provider/provider.dart';
@@ -13,10 +13,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'l10n/l10n.dart';
 import 'screens/my_home.dart';
 
-Future<void> bgHandler(RemoteMessage message) async {
-  print(message.data.toString());
-  print(message.notification!.title);
-}
+Future<void> bgHandler(RemoteMessage message) async {}
 
 // bool isLogin = false;
 
@@ -28,28 +25,6 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(bgHandler);
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  // User? user = FirebaseAuth.instance.currentUser;
-  // isLogin = user == null ? false : true;
-// AwesomeNotifications().initialize(
-//   // set the icon to null if you want to use the default app icon
-//   null,
-//   [
-//     NotificationChannel(
-//         channelGroupKey: 'basic_channel_group',
-//         channelKey: 'basic_channel',
-//         channelName: 'Basic notifications',
-//         channelDescription: 'Notification channel for basic tests',
-//         defaultColor: Color(0xFF9D50DD),
-//         ledColor: Colors.white)
-//   ],
-//   // Channel groups are only visual and are not required
-//   channelGroups: [
-//     NotificationChannelGroup(
-//         channelGroupkey: 'basic_channel_group',
-//         channelGroupName: 'Basic group')
-//   ],
-//   debug: true
-// );
 
   runApp(const MyApp());
 }
@@ -68,6 +43,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (context) => ThemeProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => QuoteModelProvider(),
+          ),
           // ChangeNotifierProvider(
           //   create: (context) => QuoteModelProvider(),
           // ),
@@ -75,6 +53,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           final provider = Provider.of<LocaleProvider>(context);
           final themeProvider = Provider.of<ThemeProvider>(context);
+          // final quoteProvider = Provider.of<ThemeProvider>(context);
 
           return MaterialApp(
             title: 'QuotesBook',

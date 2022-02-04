@@ -49,11 +49,11 @@ class _MyDrawerState extends State<MyDrawer> {
         header: Container(),
         gradient: !Provider.of<ThemeProvider>(context).isDarkMode
             ? LinearGradient(colors: [
-                Colors.pink.shade200,
+                kPrimaryColor.shade200,
                 Colors.white,
               ])
             : LinearGradient(colors: [
-                Colors.pink.shade200,
+                kPrimaryColor.shade200,
                 Colors.black,
               ]),
         children: [
@@ -118,14 +118,6 @@ class _MyDrawerState extends State<MyDrawer> {
                     .copyWith(fontFamily: "LimeLihgt"),
               ),
             ),
-            // const SizedBox(
-            //  width: 5,
-            // ),
-            // Icon(
-            //   Icons.language,
-            //   color: Colors.black,
-            //   size: media.width * .04,
-            // ),
           ],
         ),
       ),

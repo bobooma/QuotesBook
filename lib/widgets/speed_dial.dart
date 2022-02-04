@@ -5,6 +5,8 @@ import 'package:my_quotes/screens/make_quote.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../constants.dart';
+
 class CustomSpeedDial extends StatelessWidget {
   const CustomSpeedDial({
     Key? key,
@@ -32,7 +34,7 @@ class CustomSpeedDial extends StatelessWidget {
       animatedIconTheme: const IconThemeData(size: 40),
       children: [
         SpeedDialChild(
-            backgroundColor: Colors.pink[300],
+            backgroundColor: kPrimaryColor[300],
             child: const Icon(
               Icons.app_registration_outlined,
               size: 40,
@@ -43,7 +45,7 @@ class CustomSpeedDial extends StatelessWidget {
               launchApp();
             }),
         SpeedDialChild(
-            backgroundColor: Colors.pink[300],
+            backgroundColor: kPrimaryColor[300],
             child: const Icon(
               Icons.share,
               size: 40,
@@ -55,7 +57,7 @@ class CustomSpeedDial extends StatelessWidget {
                   "https://play.google.com/store/apps/details?id=com.DrHamaida.QuotesBook");
             }),
         SpeedDialChild(
-            backgroundColor: Colors.pink[300],
+            backgroundColor: kPrimaryColor[300],
             child: const Icon(
               Icons.imagesearch_roller,
               size: 40,

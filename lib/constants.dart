@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 const Color facebookColor = Color(0xff0075fc);
 const Color twittetColor = Color(0xff1da1f2);
@@ -8,7 +7,9 @@ const Color linkedinColor = Color(0xff0064c9);
 const Color whatsappColor = Color(0xff00d856);
 const Color instgramColor = Color(0xff833AB4);
 
-const kPrimaryColor = Colors.pink;
+const kPrimaryColor = Colors.deepPurple;
+
+// Colors.pink;
 // const kPrimaryColor = Color(0xFF00BF6D);
 // const kSecondaryColor = Color(0xff00d856);
 const kSecondaryColor = Color(0xFFFE9901);

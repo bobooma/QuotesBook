@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:my_quotes/widgets/carousal_screen.dart';
 import 'package:my_quotes/widgets/carousal_screen_backgrounds.dart';
 
 class Backgrounds extends StatefulWidget {

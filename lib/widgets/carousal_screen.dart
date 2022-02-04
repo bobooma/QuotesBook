@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:my_quotes/screens/quote.dart';
 
 class Sliders extends StatelessWidget {
   Sliders({
@@ -27,7 +28,17 @@ class Sliders extends StatelessWidget {
                   itemCount: imgs.data.docs.length,
                   itemBuilder: (ctx, i, _) {
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => QuoteImage(
+                                imgUrl: imgs.data.docs[i]["imgUrl"],
+                                content: imgs.data.docs[i]["content"],
+                                docId: imgs.data.docs[i].id),
+                          ),
+                        );
+                      },
                       child: CachedNetworkImage(
                         imageUrl: imgs.data.docs[i]["imgUrl"],
                         imageBuilder: (_, p) {

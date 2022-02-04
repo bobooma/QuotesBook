@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'change_theme.dart';
 import 'language_picker_widget.dart';
 
 class HomeDrawer extends StatefulWidget {
@@ -48,11 +47,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         header: Container(),
         gradient: !Provider.of<ThemeProvider>(context).isDarkMode
             ? LinearGradient(colors: [
-                Colors.pink.shade200,
+                kPrimaryColor.shade400,
                 Colors.white,
               ])
             : LinearGradient(colors: [
-                Colors.pink.shade200,
+                kPrimaryColor.shade400,
                 Colors.black,
               ]),
         children: [

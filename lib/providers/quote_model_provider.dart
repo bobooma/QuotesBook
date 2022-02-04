@@ -1,18 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class QuoteModelProvider extends ChangeNotifier {
-  late Stream<QuerySnapshot<Map<String, dynamic>>> quoteStream;
+  bool isFav = false;
 
-  QuoteModelProvider() {
-    listenQuote();
+  isFavTrue() {
+    isFav = true;
+
     notifyListeners();
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> listenQuote() {
-    return quoteStream = FirebaseFirestore.instance
-        .collection("quotes")
-        .orderBy("time", descending: true)
-        .snapshots();
+  isFavFalse() {
+    isFav = false;
+
+    notifyListeners();
   }
 }

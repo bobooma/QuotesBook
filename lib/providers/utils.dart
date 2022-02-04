@@ -39,7 +39,6 @@ class Utils {
     File(path).writeAsBytesSync(bytes);
     // ! revision
     Share.shareFiles([path], subject: content, text: content);
-    print(content);
 
     // await _save();
     // final result = await FilePicker.platform.pickFiles(
@@ -58,9 +57,6 @@ class Utils {
         .collection("tokens")
         .doc(token)
         .set({"token": token});
-    print("=======");
-    print(token);
-    print("=======");
   }
 
   static sendNotify(
@@ -69,9 +65,6 @@ class Utils {
       required String id,
       required String serverToken,
       required String token}) async {
-    print("=====");
-    print(token);
-    print("=====");
     try {
       await post(Uri.parse("https://fcm.googleapis.com/fcm/send"),
           headers: <String, String>{
@@ -92,10 +85,6 @@ class Utils {
             },
             "to": token.toString()
           }));
-
-      print("=====");
-      print(token);
-      print("=====");
     } on Exception catch (e) {
       print("error is: $e");
     }

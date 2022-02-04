@@ -3,10 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../constants.dart';
 
-// This is our  main focus
-// Let's apply light and dark theme on our app
-// Now let's add dark theme on our
-
 class ThemeProvider extends ChangeNotifier {
   ThemeMode themeMode = ThemeMode.light;
   bool get isDarkMode => themeMode == ThemeMode.dark;
@@ -24,7 +20,7 @@ ThemeData lightThemeData(BuildContext context) {
               primary: kContentColorLightTheme,
               textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
       cardColor: kPrimaryColor[100],
-      primaryColor: kPrimaryColor,
+      primaryColor: Color.fromARGB(225, 85, 37, 168),
       scaffoldBackgroundColor: kPrimaryColor[300],
       appBarTheme: appBarTheme,
       iconTheme: const IconThemeData(color: kContentColorLightTheme),
@@ -55,7 +51,7 @@ ThemeData darkThemeData(BuildContext context) {
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
         .apply(bodyColor: kContentColorDarkTheme),
     colorScheme: const ColorScheme.dark().copyWith(
-      primary: kPrimaryColor,
+      primary: Color.fromARGB(225, 85, 37, 168),
       secondary: kSecondaryColor,
       error: kErrorColor,
     ),

@@ -11,8 +11,7 @@ class MyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Locale locale = Localizations.localeOf(context);
-    // Provider.of<LocaleProvider>(context, listen: false).setLocale(locale);
+    // Locale locale = Localizations.localeOf(context);
 
     final media = MediaQuery.of(context).size;
     final content =
@@ -82,17 +81,6 @@ class MyCard extends StatelessWidget {
                                 .copyWith(
                                     fontSize: media.width * 0.035,
                                     fontWeight: FontWeight.bold),
-
-                            //  TextStyle(
-                            //   //
-                            //   // ***
-                            //   // TODO rEVISION
-                            //   //overflow: TextOverflow.ellipsis,
-                            //   fontSize: media.width * .035,
-                            //   fontWeight: FontWeight.bold,
-                            //   // letterSpacing: 2,
-                            //   fontFamily: "RobotoCondensed",
-                            // ),
                           ),
                         ),
                       ),

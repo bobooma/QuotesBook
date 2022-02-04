@@ -21,7 +21,6 @@ import 'package:my_quotes/widgets/speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../widgets/admin.dart';
 import '../widgets/my_card.dart';
 import 'blessings.dart';
 import 'funny_pg.dart';
@@ -67,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     getUserId();
-    LocalNotificationService.initialize(context);
+    // LocalNotificationService.initialize(context);
     FirebaseMessaging.onMessage.listen((message) {
-      LocalNotificationService.display(message);
+      // LocalNotificationService.display(message);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((message) {});
     Utils.getToken();
@@ -175,7 +174,6 @@ class _MyHomePageState extends State<MyHomePage> {
               Column(
                 children: const [
                   Expanded(child: ChangeTheme()),
-                  Expanded(child: AdminBtn()),
                 ],
               )
 
@@ -192,10 +190,10 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               HomePage(quotes: quotes, media: media),
               FunnyPage(),
-              Inspiration(),
-              Blessings(),
               FavScreen(),
               HealthScreen(),
+              Blessings(),
+              Inspiration(),
             ],
           ),
         ),

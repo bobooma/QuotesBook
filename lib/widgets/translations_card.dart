@@ -15,10 +15,10 @@ class TranslationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       // elevation: 7,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Center(
         child: Container(
-          padding: EdgeInsets.only(top: 20, right: 5, left: 5),
+          padding: const EdgeInsets.only(top: 20, right: 5, left: 5),
           // color: Colors.white,
           height: media.height * .15,
           child: AutoSizeText(
