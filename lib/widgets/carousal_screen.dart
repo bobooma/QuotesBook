@@ -5,9 +5,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:my_quotes/screens/quote.dart';
 
 class Sliders extends StatelessWidget {
-  Sliders({
+  const Sliders({
+    Key? key,
     required this.imgs,
-  });
+  }) : super(key: key);
 
   final AsyncSnapshot imgs;
 
@@ -33,9 +34,12 @@ class Sliders extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => QuoteImage(
-                                imgUrl: imgs.data.docs[i]["imgUrl"],
-                                content: imgs.data.docs[i]["content"],
-                                docId: imgs.data.docs[i].id),
+                              imgUrl: imgs.data.docs[i]["imgUrl"],
+                              content: imgs.data.docs[i]["content"],
+                              docId: imgs.data.docs[i].id,
+                              index: i,
+                              imgs: imgs,
+                            ),
                           ),
                         );
                       },
@@ -47,13 +51,14 @@ class Sliders extends StatelessWidget {
                             // width: width / 3,
                             height: height / 2,
                             decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(
-                                      blurRadius: 3.0, offset: Offset(0.0, 2)),
-                                ],
-                                borderRadius: BorderRadius.circular(15),
-                                image: DecorationImage(
-                                    image: p, fit: BoxFit.fill)),
+                              boxShadow: const [
+                                BoxShadow(
+                                    blurRadius: 3.0, offset: Offset(0.0, 2)),
+                              ],
+                              borderRadius: BorderRadius.circular(15),
+                              image:
+                                  DecorationImage(image: p, fit: BoxFit.fill),
+                            ),
                           );
                         },
                         progressIndicatorBuilder: (context, url, progress) {
@@ -70,13 +75,13 @@ class Sliders extends StatelessWidget {
                     );
                   },
                   options: CarouselOptions(
-                      height: 150,
+                      height: 200,
                       autoPlay: true,
                       viewportFraction: 0.3,
                       // enlargeStrategy: CenterPageEnlargeStrategy.height,
 
                       enlargeCenterPage: true,
-                      autoPlayInterval: Duration(seconds: 2))),
+                      autoPlayInterval: const Duration(seconds: 2))),
             ),
           );
   }

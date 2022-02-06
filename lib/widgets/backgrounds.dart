@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_quotes/widgets/carousal_screen_backgrounds.dart';
 
 class Backgrounds extends StatefulWidget {
-//   fun(String img){
-// return img;
-// }
+  const Backgrounds({Key? key}) : super(key: key);
 
   @override
   State<Backgrounds> createState() => _BackgroundsState();

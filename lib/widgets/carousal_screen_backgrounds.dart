@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class BackgrounSliders extends StatelessWidget {
-  BackgrounSliders({
+  const BackgrounSliders({
+    Key? key,
     required this.imgs,
-  });
+  }) : super(key: key);
 
   final AsyncSnapshot imgs;
 
@@ -67,7 +68,7 @@ class BackgrounSliders extends StatelessWidget {
                       // enlargeStrategy: CenterPageEnlargeStrategy.height,
 
                       enlargeCenterPage: true,
-                      autoPlayInterval: Duration(seconds: 2))),
+                      autoPlayInterval: const Duration(seconds: 2))),
             ),
           );
   }

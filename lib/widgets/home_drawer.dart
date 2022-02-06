@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:multilevel_drawer/multilevel_drawer.dart';
-import 'package:my_quotes/constants.dart';
-import 'package:my_quotes/providers/themes.dart';
+import 'package:my_quotes/services/constants.dart';
+import 'package:my_quotes/services/themes.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,10 +16,7 @@ import 'language_picker_widget.dart';
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer({
     Key? key,
-    required this.shareApp,
   }) : super(key: key);
-
-  final VoidCallback shareApp;
 
   @override
   State<HomeDrawer> createState() => _HomeDrawerState();
@@ -46,12 +44,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
         // itemHeight: media.width * 0.1,
         header: Container(),
         gradient: !Provider.of<ThemeProvider>(context).isDarkMode
-            ? LinearGradient(colors: [
-                kPrimaryColor.shade400,
+            ? const LinearGradient(colors: [
+                kPrimaryColor300,
                 Colors.white,
               ])
-            : LinearGradient(colors: [
-                kPrimaryColor.shade400,
+            : const LinearGradient(colors: [
+                kPrimaryColor300,
                 Colors.black,
               ]),
         children: [
@@ -69,8 +67,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
               ),
           MMLLang(appLoc, media),
           // ! SHARE APP
-          mLMitem(media, "${AppLocalizations.of(context)!.share} ✅",
-              Icons.share, kSecondaryColor, widget.shareApp),
+          mLMitem(
+            media,
+            "${AppLocalizations.of(context)!.shareApp} ✅",
+            Icons.share,
+            kSecondaryColor,
+            () => Share.share(
+                "https://play.google.com/store/apps/details?id=com.DrHamaida.QuotesBook"),
+          ),
 
           mLMitem(
               media,
@@ -107,9 +111,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
       onClick: () {
         // LangPickWidget();
       },
-      content: FittedBox(
-        child: Container(
-          padding: const EdgeInsets.only(left: 10, right: 10),
+      content: Container(
+        padding: const EdgeInsets.only(
+          left: 10,
+        ),
+        child: FittedBox(
           child: Text(
             appLoc!.chooseLanguage,
             style: Theme.of(context)
@@ -119,7 +125,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
           ),
         ),
       ),
-      trailing: const LangPickWidget(),
+      trailing: FittedBox(child: const LangPickWidget()),
 //
 //       ),
     );

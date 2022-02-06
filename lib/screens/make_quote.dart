@@ -19,7 +19,7 @@ class MakeQuote extends StatefulWidget {
   _MakeQuoteState createState() => _MakeQuoteState();
 }
 
-class _MakeQuoteState extends State<MakeQuote> {
+class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
   // Image img = Image.asset('assets/story.png');
 
   File? image;
@@ -30,6 +30,19 @@ class _MakeQuoteState extends State<MakeQuote> {
   File? file;
 
   ScreenshotController screenshotController = ScreenshotController();
+
+  late TransformationController controller;
+
+  late AnimationController animationController;
+
+  Animation<Matrix4>? animation;
+
+  resetZoom() {
+    animation = Matrix4Tween(begin: controller.value, end: Matrix4.identity())
+        .animate(
+            CurvedAnimation(parent: animationController, curve: Curves.ease));
+    animationController.forward(from: 0);
+  }
 
   screenCapture() async {
     await Permission.storage.request();
@@ -211,25 +224,25 @@ class _MakeQuoteState extends State<MakeQuote> {
   @override
   void initState() {
     super.initState();
+
+    controller = TransformationController();
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300))
+      ..addListener(() {
+        controller.value = animation!.value;
+      });
     isOne = false;
   }
 
   late bool isOne;
 
-  // Widget buildNewText(BuildContext context) {
-  //   return Positioned(
-  //     child: InteractiveViewer(
-  //       child: GestureDetector(
-  //         onTap: () => _tapHandler(_text, _textStyle, _textAlign),
-  //         child: Text(
-  //           _text,
-  //           style: _textStyle,
-  //           textAlign: _textAlign,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  @override
+  void dispose() {
+    controller.dispose();
+    animationController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +319,7 @@ class _MakeQuoteState extends State<MakeQuote> {
                         isVisible = !isVisible;
                       });
                     },
-                    icon: const Icon(Icons.share),
+                    icon: const Icon(Icons.text_format),
                   ),
                 ),
                 Expanded(
@@ -323,7 +336,9 @@ class _MakeQuoteState extends State<MakeQuote> {
                 ),
                 Expanded(
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      shareScreen();
+                    },
                     icon: const Icon(Icons.share),
                   ),
                 ),

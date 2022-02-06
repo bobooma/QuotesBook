@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:multilevel_drawer/multilevel_drawer.dart';
-import 'package:my_quotes/constants.dart';
-import 'package:my_quotes/providers/themes.dart';
+import 'package:my_quotes/services/constants.dart';
+import 'package:my_quotes/services/themes.dart';
 import 'package:provider/provider.dart';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -48,12 +48,12 @@ class _MyDrawerState extends State<MyDrawer> {
         // itemHeight: media.width * 0.1,
         header: Container(),
         gradient: !Provider.of<ThemeProvider>(context).isDarkMode
-            ? LinearGradient(colors: [
-                kPrimaryColor.shade200,
+            ? const LinearGradient(colors: [
+                kPrimaryColor300,
                 Colors.white,
               ])
-            : LinearGradient(colors: [
-                kPrimaryColor.shade200,
+            : const LinearGradient(colors: [
+                kPrimaryColor300,
                 Colors.black,
               ]),
         children: [

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +27,8 @@ class QuoteImage extends StatefulWidget {
     required this.imgUrl,
     required this.content,
     required this.docId,
+    required this.index,
+    required this.imgs,
 
     // required this.conclusion,
   }) : super(key: key);
@@ -33,16 +36,31 @@ class QuoteImage extends StatefulWidget {
   final String imgUrl;
   final String content;
   final String docId;
+  final int index;
+  final AsyncSnapshot imgs;
 
   @override
   State<QuoteImage> createState() => _QuoteImageState();
 }
 
-class _QuoteImageState extends State<QuoteImage> {
+class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   Uint8List? captureImg;
   File? file;
 
   ScreenshotController screenshotController = ScreenshotController();
+
+  late TransformationController controller;
+
+  late AnimationController animationController;
+
+  Animation<Matrix4>? animation;
+
+  resetZoom() {
+    animation = Matrix4Tween(begin: controller.value, end: Matrix4.identity())
+        .animate(
+            CurvedAnimation(parent: animationController, curve: Curves.ease));
+    animationController.forward(from: 0);
+  }
 
   _save() async {
     Navigator.of(context).pop();
@@ -143,16 +161,6 @@ class _QuoteImageState extends State<QuoteImage> {
         .get()
         .then((value) => value.docs.isNotEmpty);
 
-    // newId = "${widget.docId}$userId";
-
-    // var fav = await favorite
-    //     .get()
-    //     .then((value) => value.docs.any((element) => element.id == newId));
-
-    //
-    //   return value.id == newId;
-    // });
-
     if (fav == true) {
       setState(() {
         Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
@@ -166,8 +174,6 @@ class _QuoteImageState extends State<QuoteImage> {
           true) {
         favorite.get().then((value) {
           var fo = value.docs.firstWhere((element) {
-            print("*********");
-            print(element["userId"]);
             return element["userId"].toString() == userId &&
                 element["quoteId"] == widget.docId;
           });
@@ -193,21 +199,30 @@ class _QuoteImageState extends State<QuoteImage> {
     } on Exception catch (e) {
       print(e);
     }
-
-    // Provider.of<QuoteModelProvider>(context, listen: false).toggleFav();
-
-    // .add({"quoteId": widget.docId, "userId": useId});
-
-    // FirebaseFirestore.instance
-    //     .collection("favorite")
-    //     .where("quoteId", isEqualTo: widget.docId);
   }
+
+  PageController? pgcontroller;
 
   @override
   void initState() {
     getId();
 
+    controller = TransformationController();
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300))
+      ..addListener(() {
+        controller.value = animation!.value;
+      });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    animationController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -231,8 +246,8 @@ class _QuoteImageState extends State<QuoteImage> {
             Navigator.of(context).pop();
           },
           icon: lang == "ar" || lang == "fa" || lang == "ur"
-              ? Icon(Icons.arrow_back_ios_rounded)
-              : Icon(Icons.arrow_back_ios_new),
+              ? const Icon(Icons.arrow_back_ios_rounded)
+              : const Icon(Icons.arrow_back_ios_new),
         ),
         toolbarHeight: media.height * 0.05,
       ),
@@ -244,17 +259,38 @@ class _QuoteImageState extends State<QuoteImage> {
                 //   height: 20,
                 // ),
                 Expanded(
-                  child: Image(
-                    image: NetworkImage(
-                      widget.imgUrl,
-                    ),
-                    // height: media.height * 0.9,
-                    width: double.infinity,
-                    //  MediaQuery.of(context).size.height * 1.4,
-                    fit: BoxFit.fitWidth,
+                  child: PageView.builder(
+                    controller: pgcontroller,
+                    // allowImplicitScrolling: true,
+                    itemCount: widget.imgs.data.docs.length,
+                    itemBuilder: (context, i) {
+                      int newLength =
+                          widget.imgs.data.docs.length - widget.index;
+                      int length = widget.imgs.data.docs.length;
+
+                      return InteractiveViewer(
+                        transformationController: controller,
+                        maxScale: 7,
+                        onInteractionEnd: (details) => resetZoom(),
+                        child: CachedNetworkImage(
+                            imageUrl: widget.imgs.data.docs[
+                                (i + widget.index) > length - 1
+                                    ? i - newLength
+                                    : i + widget.index]["imgUrl"],
+                            imageBuilder: (_, p) {
+                              return Image(
+                                image: p,
+                                // height: media.height * 0.9,
+                                width: double.infinity,
+                                //  MediaQuery.of(context).size.height * 1.4,
+                                fit: BoxFit.fitWidth,
+                              );
+                            }),
+                      );
+                    },
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: media.height * 0.05,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -278,7 +314,7 @@ class _QuoteImageState extends State<QuoteImage> {
                       ),
                       IconButton(
                         onPressed: () {},
-                        icon: Icon(Icons.share),
+                        icon: const Icon(Icons.share),
                       )
                     ],
                   ),
@@ -286,11 +322,6 @@ class _QuoteImageState extends State<QuoteImage> {
                 Container(
                   height: 50,
                 )
-                // SocialMedia(
-                //   content: widget.content,
-                //   height: media.height * 0.1,
-                //   img: widget.imgUrl,
-                // ),
               ],
             )
           : Screenshot(
@@ -307,15 +338,30 @@ class _QuoteImageState extends State<QuoteImage> {
                     },
                   ),
                   Expanded(
-                    child: Image(
-                      image: NetworkImage(
-                        widget.imgUrl,
-                      ),
-                      width: double.infinity,
-                      fit: BoxFit.fill,
+                    child: PageView.builder(
+                      itemCount: widget.imgs.data.docs.length,
+                      itemBuilder: (context, i) {
+                        return InteractiveViewer(
+                          transformationController: controller,
+                          maxScale: 7,
+                          onInteractionEnd: (details) => resetZoom(),
+                          child: CachedNetworkImage(
+                              imageUrl: widget.imgs.data.docs[widget.index + i]
+                                  ["imgUrl"],
+                              imageBuilder: (_, p) {
+                                return Image(
+                                  image: p,
+                                  // height: media.height * 0.9,
+                                  width: double.infinity,
+                                  //  MediaQuery.of(context).size.height * 1.4,
+                                  fit: BoxFit.fill,
+                                );
+                              }),
+                        );
+                      },
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: media.height * 0.05,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -339,7 +385,7 @@ class _QuoteImageState extends State<QuoteImage> {
                         ),
                         IconButton(
                           onPressed: () {},
-                          icon: Icon(Icons.share),
+                          icon: const Icon(Icons.share),
                         )
                       ],
                     ),

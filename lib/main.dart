@@ -3,9 +3,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/providers/quote_model_provider.dart';
-import 'package:my_quotes/providers/themes.dart';
+import 'package:my_quotes/services/themes.dart';
 
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,7 @@ Future<void> bgHandler(RemoteMessage message) async {}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
 
   await Firebase.initializeApp();
 
@@ -46,9 +48,6 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (context) => QuoteModelProvider(),
           ),
-          // ChangeNotifierProvider(
-          //   create: (context) => QuoteModelProvider(),
-          // ),
         ],
         builder: (context, child) {
           final provider = Provider.of<LocaleProvider>(context);

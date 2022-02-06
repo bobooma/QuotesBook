@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants.dart';
+import 'constants.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode themeMode = ThemeMode.light;
@@ -18,10 +18,11 @@ ThemeData lightThemeData(BuildContext context) {
       textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
               primary: kContentColorLightTheme,
-              textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
-      cardColor: kPrimaryColor[100],
-      primaryColor: Color.fromARGB(225, 85, 37, 168),
-      scaffoldBackgroundColor: kPrimaryColor[300],
+              textStyle:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
+      cardColor: kPrimaryColor100,
+      primaryColor: kPrimaryColor,
+      scaffoldBackgroundColor: kPrimaryColor300,
       appBarTheme: appBarTheme,
       iconTheme: const IconThemeData(color: kContentColorLightTheme),
       textTheme: GoogleFonts.ralewayTextTheme(Theme.of(context).textTheme)
@@ -32,7 +33,7 @@ ThemeData lightThemeData(BuildContext context) {
         error: kErrorColor,
       ),
       bottomSheetTheme:
-          BottomSheetThemeData(backgroundColor: kPrimaryColor[300]),
+          const BottomSheetThemeData(backgroundColor: kPrimaryColor300),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(primary: kPrimaryColor)));
   return copyWith;
@@ -40,18 +41,20 @@ ThemeData lightThemeData(BuildContext context) {
 
 ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
+    scaffoldBackgroundColor: kPrimaryColor.withOpacity(0.3),
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
             primary: kContentColorDarkTheme,
-            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
-    cardColor: kPrimaryColor,
-    primaryColor: kPrimaryColor[100],
+            textStyle:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
+    cardColor: kPrimaryColor..withOpacity(0.1),
+    primaryColor: kPrimaryColor,
     appBarTheme: appBarTheme,
     iconTheme: const IconThemeData(color: kContentColorDarkTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)
         .apply(bodyColor: kContentColorDarkTheme),
     colorScheme: const ColorScheme.dark().copyWith(
-      primary: Color.fromARGB(225, 85, 37, 168),
+      primary: kPrimaryColor,
       secondary: kSecondaryColor,
       error: kErrorColor,
     ),
@@ -60,7 +63,9 @@ ThemeData darkThemeData(BuildContext context) {
   );
 }
 
-const appBarTheme = AppBarTheme(
+AppBarTheme appBarTheme = const AppBarTheme(
+  color: kPrimaryColor,
+  // .withOpacity(0.3).withAlpha(10),
   centerTitle: false,
   elevation: 0,
 );

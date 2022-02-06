@@ -1,30 +1,25 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
-import 'package:my_quotes/providers/utils.dart';
+
 import 'package:my_quotes/screens/fav_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:my_quotes/screens/quote.dart';
-import 'package:my_quotes/services/local_notification_service.dart';
+import 'package:my_quotes/services/constants.dart';
 
-import 'package:my_quotes/widgets/carousal_screen.dart';
 import 'package:my_quotes/widgets/change_theme.dart';
 import 'package:my_quotes/widgets/home_drawer.dart';
 import 'package:my_quotes/widgets/speed_dial.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
-import '../widgets/my_card.dart';
+import '../providers/utils.dart';
+import '../services/themes.dart';
 import 'blessings.dart';
 import 'funny_pg.dart';
 import 'health.dart';
+import 'home_page.dart';
 import 'inspiration.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -82,6 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final lang = AppLocalizations.of(context)!;
     final lang2 = Provider.of<LocaleProvider>(context).locale.languageCode;
+    final theme = Theme.of(context).textTheme.headline6;
+
+    bool thememode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return DefaultTabController(
       length: 6,
@@ -95,44 +94,63 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         },
         child: Scaffold(
-          drawer: HomeDrawer(shareApp: () => Share.share("")),
+          drawer: const HomeDrawer(),
           appBar: AppBar(
+            titleSpacing: 0,
+            flexibleSpace: !thememode
+                ? Container(
+                    decoration: BoxDecoration(
+                        // borderRadius: BorderRadius.circular(15),
+                        gradient: LinearGradient(colors: [
+                      Colors.white60,
+                      kPrimaryColor.withBlue(255)
+                    ])),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                        // borderRadius: BorderRadius.circular(15),
+                        gradient: LinearGradient(
+                      colors: [Colors.black54, kPrimaryColor.withRed(255)],
+                    )),
+                  ),
             bottom: TabBar(isScrollable: true, tabs: [
-              const Tab(
-                icon: Icon(Icons.home),
+              Tab(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).iconTheme.color,
+                ),
               ),
               Tab(
-                child: Text(
-                  lang.funny,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                child: Text(lang.funny, style: theme
+                    //  const TextStyle(fontWeight: FontWeight.bold),
+                    ),
               ),
               Tab(
                 // icon: Icon(Icons.fu),
                 child: Text(
                   lang.favorites,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: theme,
                 ),
               ),
               Tab(
                 // icon: Icon(Icons.fu),
                 child: Text(
                   lang.health,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Tab(
-                // icon: Icon(Icons.fu),
-                child: Text(
-                  lang.blessings,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: theme,
                 ),
               ),
               Tab(
                 // icon: Icon(Icons.fu),
                 child: Text(
                   lang.inspiring,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: theme,
+                ),
+              ),
+              Tab(
+                // icon: Icon(Icons.fu),
+                child: Text(
+                  lang.blessings,
+                  style: theme,
                 ),
               ),
             ]),
@@ -146,15 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   width: media.width * .35,
-                  child: FittedBox(
-                    child: Text(
-                      'QuotesBook',
-                      style: Theme.of(context).textTheme.headline5!.copyWith(
-                            fontFamily: "Lobster",
-                            fontSize: media.width * .025,
-                          ),
-                    ),
-                  ),
+                  child: CustomHeader(thememode: thememode, media: media),
                 ),
                 const SizedBox(
                   width: 5,
@@ -163,9 +173,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text(
                     AppLocalizations.of(context)!.newQuote,
                     style: Theme.of(context).textTheme.headline5!.copyWith(
-                          fontFamily: "RobotoCondensed",
-                          fontSize: media.width * .029,
-                        ),
+                        fontFamily: "RobotoCondensed",
+                        fontSize: media.width * .032,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -190,10 +200,10 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               HomePage(quotes: quotes, media: media),
               FunnyPage(),
-              FavScreen(),
+              const FavScreen(),
               HealthScreen(),
-              Blessings(),
               Inspiration(),
+              Blessings(),
             ],
           ),
         ),
@@ -202,151 +212,48 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({
+class CustomHeader extends StatelessWidget {
+  const CustomHeader({
     Key? key,
-    required this.quotes,
+    required this.thememode,
     required this.media,
   }) : super(key: key);
 
-  final Stream<QuerySnapshot<Map<String, dynamic>>> quotes;
+  final bool thememode;
   final Size media;
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  Locale? locale;
-
-  @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: StreamBuilder(
-        stream: widget.quotes,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasError) {
-            return const Text('error .....');
-          }
-          if (!snapshot.hasData ||
-              snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return Column(
-            children: [
-              SizedBox(
-                height: media.height * 0.65,
-                child: ListView.builder(
-                    itemCount: snapshot.data.docs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      // final doc = snapshot.data.doc[index];
-                      String content = snapshot.data.docs[index]["content"];
-                      String quoteId = snapshot.data.docs[index].id;
-
-                      // return Slidable(
-                      //   key: UniqueKey(),
-                      //   endActionPane: ActionPane(
-                      //     dismissible: DismissiblePane(
-                      //       onDismissed: ()
-                      //           // async
-                      //           {},
-                      //     ),
-                      //     motion: const DrawerMotion(),
-                      //     extentRatio: 0.25,
-                      //     children: [
-                      //       SlidableAction(
-                      //         label: 'Download',
-                      //         backgroundColor: Colors.amber,
-                      //         icon: Icons.download,
-                      //         onPressed: (context) {
-                      //           Utils.save(snapshot.data.docs[index]["imgUrl"],
-                      //               context);
-                      //         },
-                      //       ),
-
-// !  Admin
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                      return Slidable(
-                        key: UniqueKey(),
-                        endActionPane: ActionPane(
-                          dismissible: DismissiblePane(
-                            onDismissed: () async {
-                              await FirebaseFirestore.instance.runTransaction(
-                                  (Transaction myTransaction) async {
-                                myTransaction.delete(
-                                    snapshot.data.docs[index].reference);
-                              });
-                              await FirebaseStorage.instance
-                                  .refFromURL(
-                                      snapshot.data.docs[index]["imgUrl"])
-                                  .delete();
-                              // Remove this Slidable from the widget tree.
-                            },
-                          ),
-                          motion: const DrawerMotion(),
-                          extentRatio: 0.25,
-                          children: [
-                            SlidableAction(
-                              label: 'Delete',
-                              backgroundColor: Colors.red,
-                              icon: Icons.delete,
-                              onPressed: (context) {},
-                            ),
-                            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                          ],
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => QuoteImage(
-                                  content: content,
-                                  imgUrl: snapshot.data.docs[index]["imgUrl"],
-                                  docId: quoteId,
-                                ),
-                              ),
-                            );
-                          },
-                          child: SizedBox(
-                            width: widget.media.width,
-                            height: widget.media.height * 0.2,
-                            child: Stack(children: [
-                              Positioned(child: MyCard(details: content)),
-                              Positioned(
-                                top: 5,
-                                child: Container(
-                                  height: widget.media.height * 0.2,
-                                  width: widget.media.height * 0.2,
-                                  decoration: BoxDecoration(
-                                    boxShadow: const [BoxShadow(blurRadius: 2)],
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                          snapshot.data.docs[index]["imgUrl"]),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ]),
-                          ),
-                        ),
-                      );
-                    }),
+    return !thememode
+        ? Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: const LinearGradient(colors: [
+                  Colors.white70,
+                  kPrimaryColor,
+                ])),
+            child: FittedBox(
+              child: Text(
+                'QuotesBook',
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontFamily: "Lobster",
+                      fontSize: media.width * .04,
+                    ),
               ),
-              Sliders(imgs: snapshot),
-              Container(
-                height: 50,
-              )
-            ],
-          );
-        },
-      ),
-    );
+            ))
+        : Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                    colors: [Colors.black45, kPrimaryColor.withRed(255)])),
+            child: FittedBox(
+              child: Text(
+                'QuotesBook',
+                style: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontFamily: "Lobster",
+                      fontSize: media.width * .04,
+                    ),
+              ),
+            ));
   }
 }

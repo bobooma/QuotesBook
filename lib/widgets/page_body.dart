@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -69,6 +70,8 @@ class PageBody extends StatelessWidget {
                             content: content,
                             imgUrl: snapshot.data.docs[index]["imgUrl"],
                             docId: quoteId,
+                            index: index,
+                            imgs: snapshot,
                           ),
                         ),
                       );
@@ -80,19 +83,22 @@ class PageBody extends StatelessWidget {
                         Positioned(child: MyCard(details: content)),
                         Positioned(
                           top: 5,
-                          child: Container(
-                            height: media.height * 0.2,
-                            width: media.height * 0.2,
-                            decoration: BoxDecoration(
-                              boxShadow: const [BoxShadow(blurRadius: 2)],
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    snapshot.data.docs[index]["imgUrl"]),
-                              ),
-                            ),
-                          ),
+                          child: CachedNetworkImage(
+                              imageUrl: snapshot.data.docs[index]["imgUrl"],
+                              imageBuilder: (_, p) {
+                                return Container(
+                                  height: media.height * 0.2,
+                                  width: media.height * 0.2,
+                                  decoration: BoxDecoration(
+                                    boxShadow: const [BoxShadow(blurRadius: 2)],
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: p,
+                                    ),
+                                  ),
+                                );
+                              }),
                         ),
                       ]),
                     ),

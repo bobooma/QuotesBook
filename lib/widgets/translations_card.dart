@@ -14,8 +14,6 @@ class TranslationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      // elevation: 7,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Center(
         child: Container(
           padding: const EdgeInsets.only(top: 20, right: 5, left: 5),

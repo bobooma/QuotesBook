@@ -14,9 +14,9 @@ class LangPickWidget extends StatelessWidget {
 
     return DropdownButtonHideUnderline(
       child: DropdownButton(
-        icon: Icon(
+        icon: const Icon(
           Icons.language,
-          size: media.width * .07,
+          // size: media.width * .05,
         ),
         value: locale,
         items: L10n.all.map((locale) {
@@ -27,12 +27,9 @@ class LangPickWidget extends StatelessWidget {
               child: Text(
                 lang,
                 style: Theme.of(context).textTheme.headline5!.copyWith(
-                      fontSize: media.width * 0.03,
+                      fontSize: media.width * 0.045,
                       // fontWeight: FontWeight.bold,
                     ),
-
-                //  TextStyle(
-                //     color: Colors.black, fontSize: media.width * 0.03),
               ),
             ),
             value: locale,
@@ -45,7 +42,7 @@ class LangPickWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         style: const TextStyle(fontWeight: FontWeight.bold),
         focusColor: Colors.pink,
-        underline: Divider(),
+        underline: const Divider(),
       ),
     );
   }

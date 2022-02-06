@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_quotes/providers/themes.dart';
+import 'package:my_quotes/services/themes.dart';
 import 'package:provider/provider.dart';
 
 class ChangeTheme extends StatelessWidget {
