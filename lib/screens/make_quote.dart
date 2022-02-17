@@ -20,8 +20,6 @@ class MakeQuote extends StatefulWidget {
 }
 
 class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
-  // Image img = Image.asset('assets/story.png');
-
   File? image;
 
   Image? img;
@@ -61,7 +59,7 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
 
   Future<void> shareScreen() async {
     //  final path = await screenCapture();
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
     if (captureImg == null) {
       await screenCapture();
     }
@@ -92,48 +90,49 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
   }
 
   final fonts = [
-    'Lobster',
-    'Rubik',
+    'BackOutWeb',
+    'Big Shout Bob',
     'RubikMonoOne',
     'RobotoCondensed',
     'Raleway',
-    'JetBrainsMono',
-    'OpenSans',
+    'Bubblegum',
     'Billabong',
-    'GrandHotel',
-    'Oswald',
-    'Quicksand',
+    'Canterbury',
+    'eraser-shade',
     'BeautifulPeople',
-    'BeautyMountains',
-    'BiteChocolate',
-    'BlackberryJam',
-    'BunchBlossoms',
-    'CinderelaRegular',
-    'Countryside',
     'Halimun',
-    'LemonJelly',
+    'Horizon',
+    'Limelight',
+    'Pokemon Hollow',
+    'SBBTRIAL',
     'QuiteMagicalRegular',
-    'Tomatoes',
-    'TropicalAsianDemoRegular',
-    'VeganStyle',
+    'Sketch 3D',
+    'Stella Demo',
+    'Prumo Slab W00 SemiBold',
+    'Splatch',
   ];
-  TextStyle _textStyle = const TextStyle(
+  TextStyle textStyle1 = const TextStyle(
     fontSize: 50,
     color: Colors.white,
     fontFamily: 'Billabong',
   );
-  TextStyle _textStyle2 = const TextStyle(
-    fontSize: 50,
-    color: Colors.white,
-    fontFamily: 'Billabong',
-  );
-  String _text = 'Sample Text';
-  String _text2 = 'Sample Text';
+
+  TextStyle textStyle2 = const TextStyle();
+  TextStyle textStyle3 = const TextStyle();
+  String text1 = 'Sample Text';
+  String text2 = 'Sample Text';
+  String text3 = 'Sample Text';
+  // String _text2 = 'Sample Text';
   TextAlign _textAlign = TextAlign.center;
 
   bool isVisible = false;
+  bool isVisible2 = false;
 
-  void _tapHandler(text, textStyle, textAlign) {
+  void _tapHandler(
+    text,
+    textStyle,
+    textAlign,
+  ) {
     try {
       showGeneralDialog(
         context: context,
@@ -149,22 +148,20 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
               backgroundColor: Colors.transparent,
               body: SafeArea(
                 // top: false,
-                child: Container(
-                  child: TextEditor(
-                    fonts: fonts,
-                    text: text,
-                    textStyle: textStyle,
-                    textAlingment: textAlign,
-                    minFontSize: 10,
-                    onEditCompleted: (style, align, text) {
-                      setState(() {
-                        _text = text;
-                        _textStyle = style;
-                        _textAlign = align;
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
+                child: TextEditor(
+                  fonts: fonts,
+                  text: text,
+                  textStyle: textStyle,
+                  textAlingment: textAlign,
+                  minFontSize: 10,
+                  onEditCompleted: (style, align, text) {
+                    setState(() {
+                      text1 = text;
+                      textStyle1 = style;
+                      _textAlign = align;
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ),
@@ -193,22 +190,62 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
               backgroundColor: Colors.transparent,
               body: SafeArea(
                 // top: false,
-                child: Container(
-                  child: TextEditor(
-                    fonts: fonts,
-                    text: text,
-                    textStyle: textStyle,
-                    textAlingment: textAlign,
-                    minFontSize: 10,
-                    onEditCompleted: (style, align, text) {
-                      setState(() {
-                        _text2 = text;
-                        _textStyle2 = style;
-                        _textAlign = align;
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
+                child: TextEditor(
+                  fonts: fonts,
+                  text: text,
+                  textStyle: textStyle,
+                  textAlingment: textAlign,
+                  minFontSize: 10,
+                  onEditCompleted: (style, align, text) {
+                    setState(() {
+                      text2 = text;
+                      textStyle2 = style;
+                      _textAlign = align;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    } on Exception catch (e) {
+      print(e);
+      // TODO
+    }
+  }
+
+  void _tapHandler3(text, textStyle, textAlign) {
+    try {
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        transitionDuration: const Duration(
+          milliseconds: 400,
+        ), // how long it takes to popup dialog after button click
+        pageBuilder: (_, __, ___) {
+          // your widget implementation
+          return Container(
+            color: Colors.black.withOpacity(0.4),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SafeArea(
+                // top: false,
+                child: TextEditor(
+                  fonts: fonts,
+                  text: text,
+                  textStyle: textStyle,
+                  textAlingment: textAlign,
+                  minFontSize: 10,
+                  onEditCompleted: (style, align, text) {
+                    setState(() {
+                      text3 = text;
+                      textStyle3 = style;
+                      _textAlign = align;
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
               ),
             ),
@@ -244,6 +281,10 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  toggleVisibility() {
+    isVisible = !isVisible;
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context)!;
@@ -255,36 +296,6 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 35,
-              child: TextButton.icon(
-                onPressed: () async {
-                  try {
-                    final data = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => Backgrounds(),
-                          ),
-                        ) ??
-                        "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/backgrounds%2Fpexels-alex-andrews-816608.jpg?alt=media&token=48b567af-cbe2-4fcf-8729-3955a3263211";
-                    setState(() {
-                      img = Image.network(data);
-                    });
-                  } on Exception catch (e) {
-                    return;
-                  }
-                },
-                icon: const Icon(
-                  Icons.search_off_rounded,
-                  // color: Colors.black,
-                ),
-                label: Text(
-                  lang.backgrounds,
-                  // style: TextStyle(
-                  //     color: Colors.black, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -293,6 +304,27 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
                     onPressed: () {
                       try {
                         pickImg(ImageSource.gallery);
+                      } on Exception catch (e) {
+                        return;
+                      }
+                    },
+                    icon: const Icon(Icons.image_search),
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: () async {
+                      try {
+                        final data = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const Backgrounds(),
+                              ),
+                            ) ??
+                            "https://firebasestorage.googleapis.com/v0/b/quotesbook-1ae2f.appspot.com/o/backgrounds%2Fpexels-alex-andrews-816608.jpg?alt=media&token=48b567af-cbe2-4fcf-8729-3955a3263211";
+                        setState(() {
+                          img = Image.network(data);
+                        });
                       } on Exception catch (e) {
                         return;
                       }
@@ -314,30 +346,44 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
                 ),
                 Expanded(
                   child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isVisible = !isVisible;
-                      });
-                    },
+                    onPressed: isVisible
+                        ? () {
+                            setState(() {
+                              isVisible2 = true;
+                            });
+                          }
+                        : () {
+                            setState(() {
+                              isVisible = true;
+                              () {};
+                            });
+                          },
                     icon: const Icon(Icons.text_format),
+                  ),
+                ),
+                Expanded(
+                  child: Tooltip(
+                    message: "Image is saved",
+                    child: IconButton(
+                      onPressed: () {
+                        try {
+                          screenCapture();
+                        } on Exception catch (e) {
+                          return;
+                        }
+                      },
+                      icon: const Icon(Icons.download),
+                    ),
                   ),
                 ),
                 Expanded(
                   child: IconButton(
                     onPressed: () {
                       try {
-                        screenCapture();
+                        shareScreen();
                       } on Exception catch (e) {
                         return;
                       }
-                    },
-                    icon: const Icon(Icons.download),
-                  ),
-                ),
-                Expanded(
-                  child: IconButton(
-                    onPressed: () {
-                      shareScreen();
                     },
                     icon: const Icon(Icons.share),
                   ),
@@ -352,48 +398,66 @@ class _MakeQuoteState extends State<MakeQuote> with TickerProviderStateMixin {
                   color: Colors.black,
                   child: Center(
                     child: Stack(
+                      overflow: Overflow.visible,
                       fit: StackFit.expand,
                       alignment: Alignment.center,
                       children: [
                         Positioned(
-                          width: MediaQuery.of(context).size.width,
-                          child: InteractiveViewer(
-                            child: img ??
-                                Image.asset(
-                                  'assets/quote-icon-png-7.jpg',
-                                  // fit: BoxFit.fill,
-                                ),
+                          child: img ??
+                              Image.asset('assets/splash.png',
+                                  // width: 50,
+                                  fit: BoxFit.fill),
+                        ),
+                        InteractiveViewer(
+                          boundaryMargin: EdgeInsets.all(double.infinity),
+                          clipBehavior: Clip.antiAlias,
+                          child: GestureDetector(
+                            onTap: () => _tapHandler(
+                              text1,
+                              textStyle1,
+                              _textAlign,
+                            ),
+                            child: Text(
+                              text1,
+                              style: textStyle1,
+                              textAlign: _textAlign,
+                            ),
                           ),
                         ),
-                        Positioned(
-                          // height: MediaQuery.of(context).size.height,
-                          top: 100,
-                          // bottom: 50,
+                        Visibility(
+                          visible: isVisible,
                           child: InteractiveViewer(
-                            clipBehavior: Clip.hardEdge,
+                            boundaryMargin: EdgeInsets.all(double.infinity),
+                            clipBehavior: Clip.antiAlias,
                             child: GestureDetector(
-                              onTap: () =>
-                                  _tapHandler(_text, _textStyle, _textAlign),
+                              onTap: () => _tapHandler2(
+                                text2,
+                                textStyle2,
+                                _textAlign,
+                              ),
                               child: Text(
-                                _text,
-                                style: _textStyle,
+                                text2,
+                                style: textStyle2,
                                 textAlign: _textAlign,
                               ),
                             ),
                           ),
                         ),
                         Visibility(
-                          visible: isVisible,
-                          child: Positioned(
-                            child: InteractiveViewer(
-                              child: GestureDetector(
-                                onTap: () => _tapHandler2(
-                                    _text2, _textStyle, _textAlign),
-                                child: Text(
-                                  _text2,
-                                  style: _textStyle2,
-                                  textAlign: _textAlign,
-                                ),
+                          visible: isVisible2,
+                          child: InteractiveViewer(
+                            boundaryMargin: EdgeInsets.all(double.infinity),
+                            clipBehavior: Clip.antiAlias,
+                            child: GestureDetector(
+                              onTap: () => _tapHandler3(
+                                text3,
+                                textStyle3,
+                                _textAlign,
+                              ),
+                              child: Text(
+                                text3,
+                                style: textStyle3,
+                                textAlign: _textAlign,
                               ),
                             ),
                           ),

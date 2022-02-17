@@ -6,12 +6,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:http/http.dart';
 
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/providers/quote_model_provider.dart';
+import 'package:my_quotes/providers/utils.dart';
 import 'package:my_quotes/widgets/my_drawer.dart';
 import 'package:my_quotes/widgets/translations_card.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,6 +22,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../services/ad_helper.dart';
 
 class QuoteImage extends StatefulWidget {
   QuoteImage({
@@ -35,7 +39,7 @@ class QuoteImage extends StatefulWidget {
 
   final String imgUrl;
   final String content;
-  final String docId;
+  String docId;
   final int index;
   final AsyncSnapshot imgs;
 
@@ -44,6 +48,28 @@ class QuoteImage extends StatefulWidget {
 }
 
 class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
+  late BannerAd homeBanner;
+
+  bool isHomeLoaded = false;
+  void createHomeBanner() {
+    homeBanner = BannerAd(
+        size: AdSize.banner,
+        adUnitId: AdState.bannerhome,
+        listener: BannerAdListener(
+          onAdLoaded: (_) {
+            setState(() {
+              isHomeLoaded = true;
+            });
+          },
+          onAdFailedToLoad: (ad, error) {
+            ad.dispose();
+          },
+        ),
+        request: const AdRequest());
+
+    homeBanner.load();
+  }
+
   Uint8List? captureImg;
   File? file;
 
@@ -128,32 +154,22 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     print(widget.content);
   }
 
-  // IconData favIcon = Icons.favorite_border_outlined;
-
-  // bool isFav = false;
-
-  // toggleFav() {
-  //   setState(() {
-  //     isFav = !isFav;
-  //     // favIcon = favIcon == Icons.favorite
-  //     //     ? Icons.favorite_border_outlined
-  //     //     : Icons.favorite;
-  //   });
-
-  // }
-
   UserCredential? userCredential;
   String? userId;
 
   CollectionReference favorite =
       FirebaseFirestore.instance.collection("favorite");
 
-  String newId = "";
+  // String newId = "";
 
   getId() async {
     userCredential = await FirebaseAuth.instance.signInAnonymously();
 
     userId = userCredential!.user!.uid;
+
+    print("##########################");
+    print("userId***$userId");
+    print("*****************************");
 
     var fav = await favorite
         .where("userId", isEqualTo: userId)
@@ -164,18 +180,45 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     if (fav == true) {
       setState(() {
         Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
+        print("*****************************");
+        print("getId****${widget.docId}");
+        print("*****************************");
       });
     }
   }
 
-  Future addRemoveUser() async {
+  isFavFun(String newDocId) async {
+    var fav = await favorite
+        .where("userId", isEqualTo: userId)
+        .where("quoteId", isEqualTo: newDocId)
+        .get()
+        .then((value) => value.docs.isNotEmpty);
+
+    if (fav == true) {
+      setState(() {
+        Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
+        print("*****************************");
+        print("newId****$newDocId");
+        print("*****************************");
+      });
+    } else {
+      setState(() {
+        Provider.of<QuoteModelProvider>(context, listen: false).isFavFalse();
+        print("Nooooooooooooooooooooooo");
+        print("newId****$newDocId");
+        print("*****************************");
+      });
+    }
+  }
+
+  Future addRemoveUser(String img, String id, String content) async {
     try {
       if (Provider.of<QuoteModelProvider>(context, listen: false).isFav ==
           true) {
         favorite.get().then((value) {
           var fo = value.docs.firstWhere((element) {
             return element["userId"].toString() == userId &&
-                element["quoteId"] == widget.docId;
+                element["quoteId"] == id;
           });
           fo.reference.delete();
         });
@@ -184,13 +227,16 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
         setState(() {
           Provider.of<QuoteModelProvider>(context, listen: false).isFavFalse();
         });
+        print("*********");
+        print("addRemove****${widget.docId}");
+        print("###################");
       } else {
         await favorite.doc().set({
-          "imgUrl": widget.imgUrl,
-          "content": widget.content,
+          "imgUrl": img,
+          "content": content,
           "userId": userId,
           "time": Timestamp.now(),
-          "quoteId": widget.docId
+          "quoteId": id
         });
         setState(() {
           Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
@@ -213,6 +259,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
       ..addListener(() {
         controller.value = animation!.value;
       });
+    createHomeBanner();
 
     super.initState();
   }
@@ -221,17 +268,28 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   void dispose() {
     controller.dispose();
     animationController.dispose();
+    homeBanner.dispose();
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // isFavFun();
     final media = MediaQuery.of(context).size;
     final content = Provider.of<LocaleProvider>(context)
         .langeSwitch(widget.content, context);
     final lang = Provider.of<LocaleProvider>(context).locale.languageCode;
     return Scaffold(
+      bottomNavigationBar: isHomeLoaded
+          ? SizedBox(
+              height: homeBanner.size.height.toDouble(),
+              width: homeBanner.size.width.toDouble(),
+              child: AdWidget(ad: homeBanner),
+            )
+          : null,
+
+      backgroundColor: Colors.black,
       endDrawer: MyDrawer(
         imgUrl: widget.imgUrl,
         screenShare:
@@ -268,133 +326,187 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
                           widget.imgs.data.docs.length - widget.index;
                       int length = widget.imgs.data.docs.length;
 
-                      return InteractiveViewer(
-                        transformationController: controller,
-                        maxScale: 7,
-                        onInteractionEnd: (details) => resetZoom(),
-                        child: CachedNetworkImage(
-                            imageUrl: widget.imgs.data.docs[
-                                (i + widget.index) > length - 1
-                                    ? i - newLength
-                                    : i + widget.index]["imgUrl"],
-                            imageBuilder: (_, p) {
-                              return Image(
-                                image: p,
-                                // height: media.height * 0.9,
-                                width: double.infinity,
-                                //  MediaQuery.of(context).size.height * 1.4,
-                                fit: BoxFit.fitWidth,
-                              );
-                            }),
+                      final doc = widget.imgs.data.docs[
+                          (i + widget.index) > length - 1
+                              ? i - newLength
+                              : i + widget.index];
+
+                      isFavFun(doc.id);
+
+                      return Column(
+                        children: [
+                          Expanded(
+                            child: InteractiveViewer(
+                              transformationController: controller,
+                              maxScale: 7,
+                              onInteractionEnd: (details) => resetZoom(),
+                              child: CachedNetworkImage(
+                                  imageUrl: doc["imgUrl"],
+                                  imageBuilder: (_, p) {
+                                    return Image(
+                                      image: p,
+                                      // height: media.height * 0.9,
+                                      width: double.infinity,
+                                      //  MediaQuery.of(context).size.height * 1.4,
+                                      fit: BoxFit.fitWidth,
+                                    );
+                                  }),
+                            ),
+                          ),
+                          // Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: SizedBox(
+                              height: media.height * 0.05,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        widget.docId = doc.id;
+
+                                        addRemoveUser(
+                                          doc["imgUrl"],
+                                          doc.id,
+                                          doc["content"],
+                                        );
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Provider.of<QuoteModelProvider>(context,
+                                                      listen: false)
+                                                  .isFav ==
+                                              true
+                                          ? Icons.favorite
+                                          : Icons.favorite_border_outlined,
+                                      color: Colors.pink,
+                                      size: 30,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Utils.shareFile(context, doc["imgUrl"],
+                                          doc["content"]);
+                                    },
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
                 ),
-                SizedBox(
-                  height: media.height * 0.05,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            addRemoveUser();
-                          });
-                        },
-                        icon: Icon(
-                          Provider.of<QuoteModelProvider>(context,
-                                          listen: false)
-                                      .isFav ==
-                                  true
-                              ? Icons.favorite
-                              : Icons.favorite_border_outlined,
-                          color: Colors.pink,
-                          size: 30,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.share),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 50,
-                )
+                // Container(
+                //   height: 50,
+                // )
               ],
             )
-          : Screenshot(
-              controller: screenshotController,
-              child: Column(
-                children: [
-                  FutureBuilder(
-                    future: content,
-                    builder: (context, AsyncSnapshot<String> snapshot) {
-                      return TranslationCard(
-                        media: media,
-                        data: snapshot.data ?? "",
+          : Column(
+              children: [
+                Expanded(
+                  child: PageView.builder(
+                    itemCount: widget.imgs.data.docs.length,
+                    itemBuilder: (context, i) {
+                      int newLength =
+                          widget.imgs.data.docs.length - widget.index;
+                      int length = widget.imgs.data.docs.length;
+                      final doc = widget.imgs.data.docs[
+                          (i + widget.index) > length - 1
+                              ? i - newLength
+                              : i + widget.index];
+
+                      final content2 = Provider.of<LocaleProvider>(context)
+                          .langeSwitch(doc["content"], context);
+
+                      return Column(
+                        children: [
+                          Screenshot(
+                            controller: screenshotController,
+                            child: Column(
+                              children: [
+                                FutureBuilder(
+                                  future: content2,
+                                  builder: (context,
+                                      AsyncSnapshot<String> snapshot) {
+                                    return TranslationCard(
+                                      media: media,
+                                      data: snapshot.data ?? "",
+                                    );
+                                  },
+                                ),
+                                Expanded(
+                                  child: InteractiveViewer(
+                                    transformationController: controller,
+                                    maxScale: 7,
+                                    onInteractionEnd: (details) => resetZoom(),
+                                    child: CachedNetworkImage(
+                                        imageUrl: doc["imgUrl"],
+                                        imageBuilder: (_, p) {
+                                          return Image(
+                                            image: p,
+                                            // height: media.height * 0.9,
+                                            width: double.infinity,
+                                            //  MediaQuery.of(context).size.height * 1.4,
+                                            fit: BoxFit.fill,
+                                          );
+                                        }),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: SizedBox(
+                              height: media.height * 0.05,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        addRemoveUser(doc["imgUrl"], doc.id,
+                                            doc["content"]);
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Provider.of<QuoteModelProvider>(context,
+                                                      listen: false)
+                                                  .isFav ==
+                                              true
+                                          ? Icons.favorite
+                                          : Icons.favorite_border_outlined,
+                                      color: Colors.pink,
+                                      size: 30,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Utils.shareFile(context, doc["imgUrl"],
+                                          doc["content"]);
+                                    },
+                                    icon: const Icon(Icons.share),
+                                    color: Colors.white,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
-                  Expanded(
-                    child: PageView.builder(
-                      itemCount: widget.imgs.data.docs.length,
-                      itemBuilder: (context, i) {
-                        return InteractiveViewer(
-                          transformationController: controller,
-                          maxScale: 7,
-                          onInteractionEnd: (details) => resetZoom(),
-                          child: CachedNetworkImage(
-                              imageUrl: widget.imgs.data.docs[widget.index + i]
-                                  ["imgUrl"],
-                              imageBuilder: (_, p) {
-                                return Image(
-                                  image: p,
-                                  // height: media.height * 0.9,
-                                  width: double.infinity,
-                                  //  MediaQuery.of(context).size.height * 1.4,
-                                  fit: BoxFit.fill,
-                                );
-                              }),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: media.height * 0.05,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              addRemoveUser();
-                            });
-                          },
-                          icon: Icon(
-                            Provider.of<QuoteModelProvider>(context,
-                                            listen: false)
-                                        .isFav ==
-                                    true
-                                ? Icons.favorite
-                                : Icons.favorite_border_outlined,
-                            color: Colors.pink,
-                            size: 30,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.share),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
     );
   }

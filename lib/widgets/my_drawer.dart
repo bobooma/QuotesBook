@@ -57,7 +57,7 @@ class _MyDrawerState extends State<MyDrawer> {
                 Colors.black,
               ]),
         children: [
-          MMLLang(appLoc, media),
+          mMLLang(appLoc, media),
           mLMitem(media, "${AppLocalizations.of(context)!.share} ♾",
               Icons.share, kSecondaryColor, widget.screenShare),
           mLMitem(
@@ -98,30 +98,26 @@ class _MyDrawerState extends State<MyDrawer> {
         ]);
   }
 
-  MLMenuItem MMLLang(AppLocalizations? appLoc, Size media) {
+  MLMenuItem mMLLang(AppLocalizations? appLoc, Size media) {
     return MLMenuItem(
       onClick: () {
         // LangPickWidget();
       },
-      content: FittedBox(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Text(
-                appLoc!.chooseLanguage,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline5!
-                    .copyWith(fontFamily: "LimeLihgt"),
-              ),
-            ),
-          ],
+      content: Container(
+        padding: const EdgeInsets.only(
+          left: 10,
+        ),
+        child: FittedBox(
+          child: Text(
+            appLoc!.chooseLanguage,
+            style: Theme.of(context)
+                .textTheme
+                .headline5!
+                .copyWith(fontFamily: "LimeLihgt"),
+          ),
         ),
       ),
-      trailing: const LangPickWidget(),
+      trailing: const FittedBox(child: LangPickWidget()),
 //
 //       ),
     );

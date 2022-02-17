@@ -1,33 +1,55 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/screens/quote.dart';
 
+import '../providers/utils.dart';
 import '../services/ad_helper.dart';
 import '../widgets/carousal_screen.dart';
 import '../widgets/my_card.dart';
+import 'my_home.dart';
 
-const int maxFailedLoadAttempt = 3;
+// const int maxFailedLoadAttempt = 3;
 
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
-    required this.quotes,
-    required this.media,
   }) : super(key: key);
-
-  final Stream<QuerySnapshot<Map<String, dynamic>>> quotes;
-  final Size media;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  String? userId;
+  UserCredential? userCredential;
+
+  getUserId() async {
+    userCredential = await FirebaseAuth.instance.signInAnonymously();
+    userId = userCredential!.user!.uid;
+  }
+
+  final quotes = FirebaseFirestore.instance
+      .collection("quotes")
+      .orderBy("time", descending: true)
+      .snapshots();
+
+  initialMessage() async {
+    final message = FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MyHomePage(),
+          ));
+    }
+  }
+
   Locale? locale;
 
   final inlineIndex = 3;
@@ -38,8 +60,8 @@ class _HomePageState extends State<HomePage> {
   bool isHomeLoaded = false;
   bool isInlineLoaded = false;
 
-  InterstitialAd? interstitialAd;
-  int interstatilLoadAttempt = 0;
+  // InterstitialAd? interstitialAd;
+  // int interstatilLoadAttempt = 0;
 
   int getListvItemIndx(int index) {
     if (index >= inlineIndex && isInlineLoaded) {
@@ -50,83 +72,63 @@ class _HomePageState extends State<HomePage> {
   }
 
   void createHomeBanner() {
-    homeBanner = BannerAd(
-        size: AdSize.banner,
-        adUnitId: AdState.bannerhome,
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            setState(() {
-              isHomeLoaded = true;
-            });
-          },
-          onAdFailedToLoad: (ad, error) {
-            ad.dispose();
-          },
-        ),
-        request: const AdRequest());
+    try {
+      homeBanner = BannerAd(
+          size: AdSize.banner,
+          adUnitId: AdState.bannerhome,
+          listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                isHomeLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              ad.dispose();
+            },
+          ),
+          request: const AdRequest());
 
-    homeBanner.load();
+      homeBanner.load();
+    } on Exception catch (e) {
+      print("homeBanner  error $e");
+    }
   }
 
   void createInlineBanner() {
-    inlineBanner = BannerAd(
-        size: AdSize.mediumRectangle,
-        adUnitId: AdState.inline,
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            setState(() {
-              isInlineLoaded = true;
-            });
-          },
-          onAdFailedToLoad: (ad, error) {
-            ad.dispose();
-          },
-        ),
-        request: const AdRequest());
+    try {
+      inlineBanner = BannerAd(
+          size: AdSize.mediumRectangle,
+          adUnitId: AdState.inline,
+          listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                isInlineLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              ad.dispose();
+            },
+          ),
+          request: const AdRequest());
 
-    inlineBanner.load();
-  }
-
-  void _createInterstitialAd() {
-    InterstitialAd.load(
-      adUnitId: AdState.interstatialAdUnitId,
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (InterstitialAd ad) {
-          interstitialAd = ad;
-          interstatilLoadAttempt = 0;
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          interstatilLoadAttempt += 1;
-          interstitialAd = null;
-          if (interstatilLoadAttempt >= maxFailedLoadAttempt) {
-            _createInterstitialAd();
-          }
-        },
-      ),
-    );
-  }
-
-  void _showInterstitialAd() {
-    if (interstitialAd != null) {
-      interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (InterstitialAd ad) {
-          ad.dispose();
-          _createInterstitialAd();
-        },
-        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-          ad.dispose();
-          _createInterstitialAd();
-        },
-      );
-      interstitialAd!.show();
+      inlineBanner.load();
+    } on Exception catch (e) {
+      print("homeInline  error $e");
     }
   }
 
   @override
   void initState() {
+    getUserId();
+    // LocalNotificationService.initialize(context);
+    FirebaseMessaging.onMessage.listen((message) {
+      // LocalNotificationService.display(message);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    Utils.getToken();
+
     createHomeBanner();
-    _createInterstitialAd();
+    // _createInterstitialAd();
     createInlineBanner();
     super.initState();
   }
@@ -135,7 +137,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     super.dispose();
     homeBanner.dispose();
-    interstitialAd?.dispose();
+    // interstitialAd?.dispose();
     inlineBanner.dispose();
   }
 
@@ -143,6 +145,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       bottomNavigationBar: isHomeLoaded
           ? SizedBox(
@@ -154,7 +157,7 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(5.0),
         child: StreamBuilder(
-          stream: widget.quotes,
+          stream: quotes,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasError) {
               return const Text('error .....');
@@ -187,65 +190,39 @@ class _HomePageState extends State<HomePage> {
                             String quoteId =
                                 snapshot.data.docs[getListvItemIndx(index)].id;
 
-                            // return Slidable(
-                            //   key: UniqueKey(),
-                            //   endActionPane: ActionPane(
-                            //     dismissible: DismissiblePane(
-                            //       onDismissed: ()
-                            //           // async
-                            //           {},
-                            //     ),
-                            //     motion: const DrawerMotion(),
-                            //     extentRatio: 0.25,
-                            //     children: [
-                            //       SlidableAction(
-                            //         label: 'Download',
-                            //         backgroundColor: Colors.amber,
-                            //         icon: Icons.download,
-                            //         onPressed: (context) {
-                            //           Utils.save(snapshot.data.docs[getListvItemIndx(index)]["imgUrl"],
-                            //               context);
-                            //         },
-                            //       ),
-
-                            // !  Admin
-                            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                             return Slidable(
                               key: UniqueKey(),
                               endActionPane: ActionPane(
                                 dismissible: DismissiblePane(
-                                  onDismissed: () async {
-                                    await FirebaseFirestore.instance
-                                        .runTransaction(
-                                            (Transaction myTransaction) async {
-                                      myTransaction.delete(snapshot
-                                          .data
-                                          .docs[getListvItemIndx(index)]
-                                          .reference);
-                                    });
-                                    await FirebaseStorage.instance
-                                        .refFromURL(snapshot.data
-                                                .docs[getListvItemIndx(index)]
-                                            ["imgUrl"])
-                                        .delete();
-                                    // Remove this Slidable from the widget tree.
-                                  },
+                                  onDismissed: ()
+                                      // async
+                                      {},
                                 ),
                                 motion: const DrawerMotion(),
                                 extentRatio: 0.25,
                                 children: [
                                   SlidableAction(
-                                    label: 'Delete',
-                                    backgroundColor: Colors.red,
-                                    icon: Icons.delete,
-                                    onPressed: (context) {},
+                                    label: 'Download',
+                                    backgroundColor: Colors.amber,
+                                    icon: Icons.download,
+                                    onPressed: (context) {
+                                      Utils.save(
+                                          snapshot.data
+                                                  .docs[getListvItemIndx(index)]
+                                              ["imgUrl"],
+                                          context);
+                                    },
                                   ),
+
+                                  // !  Admin
+                                  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
                                   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 ],
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  _showInterstitialAd();
+                                  // _showInterstitialAd();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -262,8 +239,8 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                                 child: SizedBox(
-                                  width: widget.media.width,
-                                  height: widget.media.height * 0.2,
+                                  width: width,
+                                  height: height * 0.2,
                                   child: Stack(children: [
                                     Positioned(child: MyCard(details: content)),
                                     Positioned(
@@ -274,8 +251,8 @@ class _HomePageState extends State<HomePage> {
                                             ["imgUrl"],
                                         imageBuilder: (_, p) {
                                           return Container(
-                                            height: widget.media.height * 0.2,
-                                            width: widget.media.height * 0.2,
+                                            height: height * 0.2,
+                                            width: height * 0.2,
                                             decoration: BoxDecoration(
                                               boxShadow: const [
                                                 BoxShadow(blurRadius: 2)
@@ -313,9 +290,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(height: height * 0.15, child: Sliders(imgs: snapshot)),
-                Container(
-                  height: 50,
-                )
               ],
             );
           },

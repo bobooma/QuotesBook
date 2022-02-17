@@ -21,8 +21,8 @@ ThemeData lightThemeData(BuildContext context) {
               textStyle:
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
       cardColor: kPrimaryColor100,
-      primaryColor: kPrimaryColor,
-      scaffoldBackgroundColor: kPrimaryColor300,
+      primaryColor: kPrimaryColor.withBlue(255),
+      scaffoldBackgroundColor: kPrimaryColor.withBlue(255).withOpacity(0.7),
       appBarTheme: appBarTheme,
       iconTheme: const IconThemeData(color: kContentColorLightTheme),
       textTheme: GoogleFonts.ralewayTextTheme(Theme.of(context).textTheme)
@@ -41,14 +41,14 @@ ThemeData lightThemeData(BuildContext context) {
 
 ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
-    scaffoldBackgroundColor: kPrimaryColor.withOpacity(0.3),
+    scaffoldBackgroundColor: Colors.black54,
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
             primary: kContentColorDarkTheme,
             textStyle:
                 const TextStyle(fontWeight: FontWeight.bold, fontSize: 17))),
-    cardColor: kPrimaryColor..withOpacity(0.1),
-    primaryColor: kPrimaryColor,
+    cardColor: kPrimaryColor.withRed(255),
+    primaryColor: kPrimaryColor.withRed(255),
     appBarTheme: appBarTheme,
     iconTheme: const IconThemeData(color: kContentColorDarkTheme),
     textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)

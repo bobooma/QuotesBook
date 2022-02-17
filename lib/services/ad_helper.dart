@@ -78,4 +78,12 @@ class AdState {
       throw UnsupportedError("Unsupported platform");
     }
   }
+
+  static String get openAdUnitId {
+    if (Platform.isAndroid) {
+      return "ca-app-pub-3940256099942544/3419835294";
+    } else {
+      throw UnsupportedError("Unsupported platform");
+    }
+  }
 }

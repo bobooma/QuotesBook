@@ -2,8 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class BackgrounSliders extends StatelessWidget {
+import '../services/ad_helper.dart';
+
+const int maxFailedLoadAttempt = 3;
+
+class BackgrounSliders extends StatefulWidget {
   const BackgrounSliders({
     Key? key,
     required this.imgs,
@@ -12,10 +17,66 @@ class BackgrounSliders extends StatelessWidget {
   final AsyncSnapshot imgs;
 
   @override
+  State<BackgrounSliders> createState() => _BackgrounSlidersState();
+}
+
+class _BackgrounSlidersState extends State<BackgrounSliders> {
+  InterstitialAd? interstitialAd;
+  int interstatilLoadAttempt = 0;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdState.interstatialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          interstitialAd = ad;
+          interstatilLoadAttempt = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          interstatilLoadAttempt += 1;
+          interstitialAd = null;
+          if (interstatilLoadAttempt >= maxFailedLoadAttempt) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (interstitialAd != null) {
+      interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      interstitialAd!.show();
+    }
+  }
+
+  @override
+  void initState() {
+    _createInterstitialAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    interstitialAd?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return imgs == null
+    return widget.imgs == null
         ? Container(
             padding: const EdgeInsets.symmetric(vertical: 100),
             child: const CircularProgressIndicator(
@@ -25,14 +86,16 @@ class BackgrounSliders extends StatelessWidget {
         : Expanded(
             child: Center(
               child: CarouselSlider.builder(
-                  itemCount: imgs.data.docs.length,
+                  itemCount: widget.imgs.data.docs.length,
                   itemBuilder: (ctx, i, _) {
                     return InkWell(
                       onTap: () {
-                        Navigator.of(context).pop(imgs.data.docs[i]["b"]);
+                        _showInterstitialAd();
+                        Navigator.of(context)
+                            .pop(widget.imgs.data.docs[i]["b"]);
                       },
                       child: CachedNetworkImage(
-                        imageUrl: imgs.data.docs[i]["b"],
+                        imageUrl: widget.imgs.data.docs[i]["b"],
                         imageBuilder: (_, p) {
                           return Container(
                             margin: const EdgeInsets.all(1),

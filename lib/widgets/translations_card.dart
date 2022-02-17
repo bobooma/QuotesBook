@@ -16,7 +16,7 @@ class TranslationCard extends StatelessWidget {
     return Card(
       child: Center(
         child: Container(
-          padding: const EdgeInsets.only(top: 20, right: 5, left: 5),
+          padding: const EdgeInsets.only(top: 10, right: 5, left: 5),
           // color: Colors.white,
           height: media.height * .15,
           child: AutoSizeText(
@@ -26,10 +26,9 @@ class TranslationCard extends StatelessWidget {
             minFontSize: 8,
             // maxFontSize: 50,
             style: TextStyle(
-              // overflow: TextOverflow.visible,
               //
               // ***
-              // TODO rEVISION
+
               //overflow: TextOverflow.ellipsis,
               fontSize: media.width * .04,
               fontWeight: FontWeight.bold,

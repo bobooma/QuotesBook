@@ -47,40 +47,49 @@ class _PageBodyState extends State<PageBody> {
   }
 
   void createHomeBanner() {
-    homeBanner = BannerAd(
-        size: AdSize.banner,
-        adUnitId: widget.bannerId,
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            isHomeLoaded = true;
-            //
-          },
-          onAdFailedToLoad: (ad, error) {
-            ad.dispose();
-          },
-        ),
-        request: const AdRequest());
+    try {
+      homeBanner = BannerAd(
+          size: AdSize.banner,
+          adUnitId: widget.bannerId,
+          listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                isHomeLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              ad.dispose();
+            },
+          ),
+          request: const AdRequest());
 
-    homeBanner.load();
+      homeBanner.load();
+    } on Exception catch (e) {
+      print("home error $e");
+    }
   }
 
   void createInlineBanner() {
-    inlineBanner = BannerAd(
-        size: AdSize.mediumRectangle,
-        adUnitId: widget.inlineId,
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            isInlineLoaded = true;
-            // setState(() {
-            // });
-          },
-          onAdFailedToLoad: (ad, error) {
-            ad.dispose();
-          },
-        ),
-        request: const AdRequest());
+    try {
+      inlineBanner = BannerAd(
+          size: AdSize.mediumRectangle,
+          adUnitId: widget.inlineId,
+          listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                isInlineLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              ad.dispose();
+            },
+          ),
+          request: const AdRequest());
 
-    inlineBanner.load();
+      inlineBanner.load();
+    } on Exception catch (e) {
+      print(e.toString());
+    }
   }
 
   @override

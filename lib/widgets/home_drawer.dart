@@ -65,7 +65,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
               () => provider.toggleTheme(themeProvider.isDarkMode)
               //  const ChangeTheme()
               ),
-          MMLLang(appLoc, media),
+          mMLLang(appLoc, media),
           // ! SHARE APP
           mLMitem(
             media,
@@ -106,16 +106,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
         ]);
   }
 
-  MLMenuItem MMLLang(AppLocalizations? appLoc, Size media) {
+  MLMenuItem mMLLang(AppLocalizations? appLoc, Size media) {
     return MLMenuItem(
       onClick: () {
         // LangPickWidget();
       },
-      content: Container(
-        padding: const EdgeInsets.only(
-          left: 10,
-        ),
-        child: FittedBox(
+      content: FittedBox(
+        child: Container(
+          padding: const EdgeInsets.only(left: 10, right: 10),
           child: Text(
             appLoc!.chooseLanguage,
             style: Theme.of(context)
@@ -125,10 +123,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
           ),
         ),
       ),
-      trailing: FittedBox(child: const LangPickWidget()),
+      trailing: FittedBox(child: LangPickWidget()),
+    );
 //
 //       ),
-    );
   }
 
   MLMenuItem mLMitem(

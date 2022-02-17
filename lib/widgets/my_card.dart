@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../services/constants.dart';
+import '../services/themes.dart';
+
 class MyCard extends StatelessWidget {
   const MyCard({
     Key? key,
@@ -12,6 +15,9 @@ class MyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Locale locale = Localizations.localeOf(context);
+
+    bool thememode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     final media = MediaQuery.of(context).size;
     final content =
@@ -65,14 +71,36 @@ class MyCard extends StatelessWidget {
                   margin: EdgeInsets.only(left: media.width * 0.19),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
-                  child: Padding(
+                  child: Container(
                     padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient:
+                          // RadialGradient(colors: [
+                          //   kPrimaryColor.withRed(255),
+                          //   Colors.black54,
+                          // ]),
+                          !thememode
+                              ? LinearGradient(colors: [
+                                  kPrimaryColor.withBlue(255),
+                                  Colors.white60,
+                                ])
+                              : LinearGradient(
+                                  colors: [
+                                    kPrimaryColor.withRed(255),
+                                    Colors.black87,
+                                  ],
+                                ),
+                    ),
                     child: Center(
                       child: Container(
                         padding: EdgeInsets.only(left: media.width * 0.2),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.vertical,
+
+                          
                           child: SelectableText(
+                            
                             snapshot.data ?? "",
                             textAlign: TextAlign.center,
                             style: Theme.of(context)

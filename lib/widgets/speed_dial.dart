@@ -29,7 +29,7 @@ class CustomSpeedDial extends StatelessWidget {
   Widget build(BuildContext context) {
     return SpeedDial(
       openCloseDial: isDialOpen,
-      overlayColor: Colors.transparent,
+      overlayColor: Colors.white10,
       animatedIcon: AnimatedIcons.add_event,
       animatedIconTheme: const IconThemeData(size: 40),
       children: [
@@ -65,8 +65,8 @@ class CustomSpeedDial extends StatelessWidget {
             label: lang.makeQuote,
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => MakeQuote()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const MakeQuote()));
             }),
       ],
     );

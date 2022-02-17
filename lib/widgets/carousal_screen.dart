@@ -2,9 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/screens/quote.dart';
 
-class Sliders extends StatelessWidget {
+import '../services/ad_helper.dart';
+
+const int maxFailedLoadAttempt = 3;
+
+class Sliders extends StatefulWidget {
   const Sliders({
     Key? key,
     required this.imgs,
@@ -13,10 +18,66 @@ class Sliders extends StatelessWidget {
   final AsyncSnapshot imgs;
 
   @override
+  State<Sliders> createState() => _SlidersState();
+}
+
+class _SlidersState extends State<Sliders> {
+  InterstitialAd? interstitialAd;
+  int interstatilLoadAttempt = 0;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdState.interstatialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          interstitialAd = ad;
+          interstatilLoadAttempt = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          interstatilLoadAttempt += 1;
+          interstitialAd = null;
+          if (interstatilLoadAttempt >= maxFailedLoadAttempt) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (interstitialAd != null) {
+      interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      interstitialAd!.show();
+    }
+  }
+
+  @override
+  void initState() {
+    _createInterstitialAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    interstitialAd?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return imgs == null
+    return widget.imgs == null
         ? Container(
             padding: const EdgeInsets.symmetric(vertical: 100),
             child: const CircularProgressIndicator(
@@ -26,25 +87,26 @@ class Sliders extends StatelessWidget {
         : Expanded(
             child: Center(
               child: CarouselSlider.builder(
-                  itemCount: imgs.data.docs.length,
+                  itemCount: widget.imgs.data.docs.length,
                   itemBuilder: (ctx, i, _) {
                     return InkWell(
                       onTap: () {
+                        _showInterstitialAd();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => QuoteImage(
-                              imgUrl: imgs.data.docs[i]["imgUrl"],
-                              content: imgs.data.docs[i]["content"],
-                              docId: imgs.data.docs[i].id,
+                              imgUrl: widget.imgs.data.docs[i]["imgUrl"],
+                              content: widget.imgs.data.docs[i]["content"],
+                              docId: widget.imgs.data.docs[i].id,
                               index: i,
-                              imgs: imgs,
+                              imgs: widget.imgs,
                             ),
                           ),
                         );
                       },
                       child: CachedNetworkImage(
-                        imageUrl: imgs.data.docs[i]["imgUrl"],
+                        imageUrl: widget.imgs.data.docs[i]["imgUrl"],
                         imageBuilder: (_, p) {
                           return Container(
                             margin: const EdgeInsets.all(1),

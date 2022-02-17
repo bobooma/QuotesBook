@@ -16,8 +16,6 @@ import 'screens/my_home.dart';
 
 Future<void> bgHandler(RemoteMessage message) async {}
 
-// bool isLogin = false;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
@@ -52,7 +50,6 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           final provider = Provider.of<LocaleProvider>(context);
           final themeProvider = Provider.of<ThemeProvider>(context);
-          // final quoteProvider = Provider.of<ThemeProvider>(context);
 
           return MaterialApp(
             title: 'QuotesBook',
@@ -70,7 +67,7 @@ class MyApp extends StatelessWidget {
             home:
                 //  FirstScreen(),
                 // isLogin?
-                const MyHomePage(),
+                MyHomePage(),
           );
         });
   }

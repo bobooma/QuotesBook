@@ -38,6 +38,11 @@ class _FavScreenState extends State<FavScreen> {
         .snapshots();
     final media = MediaQuery.of(context).size;
 
-    return PageBody(quotes: quotes, media: media);
+    return PageBody(
+      quotes: quotes,
+      media: media,
+      bannerId: "",
+      inlineId: "",
+    );
   }
 }
