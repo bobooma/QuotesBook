@@ -6,7 +6,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/widgets/my_card.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/locale_provider.dart';
 import '../providers/utils.dart';
 
 const int maxFailedLoadAttempt = 3;
@@ -107,10 +109,16 @@ class _PageBodyState extends State<PageBody> {
     inlineBanner.dispose();
   }
 
+  late Future<String> content;
+  late String quoteId;
+
+  double width = 0;
+  double height = 0;
+
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       bottomNavigationBar: isHomeLoaded
@@ -138,9 +146,6 @@ class _PageBodyState extends State<PageBody> {
             return ListView.builder(
                 itemCount: len + (isInlineLoaded && len >= 3 ? 1 : 0),
                 itemBuilder: (BuildContext context, int index) {
-                  print("******");
-                  print(index);
-                  print(len + (isInlineLoaded ? 1 : 0));
                   if (isInlineLoaded && index == inlineIndex) {
                     return Container(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -151,6 +156,7 @@ class _PageBodyState extends State<PageBody> {
                   } else {
                     String content =
                         snapshot.data.docs[getListvItemIndx(index)]["content"];
+
                     String quoteId =
                         snapshot.data.docs[getListvItemIndx(index)].id;
 
@@ -198,7 +204,12 @@ class _PageBodyState extends State<PageBody> {
                           width: widget.media.width,
                           height: widget.media.height * 0.2,
                           child: Stack(children: [
-                            Positioned(child: MyCard(details: content)),
+                            Positioned(
+                              child: MyCard(
+                                  details: snapshot
+                                          .data.docs[getListvItemIndx(index)]
+                                      ["content"]),
+                            ),
                             Positioned(
                               top: 5,
                               child: CachedNetworkImage(

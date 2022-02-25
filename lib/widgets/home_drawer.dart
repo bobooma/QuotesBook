@@ -53,10 +53,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 Colors.black,
               ]),
         children: [
-          // mLMitem(media, "${AppLocalizations.of(context)!.changeTheme} 🔲", Icons.change_circle_outlined, !Provider.of<ThemeProvider>(context).isDarkMode
-          //         ? Colors.black
-          //         : Colors.white,()=> const ChangeTheme(),),
-
           mLMitem(
               media,
               "${AppLocalizations.of(context)!.changeTheme} 💥",

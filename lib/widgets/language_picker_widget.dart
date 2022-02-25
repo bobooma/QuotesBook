@@ -33,7 +33,11 @@ class LangPickWidget extends StatelessWidget {
             ),
             value: locale,
             onTap: () {
-              provider.setLocale(locale);
+              try {
+                provider.setLocale(locale);
+              } on Exception catch (e) {
+                // TODO
+              }
             },
           );
         }).toList(),

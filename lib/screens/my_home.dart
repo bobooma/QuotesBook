@@ -124,11 +124,8 @@ class MyHomePage extends StatelessWidget {
                 ),
               ],
             ),
-            actions: [
-              Tooltip(
-                  triggerMode: TooltipTriggerMode.tap,
-                  message: "Change",
-                  child: Expanded(child: ChangeTheme()))
+            actions: const [
+              ChangeTheme()
 
               //
             ],
@@ -179,7 +176,7 @@ class CustomHeader extends StatelessWidget {
               child: Text(
                 'QuotesBook',
                 style: Theme.of(context).textTheme.headline5!.copyWith(
-                    fontFamily: "Sketch 3D",
+                    fontFamily: "Limelight",
                     fontSize: media.width * .045,
                     fontWeight: FontWeight.bold),
               ),
@@ -193,7 +190,7 @@ class CustomHeader extends StatelessWidget {
               child: Text(
                 'QuotesBook',
                 style: Theme.of(context).textTheme.headline5!.copyWith(
-                    fontFamily: "Sketch 3D",
+                    fontFamily: "Limelight",
                     fontSize: media.width * .045,
                     fontWeight: FontWeight.bold),
               ),

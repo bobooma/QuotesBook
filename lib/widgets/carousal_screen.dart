@@ -16,6 +16,7 @@ class Sliders extends StatefulWidget {
   }) : super(key: key);
 
   final AsyncSnapshot imgs;
+  // final Future<String> content;
 
   @override
   State<Sliders> createState() => _SlidersState();
@@ -65,6 +66,8 @@ class _SlidersState extends State<Sliders> {
   void initState() {
     _createInterstitialAd();
     super.initState();
+
+    // getStr(widget.content);
   }
 
   @override
@@ -73,10 +76,20 @@ class _SlidersState extends State<Sliders> {
     super.dispose();
   }
 
+  // String str = "";
+  // getStr(Future<String> content) async {
+  //   await content.then((value) {
+  //     setState(() {
+  //       str = value;
+  //     });
+  //   });
+  // }
+  double width = 0;
+  double height = 0;
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return widget.imgs == null
         ? Container(
             padding: const EdgeInsets.symmetric(vertical: 100),
@@ -84,67 +97,65 @@ class _SlidersState extends State<Sliders> {
               valueColor: AlwaysStoppedAnimation<Color>(Colors.pink),
             ),
           )
-        : Expanded(
-            child: Center(
-              child: CarouselSlider.builder(
-                  itemCount: widget.imgs.data.docs.length,
-                  itemBuilder: (ctx, i, _) {
-                    return InkWell(
-                      onTap: () {
-                        _showInterstitialAd();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => QuoteImage(
-                              imgUrl: widget.imgs.data.docs[i]["imgUrl"],
-                              content: widget.imgs.data.docs[i]["content"],
-                              docId: widget.imgs.data.docs[i].id,
-                              index: i,
-                              imgs: widget.imgs,
-                            ),
+        : Center(
+            child: CarouselSlider.builder(
+                itemCount: widget.imgs.data.docs.length,
+                itemBuilder: (ctx, i, _) {
+                  return InkWell(
+                    onTap: () {
+                      // getStr(widget.imgs.data.docs[i]["content"]);
+                      _showInterstitialAd();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => QuoteImage(
+                            imgUrl: widget.imgs.data.docs[i]["imgUrl"],
+                            content: widget.imgs.data.docs[i]["content"],
+                            docId: widget.imgs.data.docs[i].id,
+                            index: i,
+                            imgs: widget.imgs,
+                          ),
+                        ),
+                      );
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl: widget.imgs.data.docs[i]["imgUrl"],
+                      imageBuilder: (_, p) {
+                        return Container(
+                          margin: const EdgeInsets.all(1),
+                          // width: width / 3,
+                          height: height / 2,
+                          decoration: BoxDecoration(
+                            boxShadow: const [
+                              BoxShadow(
+                                  blurRadius: 3.0, offset: Offset(0.0, 2)),
+                            ],
+                            borderRadius: BorderRadius.circular(15),
+                            image: DecorationImage(image: p, fit: BoxFit.fill),
                           ),
                         );
                       },
-                      child: CachedNetworkImage(
-                        imageUrl: widget.imgs.data.docs[i]["imgUrl"],
-                        imageBuilder: (_, p) {
-                          return Container(
-                            margin: const EdgeInsets.all(1),
-                            // width: width / 3,
-                            height: height / 2,
-                            decoration: BoxDecoration(
-                              boxShadow: const [
-                                BoxShadow(
-                                    blurRadius: 3.0, offset: Offset(0.0, 2)),
-                              ],
-                              borderRadius: BorderRadius.circular(15),
-                              image:
-                                  DecorationImage(image: p, fit: BoxFit.fill),
-                            ),
-                          );
-                        },
-                        progressIndicatorBuilder: (context, url, progress) {
-                          return Container(
-                            width: width / 2,
-                            height: height / 2,
-                            color: Colors.grey.withOpacity(.4),
-                            child: const Center(
-                                child: SpinKitThreeBounce(
-                                    size: 30, color: Colors.pink)),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  options: CarouselOptions(
-                      height: 200,
-                      autoPlay: true,
-                      viewportFraction: 0.3,
-                      // enlargeStrategy: CenterPageEnlargeStrategy.height,
+                      progressIndicatorBuilder: (context, url, progress) {
+                        return Container(
+                          width: width / 2,
+                          height: height / 2,
+                          color: Colors.grey.withOpacity(.4),
+                          child: const Center(
+                              child: SpinKitThreeBounce(
+                                  size: 30, color: Colors.pink)),
+                        );
+                      },
+                    ),
+                  );
+                },
+                options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    viewportFraction: 0.3,
+                    // enlargeStrategy: CenterPageEnlargeStrategy.height,
 
-                      enlargeCenterPage: true,
-                      autoPlayInterval: const Duration(seconds: 2))),
-            ),
+                    enlargeCenterPage: true,
+                    autoPlayInterval: const Duration(seconds: 2))),
           );
   }
 }

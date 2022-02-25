@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -38,8 +39,10 @@ class QuoteImage extends StatefulWidget {
   }) : super(key: key);
 
   final String imgUrl;
-  final String content;
+
+  // final Future<String> content;
   String docId;
+  String content;
   final int index;
   final AsyncSnapshot imgs;
 
@@ -51,6 +54,9 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   late BannerAd homeBanner;
 
   bool isHomeLoaded = false;
+
+  // PageController pgViewController = PageController();
+
   void createHomeBanner() {
     homeBanner = BannerAd(
         size: AdSize.banner,
@@ -103,6 +109,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   }
 
   Future<void> shareFile() async {
+    String content = await widget.content;
     Navigator.of(context).pop();
     final url = Uri.parse(widget.imgUrl);
     final response = await get(url);
@@ -112,8 +119,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     final path = "${temp.path}/img.jpg";
     File(path).writeAsBytesSync(bytes);
     // ! revision
-    Share.shareFiles([path], subject: widget.content, text: widget.content);
-    print(widget.content);
+    Share.shareFiles([path], subject: content, text: content);
 
     // await _save();
     // final result = await FilePicker.platform.pickFiles(
@@ -140,6 +146,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   }
 
   Future<void> shareScreen() async {
+    String content = await widget.content;
     //  final path = await screenCapture();
     Navigator.of(context).pop();
     if (captureImg == null) {
@@ -150,8 +157,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     final img = File("${dir.path}/flutter.png");
 
     img.writeAsBytesSync(captureImg!);
-    Share.shareFiles([img.path], subject: widget.content, text: widget.content);
-    print(widget.content);
+    Share.shareFiles([img.path], subject: content, text: content);
   }
 
   UserCredential? userCredential;
@@ -167,10 +173,6 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
 
     userId = userCredential!.user!.uid;
 
-    print("##########################");
-    print("userId***$userId");
-    print("*****************************");
-
     var fav = await favorite
         .where("userId", isEqualTo: userId)
         .where("quoteId", isEqualTo: widget.docId)
@@ -180,9 +182,6 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     if (fav == true) {
       setState(() {
         Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
-        print("*****************************");
-        print("getId****${widget.docId}");
-        print("*****************************");
       });
     }
   }
@@ -194,19 +193,17 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
         .get()
         .then((value) => value.docs.isNotEmpty);
 
+    void setStateIfMounted(f) {
+      if (mounted) setState(f);
+    }
+
     if (fav == true) {
-      setState(() {
+      setStateIfMounted(() {
         Provider.of<QuoteModelProvider>(context, listen: false).isFavTrue();
-        print("*****************************");
-        print("newId****$newDocId");
-        print("*****************************");
       });
     } else {
-      setState(() {
+      setStateIfMounted(() {
         Provider.of<QuoteModelProvider>(context, listen: false).isFavFalse();
-        print("Nooooooooooooooooooooooo");
-        print("newId****$newDocId");
-        print("*****************************");
       });
     }
   }
@@ -227,9 +224,6 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
         setState(() {
           Provider.of<QuoteModelProvider>(context, listen: false).isFavFalse();
         });
-        print("*********");
-        print("addRemove****${widget.docId}");
-        print("###################");
       } else {
         await favorite.doc().set({
           "imgUrl": img,
@@ -247,7 +241,8 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     }
   }
 
-  PageController? pgcontroller;
+  PageController? pgController;
+  PageController? pgViewController;
 
   @override
   void initState() {
@@ -262,7 +257,16 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     createHomeBanner();
 
     super.initState();
+    // getStr(widget.content);
   }
+
+  // getStr(Future<String> content) async {
+  //   await content.then((value) {
+  //     setState(() {
+  //       str = value;
+  //     });
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -273,241 +277,328 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Future<String> getLang(content) async {
+    return await Provider.of<LocaleProvider>(context).langSwitch(
+      content,
+      context,
+    );
+  }
+
+  var doc;
+  late Size media;
+  late String lang;
+  late int newLength;
+  late int length;
+  // late Future<String> content2;
+  late Future<String> content;
+
+  String str = "";
+
   @override
   Widget build(BuildContext context) {
     // isFavFun();
-    final media = MediaQuery.of(context).size;
+    media = MediaQuery.of(context).size;
+    // final content = getLang();
+
     final content = Provider.of<LocaleProvider>(context)
-        .langeSwitch(widget.content, context);
-    final lang = Provider.of<LocaleProvider>(context).locale.languageCode;
+        .langSwitch(widget.content, context);
+    lang = Provider.of<LocaleProvider>(context).locale.languageCode;
     return Scaffold(
-      bottomNavigationBar: isHomeLoaded
-          ? SizedBox(
-              height: homeBanner.size.height.toDouble(),
-              width: homeBanner.size.width.toDouble(),
-              child: AdWidget(ad: homeBanner),
-            )
-          : null,
-
-      backgroundColor: Colors.black,
-      endDrawer: MyDrawer(
-        imgUrl: widget.imgUrl,
-        screenShare:
-            Provider.of<LocaleProvider>(context).locale.languageCode == "en"
-                ? shareFile
-                : shareScreen,
-        save: _save,
-      ),
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: lang == "ar" || lang == "fa" || lang == "ur"
-              ? const Icon(Icons.arrow_back_ios_rounded)
-              : const Icon(Icons.arrow_back_ios_new),
+        bottomNavigationBar: isHomeLoaded
+            ? SizedBox(
+                height: homeBanner.size.height.toDouble(),
+                width: homeBanner.size.width.toDouble(),
+                child: AdWidget(ad: homeBanner),
+              )
+            : null,
+        backgroundColor: Colors.black,
+        endDrawer: MyDrawer(
+          imgUrl: widget.imgUrl,
+          screenShare:
+              Provider.of<LocaleProvider>(context).locale.languageCode == "en"
+                  ? shareFile
+                  : shareScreen,
+          save: _save,
         ),
-        toolbarHeight: media.height * 0.05,
-      ),
-      // backgroundColor: Colors.pink[300],
-      body: Provider.of<LocaleProvider>(context).locale.languageCode == "en"
-          ? Column(
-              children: [
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                Expanded(
-                  child: PageView.builder(
-                    controller: pgcontroller,
-                    // allowImplicitScrolling: true,
-                    itemCount: widget.imgs.data.docs.length,
-                    itemBuilder: (context, i) {
-                      int newLength =
-                          widget.imgs.data.docs.length - widget.index;
-                      int length = widget.imgs.data.docs.length;
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: lang == "ar" || lang == "fa" || lang == "ur"
+                ? const Icon(Icons.arrow_back_ios_rounded)
+                : const Icon(Icons.arrow_back_ios_new),
+          ),
+          toolbarHeight: media.height * 0.05,
+        ),
+        body: Provider.of<LocaleProvider>(context).locale.languageCode == "en"
+            ? PageView.builder(
+                controller: pgController,
+                // allowImplicitScrolling: true,
+                itemCount: widget.imgs.data.docs.length,
+                itemBuilder: (context, i) {
+                  newLength = widget.imgs.data.docs.length - widget.index;
+                  length = widget.imgs.data.docs.length;
 
-                      final doc = widget.imgs.data.docs[
-                          (i + widget.index) > length - 1
-                              ? i - newLength
-                              : i + widget.index];
+                  doc = widget.imgs.data.docs[(i + widget.index) > length - 1
+                      ? i - newLength
+                      : i + widget.index];
 
-                      isFavFun(doc.id);
+                  isFavFun(doc.id);
 
-                      return Column(
-                        children: [
-                          Expanded(
-                            child: InteractiveViewer(
-                              transformationController: controller,
-                              maxScale: 7,
-                              onInteractionEnd: (details) => resetZoom(),
-                              child: CachedNetworkImage(
-                                  imageUrl: doc["imgUrl"],
-                                  imageBuilder: (_, p) {
-                                    return Image(
-                                      image: p,
-                                      // height: media.height * 0.9,
-                                      width: double.infinity,
-                                      //  MediaQuery.of(context).size.height * 1.4,
-                                      fit: BoxFit.fitWidth,
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: InteractiveViewer(
+                          transformationController: controller,
+                          maxScale: 7,
+                          onInteractionEnd: (details) => resetZoom(),
+                          child: CachedNetworkImage(
+                              imageUrl: doc["imgUrl"],
+                              imageBuilder: (_, p) {
+                                return Image(
+                                  image: p,
+                                  // height: media.height * 0.9,
+                                  width: double.infinity,
+                                  //  MediaQuery.of(context).size.height * 1.4,
+                                  fit: BoxFit.fitWidth,
+                                );
+                              }),
+                        ),
+                      ),
+                      // Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: SizedBox(
+                          height: media.height * 0.05,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    widget.docId = doc.id;
+
+                                    addRemoveUser(
+                                      doc["imgUrl"],
+                                      doc.id,
+                                      doc["content"],
                                     );
-                                  }),
-                            ),
+                                  });
+                                },
+                                icon: Icon(
+                                  Provider.of<QuoteModelProvider>(context,
+                                                  listen: false)
+                                              .isFav ==
+                                          true
+                                      ? Icons.favorite
+                                      : Icons.favorite_border_outlined,
+                                  color: Colors.pink,
+                                  size: 30,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Utils.shareFile(
+                                      context, doc["imgUrl"], doc["content"]);
+                                },
+                                icon: const Icon(
+                                  Icons.share,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
                           ),
-                          // Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: SizedBox(
-                              height: media.height * 0.05,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        widget.docId = doc.id;
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              )
+            :
 
-                                        addRemoveUser(
-                                          doc["imgUrl"],
-                                          doc.id,
-                                          doc["content"],
-                                        );
-                                      });
-                                    },
-                                    icon: Icon(
-                                      Provider.of<QuoteModelProvider>(context,
-                                                      listen: false)
-                                                  .isFav ==
-                                              true
-                                          ? Icons.favorite
-                                          : Icons.favorite_border_outlined,
-                                      color: Colors.pink,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      Utils.shareFile(context, doc["imgUrl"],
-                                          doc["content"]);
-                                    },
-                                    icon: const Icon(
-                                      Icons.share,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                ],
+            //  PageView.builder(
+            //     controller: pgViewController,
+            //     // allowImplicitScrolling: true,
+            //     itemCount: widget.imgs.data.docs.length,
+            //     itemBuilder: (context, i) {
+            //       newLength = widget.imgs.data.docs.length - widget.index;
+            //       length = widget.imgs.data.docs.length;
+
+            //       doc = widget.imgs.data.docs[(i + widget.index) > length - 1
+            //           ? i - newLength
+            //           : i + widget.index];
+
+            //       print(doc["content"]);
+
+            //       content2 = getLang(doc["content"]);
+
+            //       print("**************");
+            //       print(content2);
+
+            //       // content2 = Provider.of<LocaleProvider>(context).langSwitch(
+            //       //   doc["content"],
+            //       //   context,
+            //       // );
+
+            //       isFavFun(doc.id);
+
+            //       return
+            Screenshot(
+                controller: screenshotController,
+                child: Column(
+                  children: [
+                    // SizedBox(
+                    //   height: 150,
+                    //   child:
+                    FutureBuilder(
+                        future: content,
+                        builder: (context, AsyncSnapshot<String> snapshot) {
+                          return TranslationCard(
+                              media: media,
+                              data: snapshot.data ?? widget.content);
+
+                          //     // Provider.of<LocaleProvider>(context)
+                          //     //     .langSwitch(
+                          //     //   doc["content"] ?? "wait ",
+                          //     //   context,
+                          //     // )
+                          //     //     .then((value) {
+                          //     //   return value;
+                          //     // })
+
+                          //     //  snapshot.data!,
+                          //     );
+                        }),
+
+                    Expanded(
+                      child: InteractiveViewer(
+                        transformationController: controller,
+                        maxScale: 7,
+                        onInteractionEnd: (details) => resetZoom(),
+                        child: CachedNetworkImage(
+                            imageUrl: widget.imgUrl,
+                            imageBuilder: (_, p) {
+                              return Image(
+                                image: p,
+                                // height: media.height * 0.9,
+                                width: double.infinity,
+                                //  MediaQuery.of(context).size.height * 1.4,
+                                fit: BoxFit.fill,
+                              );
+                            }),
+                      ),
+                    ),
+                    // Spacer(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: SizedBox(
+                        height: media.height * 0.05,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  // widget.docId = doc.id;
+
+                                  addRemoveUser(widget.imgUrl, widget.docId,
+                                      widget.content
+                                      // getStr(widget.content)
+                                      // doc["imgUrl"],
+                                      // doc.id,
+                                      // doc["content"],
+                                      );
+                                });
+                              },
+                              icon: Icon(
+                                Provider.of<QuoteModelProvider>(context,
+                                                listen: false)
+                                            .isFav ==
+                                        true
+                                    ? Icons.favorite
+                                    : Icons.favorite_border_outlined,
+                                color: Colors.pink,
+                                size: 30,
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                // Container(
-                //   height: 50,
-                // )
-              ],
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: PageView.builder(
-                    itemCount: widget.imgs.data.docs.length,
-                    itemBuilder: (context, i) {
-                      int newLength =
-                          widget.imgs.data.docs.length - widget.index;
-                      int length = widget.imgs.data.docs.length;
-                      final doc = widget.imgs.data.docs[
-                          (i + widget.index) > length - 1
-                              ? i - newLength
-                              : i + widget.index];
-
-                      final content2 = Provider.of<LocaleProvider>(context)
-                          .langeSwitch(doc["content"], context);
-
-                      return Column(
-                        children: [
-                          Screenshot(
-                            controller: screenshotController,
-                            child: Column(
-                              children: [
-                                FutureBuilder(
-                                  future: content2,
-                                  builder: (context,
-                                      AsyncSnapshot<String> snapshot) {
-                                    return TranslationCard(
-                                      media: media,
-                                      data: snapshot.data ?? "",
-                                    );
-                                  },
-                                ),
-                                Expanded(
-                                  child: InteractiveViewer(
-                                    transformationController: controller,
-                                    maxScale: 7,
-                                    onInteractionEnd: (details) => resetZoom(),
-                                    child: CachedNetworkImage(
-                                        imageUrl: doc["imgUrl"],
-                                        imageBuilder: (_, p) {
-                                          return Image(
-                                            image: p,
-                                            // height: media.height * 0.9,
-                                            width: double.infinity,
-                                            //  MediaQuery.of(context).size.height * 1.4,
-                                            fit: BoxFit.fill,
-                                          );
-                                        }),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: SizedBox(
-                              height: media.height * 0.05,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        addRemoveUser(doc["imgUrl"], doc.id,
-                                            doc["content"]);
-                                      });
-                                    },
-                                    icon: Icon(
-                                      Provider.of<QuoteModelProvider>(context,
-                                                      listen: false)
-                                                  .isFav ==
-                                              true
-                                          ? Icons.favorite
-                                          : Icons.favorite_border_outlined,
-                                      color: Colors.pink,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      Utils.shareFile(context, doc["imgUrl"],
-                                          doc["content"]);
-                                    },
-                                    icon: const Icon(Icons.share),
-                                    color: Colors.white,
-                                  )
-                                ],
+                            IconButton(
+                              onPressed: () {
+                                Utils.shareFile(
+                                    context, widget.imgUrl, widget.content);
+                                // getStr());
+                              },
+                              icon: const Icon(
+                                Icons.share,
+                                color: Colors.white,
                               ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-    );
+              ));
+
+    //  Column(
+    //     children: [
+    //       Expanded(
+    //         child: PageView.builder(
+    //           controller: pgViewController,
+    //           itemCount: widget.imgs.data.docs.length,
+    //           itemBuilder: (context, i) {
+    //             int newLength =
+    //                 widget.imgs.data.docs.length - widget.index;
+    //             int length = widget.imgs.data.docs.length;
+    //             final doc = widget.imgs.data.docs[
+    //                 (i + widget.index) > length - 1
+    //                     ? i - newLength
+    //                     : i + widget.index];
+
+    //             final content2 = Provider.of<LocaleProvider>(context)
+    //                 .langeSwitch(doc["content"], context);
+
+    //             return Screenshot(
+    //               key: UniqueKey(),
+    //               controller: screenshotController,
+    //               child: Column(
+    //                 mainAxisSize: MainAxisSize.min,
+    //                 children: [
+    // FutureBuilder(
+    //   future: content2,
+    //   builder:
+    //       (context, AsyncSnapshot<String> snapshot) {
+    //     return TranslationCard(
+    //       media: media,
+    //       data: snapshot.data ?? "",
+    //     );
+    //   },
+    // ),
+    //                   InteractiveViewer(
+    //                     // key: UniqueKey(),
+    //                     transformationController: controller,
+    //                     maxScale: 7,
+    //                     onInteractionEnd: (details) => resetZoom(),
+    //                     child: CachedNetworkImage(
+    //                         imageUrl: doc["imgUrl"],
+    //                         imageBuilder: (_, p) {
+    //                           return Image(
+    //                             image: p,
+    //                             // height: media.height * 0.9,
+    //                             width: double.infinity,
+    //                             //  MediaQuery.of(context).size.height * 1.4,
+    //                             fit: BoxFit.fill,
+    //                           );
+    //                         }),
+    //                   ),
+    //                 ],
+    //               ),
+    //             );
+    //           },
+    //         ),
+    //       ),
+    //     ],
+    //   ),
   }
 }

@@ -6,25 +6,48 @@ import '../services/constants.dart';
 import '../services/themes.dart';
 
 class MyCard extends StatelessWidget {
-  const MyCard({
+  MyCard({
     Key? key,
     required this.details,
   }) : super(key: key);
-  final String details;
+  String details;
+
+  late Size media;
+
+  bool themeMode = true;
+
+  String str = "";
+
+  // @override
+  // void initState() {
+  //   getStr(widget.details);
+
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
+
+  late Future<String> content;
 
   @override
   Widget build(BuildContext context) {
     // Locale locale = Localizations.localeOf(context);
 
-    bool thememode =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    themeMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
-    final media = MediaQuery.of(context).size;
-    final content =
-        Provider.of<LocaleProvider>(context).langeSwitch(details, context);
+    media = MediaQuery.of(context).size;
+
+    content = Provider.of<LocaleProvider>(context).langSwitch(
+      details,
+      context,
+    );
+
     return Provider.of<LocaleProvider>(context).locale.languageCode == "ar" ||
             Provider.of<LocaleProvider>(context).locale.languageCode == "fa" ||
             Provider.of<LocaleProvider>(context).locale.languageCode == "ur"
+        // ? FutureBuilder(
+        //     future: details,
+        //     builder: (context, AsyncSnapshot<String> snapshot) {
+        //       return
         ? FutureBuilder(
             future: content,
             builder: (context, AsyncSnapshot<String> snapshot) {
@@ -38,30 +61,36 @@ class MyCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
-                      child: Container(
-                        padding: EdgeInsets.only(right: media.width * 0.19),
-                        child: SelectableText(
-                          snapshot.data ?? "",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            //
-                            // ***
-                            // TODO rEVISION
-                            //overflow: TextOverflow.ellipsis,
-                            fontSize: media.width * 0.035,
-                            // letterSpacing: 2,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "RobotoCondensed",
-                          ),
-                        ),
-                      ),
-                    ),
+                        child: Container(
+                            padding: EdgeInsets.only(right: media.width * 0.19),
+                            child: SelectableText(
+                              snapshot.data ?? details,
+                              // details,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                //
+                                // ***
+                                // TODO rEVISION
+                                //overflow: TextOverflow.ellipsis,
+                                fontSize: media.width * 0.035,
+                                // letterSpacing: 2,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "RobotoCondensed",
+                              ),
+                            ))),
                   ),
                 ),
               );
             },
           )
-        : FutureBuilder(
+        :
+        //   },
+        // )
+        // : FutureBuilder(
+        //     future: content,
+        //     builder: (context, AsyncSnapshot<String> snapshot) {
+        //       return
+        FutureBuilder(
             future: content,
             builder: (context, AsyncSnapshot<String> snapshot) {
               return Padding(
@@ -80,7 +109,7 @@ class MyCard extends StatelessWidget {
                           //   kPrimaryColor.withRed(255),
                           //   Colors.black54,
                           // ]),
-                          !thememode
+                          !themeMode
                               ? LinearGradient(colors: [
                                   kPrimaryColor.withBlue(255),
                                   Colors.white60,
@@ -94,29 +123,25 @@ class MyCard extends StatelessWidget {
                     ),
                     child: Center(
                       child: Container(
-                        padding: EdgeInsets.only(left: media.width * 0.2),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-
-                          
-                          child: SelectableText(
-                            
-                            snapshot.data ?? "",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5!
-                                .copyWith(
-                                    fontSize: media.width * 0.035,
-                                    fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
+                          padding: EdgeInsets.only(left: media.width * 0.2),
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: SelectableText(
+                                snapshot.data ?? details,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5!
+                                    .copyWith(
+                                        fontSize: media.width * 0.035,
+                                        fontWeight: FontWeight.bold),
+                              ))),
                     ),
                   ),
                 ),
               );
-            },
-          );
+            });
+    //   },
+    // );
   }
 }

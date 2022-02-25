@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_quotes/l10n/l10n.dart';
 import 'package:translator/translator.dart';
@@ -22,9 +21,13 @@ class LocaleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> langeSwitch(String content, BuildContext context) async {
+  Future<String> langSwitch(
+    String content,
+    BuildContext context,
+  ) async {
     Locale locale = Localizations.localeOf(context);
     _locale = locale;
+
     switch (_locale.languageCode) {
       case "en":
         return content = content;
@@ -34,8 +37,14 @@ class LocaleProvider extends ChangeNotifier {
         return content = trans.text;
 
       case "es":
-        var trans = await translator.translate(content, from: "en", to: "es");
-        return content = trans.text;
+        try {
+          var trans = await translator.translate(content, from: "en", to: "es");
+
+          return content = trans.text;
+        } catch (e) {
+          print(e.toString());
+          return content;
+        }
 
       case "hi":
         var trans = await translator.translate(content, from: "en", to: "hi");
@@ -120,11 +129,10 @@ class LocaleProvider extends ChangeNotifier {
         return content = trans.text;
       default:
         return content = content;
-
-      // setState(() {
-      // });
-
     }
+
+    // setState(() {
+    // });
   }
 
   void clearLocale() {

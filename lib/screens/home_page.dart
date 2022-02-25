@@ -7,7 +7,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/screens/quote.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/locale_provider.dart';
 import '../providers/utils.dart';
 import '../services/ad_helper.dart';
 import '../widgets/carousal_screen.dart';
@@ -60,8 +62,8 @@ class _HomePageState extends State<HomePage> {
   bool isHomeLoaded = false;
   bool isInlineLoaded = false;
 
-  // InterstitialAd? interstitialAd;
-  // int interstatilLoadAttempt = 0;
+  late String quoteId;
+  late Future<String> content;
 
   int getListvItemIndx(int index) {
     if (index >= inlineIndex && isInlineLoaded) {
@@ -141,10 +143,13 @@ class _HomePageState extends State<HomePage> {
     inlineBanner.dispose();
   }
 
+  double width = 0;
+  double height = 0;
+
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       bottomNavigationBar: isHomeLoaded
@@ -187,6 +192,13 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             String content = snapshot
                                 .data.docs[getListvItemIndx(index)]["content"];
+                            // Provider.of<LocaleProvider>(context).langSwitch(
+                            //   snapshot.data.docs[getListvItemIndx(index)]
+                            //       ["content"],
+                            //   context,
+                            // );
+                            // getStr(content);
+
                             String quoteId =
                                 snapshot.data.docs[getListvItemIndx(index)].id;
 
@@ -223,26 +235,33 @@ class _HomePageState extends State<HomePage> {
                               child: InkWell(
                                 onTap: () {
                                   // _showInterstitialAd();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => QuoteImage(
-                                        content: content,
-                                        imgUrl: snapshot.data
-                                                .docs[getListvItemIndx(index)]
-                                            ["imgUrl"],
-                                        docId: quoteId,
-                                        index: getListvItemIndx(index),
-                                        imgs: snapshot,
+                                  try {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => QuoteImage(
+                                          content: content,
+                                          imgUrl: snapshot.data
+                                                  .docs[getListvItemIndx(index)]
+                                              ["imgUrl"],
+                                          docId: quoteId,
+                                          index: getListvItemIndx(index),
+                                          imgs: snapshot,
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } on Exception catch (e) {
+                                    print(e.toString());
+                                    // TODO
+                                  }
                                 },
                                 child: SizedBox(
                                   width: width,
                                   height: height * 0.2,
                                   child: Stack(children: [
-                                    Positioned(child: MyCard(details: content)),
+                                    Positioned(
+                                      child: MyCard(details: content),
+                                    ),
                                     Positioned(
                                       top: 5,
                                       child: CachedNetworkImage(
@@ -289,7 +308,12 @@ class _HomePageState extends State<HomePage> {
                         }),
                   ),
                 ),
-                SizedBox(height: height * 0.15, child: Sliders(imgs: snapshot)),
+                SizedBox(
+                    height: height * 0.15,
+                    child: Sliders(
+                      imgs: snapshot,
+                      // content: str,
+                    )),
               ],
             );
           },
