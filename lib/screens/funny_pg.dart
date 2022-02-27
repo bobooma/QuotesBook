@@ -13,9 +13,11 @@ class FunnyPage extends StatelessWidget {
 
   FunnyPage({Key? key}) : super(key: key);
 
+  late Size media;
+
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
+    media = MediaQuery.of(context).size;
 
     return PageBody(
       quotes: quotes,

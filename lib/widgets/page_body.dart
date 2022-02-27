@@ -6,10 +6,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/widgets/my_card.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/locale_provider.dart';
-import '../providers/utils.dart';
+import '../services/utils.dart';
 
 const int maxFailedLoadAttempt = 3;
 
@@ -142,9 +140,10 @@ class _PageBodyState extends State<PageBody> {
                 child: CircularProgressIndicator(),
               );
             }
-            final len = snapshot.data.docs.length;
+
             return ListView.builder(
-                itemCount: len + (isInlineLoaded && len >= 3 ? 1 : 0),
+                itemCount: snapshot.data.docs.length +
+                    (isInlineLoaded && snapshot.data.docs.length >= 3 ? 1 : 0),
                 itemBuilder: (BuildContext context, int index) {
                   if (isInlineLoaded && index == inlineIndex) {
                     return Container(
@@ -173,7 +172,7 @@ class _PageBodyState extends State<PageBody> {
                         children: [
                           SlidableAction(
                             label: 'Download',
-                            backgroundColor: Colors.red,
+                            backgroundColor: Colors.amber,
                             icon: Icons.delete,
                             onPressed: (context) {
                               Utils.save(
@@ -182,23 +181,31 @@ class _PageBodyState extends State<PageBody> {
                                   context);
                             },
                           ),
+                          // !  Admin
+                          // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                          // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         ],
                       ),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => QuoteImage(
-                                content: content,
-                                imgUrl: snapshot.data
-                                    .docs[getListvItemIndx(index)]["imgUrl"],
-                                docId: quoteId,
-                                index: getListvItemIndx(index),
-                                imgs: snapshot,
+                          try {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QuoteImage(
+                                  content: content,
+                                  imgUrl: snapshot.data
+                                      .docs[getListvItemIndx(index)]["imgUrl"],
+                                  docId: quoteId,
+                                  index: getListvItemIndx(index),
+                                  imgs: snapshot,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } on Exception catch (e) {
+                            debugPrint(e.toString());
+                          }
                         },
                         child: SizedBox(
                           width: widget.media.width,

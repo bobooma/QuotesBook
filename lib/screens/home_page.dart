@@ -7,10 +7,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:my_quotes/screens/quote.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/locale_provider.dart';
-import '../providers/utils.dart';
+import '../services/utils.dart';
 import '../services/ad_helper.dart';
 import '../widgets/carousal_screen.dart';
 import '../widgets/my_card.dart';
@@ -192,12 +190,6 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             String content = snapshot
                                 .data.docs[getListvItemIndx(index)]["content"];
-                            // Provider.of<LocaleProvider>(context).langSwitch(
-                            //   snapshot.data.docs[getListvItemIndx(index)]
-                            //       ["content"],
-                            //   context,
-                            // );
-                            // getStr(content);
 
                             String quoteId =
                                 snapshot.data.docs[getListvItemIndx(index)].id;
@@ -234,7 +226,6 @@ class _HomePageState extends State<HomePage> {
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  // _showInterstitialAd();
                                   try {
                                     Navigator.push(
                                       context,
@@ -278,11 +269,7 @@ class _HomePageState extends State<HomePage> {
                                               ],
                                               shape: BoxShape.circle,
                                               image: DecorationImage(
-                                                  fit: BoxFit.cover, image: p
-
-                                                  // NetworkImage(snapshot
-                                                  //     .data.docs[getListvItemIndx(index)]["imgUrl"]),
-                                                  ),
+                                                  fit: BoxFit.cover, image: p),
                                             ),
                                           );
                                         },
