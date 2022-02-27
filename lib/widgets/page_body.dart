@@ -8,6 +8,7 @@ import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/widgets/my_card.dart';
 
 import '../services/utils.dart';
+import 'carousal_screen.dart';
 
 const int maxFailedLoadAttempt = 3;
 
@@ -141,122 +142,149 @@ class _PageBodyState extends State<PageBody> {
               );
             }
 
-            return ListView.builder(
-                itemCount: snapshot.data.docs.length +
-                    (isInlineLoaded && snapshot.data.docs.length >= 3 ? 1 : 0),
-                itemBuilder: (BuildContext context, int index) {
-                  if (isInlineLoaded && index == inlineIndex) {
-                    return Container(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      width: inlineBanner.size.width.toDouble(),
-                      height: inlineBanner.size.height.toDouble(),
-                      child: AdWidget(ad: inlineBanner),
-                    );
-                  } else {
-                    String content =
-                        snapshot.data.docs[getListvItemIndx(index)]["content"];
+            return Column(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: height * .58,
+                    child: ListView.builder(
+                        itemCount: snapshot.data.docs.length +
+                            (isInlineLoaded && snapshot.data.docs.length >= 3
+                                ? 1
+                                : 0),
+                        itemBuilder: (BuildContext context, int index) {
+                          if (isInlineLoaded && index == inlineIndex) {
+                            return Container(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              width: inlineBanner.size.width.toDouble(),
+                              height: inlineBanner.size.height.toDouble(),
+                              child: AdWidget(ad: inlineBanner),
+                            );
+                          } else {
+                            String content = snapshot
+                                .data.docs[getListvItemIndx(index)]["content"];
 
-                    String quoteId =
-                        snapshot.data.docs[getListvItemIndx(index)].id;
+                            String quoteId =
+                                snapshot.data.docs[getListvItemIndx(index)].id;
 
-                    return Slidable(
-                      key: UniqueKey(),
-                      endActionPane: ActionPane(
-                        dismissible: DismissiblePane(
-                          onDismissed: () async {
-                            // Remove this Slidable from the widget tree.
-                          },
-                        ),
-                        motion: const DrawerMotion(),
-                        extentRatio: 0.25,
-                        children: [
-                          SlidableAction(
-                            label: 'Download',
-                            backgroundColor: Colors.amber,
-                            icon: Icons.delete,
-                            onPressed: (context) {
-                              Utils.save(
-                                  snapshot.data.docs[getListvItemIndx(index)]
-                                      ["imgUrl"],
-                                  context);
-                            },
-                          ),
-                          // !  Admin
-                          // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            return Slidable(
+                              key: UniqueKey(),
+                              endActionPane: ActionPane(
+                                dismissible: DismissiblePane(
+                                  onDismissed: () async {
+                                    // Remove this Slidable from the widget tree.
+                                  },
+                                ),
+                                motion: const DrawerMotion(),
+                                extentRatio: 0.25,
+                                children: [
+                                  SlidableAction(
+                                    label: 'Download',
+                                    backgroundColor: Colors.amber,
+                                    icon: Icons.delete,
+                                    onPressed: (context) {
+                                      Utils.save(
+                                          snapshot.data
+                                                  .docs[getListvItemIndx(index)]
+                                              ["imgUrl"],
+                                          context);
+                                    },
+                                  ),
+                                  // !  Admin
+                                  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                          // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        ],
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          try {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => QuoteImage(
-                                  content: content,
-                                  imgUrl: snapshot.data
-                                      .docs[getListvItemIndx(index)]["imgUrl"],
-                                  docId: quoteId,
-                                  index: getListvItemIndx(index),
-                                  imgs: snapshot,
+                                  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                ],
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  try {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => QuoteImage(
+                                          content: content,
+                                          imgUrl: snapshot.data
+                                                  .docs[getListvItemIndx(index)]
+                                              ["imgUrl"],
+                                          docId: quoteId,
+                                          index: getListvItemIndx(index),
+                                          imgs: snapshot,
+                                        ),
+                                      ),
+                                    );
+                                  } on Exception catch (e) {
+                                    debugPrint(e.toString());
+                                  }
+                                },
+                                child: SizedBox(
+                                  width: widget.media.width,
+                                  height: widget.media.height * 0.2,
+                                  child: Stack(children: [
+                                    Positioned(
+                                      child: MyCard(
+                                          details: snapshot.data
+                                                  .docs[getListvItemIndx(index)]
+                                              ["content"]),
+                                    ),
+                                    Positioned(
+                                      top: 5,
+                                      child: CachedNetworkImage(
+                                        imageUrl: snapshot.data
+                                                .docs[getListvItemIndx(index)]
+                                            ["imgUrl"],
+                                        imageBuilder: (_, p) {
+                                          return Container(
+                                            height: height * 0.2,
+                                            width: height * 0.2,
+                                            decoration: BoxDecoration(
+                                              boxShadow: const [
+                                                BoxShadow(blurRadius: 2)
+                                              ],
+                                              shape: BoxShape.circle,
+                                              image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: p,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        progressIndicatorBuilder:
+                                            (context, url, progress) {
+                                          return Container(
+                                            width: width / 2,
+                                            height: height / 2,
+                                            color: Colors.grey.withOpacity(.4),
+                                            child: const Center(
+                                                child: SpinKitThreeBounce(
+                                                    size: 30,
+                                                    color: Colors.pink)),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ]),
                                 ),
                               ),
                             );
-                          } on Exception catch (e) {
-                            debugPrint(e.toString());
                           }
-                        },
-                        child: SizedBox(
-                          width: widget.media.width,
-                          height: widget.media.height * 0.2,
-                          child: Stack(children: [
-                            Positioned(
-                              child: MyCard(
-                                  details: snapshot
-                                          .data.docs[getListvItemIndx(index)]
-                                      ["content"]),
-                            ),
-                            Positioned(
-                              top: 5,
-                              child: CachedNetworkImage(
-                                imageUrl: snapshot.data
-                                    .docs[getListvItemIndx(index)]["imgUrl"],
-                                imageBuilder: (_, p) {
-                                  return Container(
-                                    height: height * 0.2,
-                                    width: height * 0.2,
-                                    decoration: BoxDecoration(
-                                      boxShadow: const [
-                                        BoxShadow(blurRadius: 2)
-                                      ],
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: p,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                progressIndicatorBuilder:
-                                    (context, url, progress) {
-                                  return Container(
-                                    width: width / 2,
-                                    height: height / 2,
-                                    color: Colors.grey.withOpacity(.4),
-                                    child: const Center(
-                                        child: SpinKitThreeBounce(
-                                            size: 30, color: Colors.pink)),
-                                  );
-                                },
-                              ),
-                            ),
-                          ]),
-                        ),
-                      ),
-                    );
-                  }
-                });
+                        }),
+                  ),
+                ),
+                widget.quotes ==
+                        FirebaseFirestore.instance
+                            .collection("quotes")
+                            .orderBy("time", descending: true)
+                            .snapshots()
+                    ? SizedBox(
+                        height: height * 0.15,
+                        child: Sliders(
+                          imgs: snapshot,
+                          // content: str,
+                        ))
+                    : Container(),
+              ],
+            );
           },
         ),
       ),

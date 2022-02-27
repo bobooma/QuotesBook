@@ -138,7 +138,7 @@ class MyHomePage extends StatelessWidget {
                   : FloatingActionButtonLocation.endFloat,
           body: TabBarView(
             children: [
-              const HomePage(),
+              HomePage(),
               FunnyPage(),
               const FavScreen(),
               HealthScreen(),
