@@ -19,6 +19,7 @@ class HomePage extends StatelessWidget {
     media = MediaQuery.of(context).size;
 
     return PageBody(
+      widId: "home",
       quotes: quotes,
       media: media,
       bannerId: AdState.bannerhome,

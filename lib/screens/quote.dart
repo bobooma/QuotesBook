@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -14,7 +13,7 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/providers/quote_model_provider.dart';
-import 'package:my_quotes/providers/utils.dart';
+import 'package:my_quotes/services/utils.dart';
 import 'package:my_quotes/widgets/my_drawer.dart';
 import 'package:my_quotes/widgets/translations_card.dart';
 import 'package:path_provider/path_provider.dart';
@@ -54,8 +53,6 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   late BannerAd homeBanner;
 
   bool isHomeLoaded = false;
-
-  // PageController pgViewController = PageController();
 
   void createHomeBanner() {
     homeBanner = BannerAd(

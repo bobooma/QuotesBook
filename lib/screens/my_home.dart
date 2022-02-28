@@ -25,16 +25,23 @@ class MyHomePage extends StatelessWidget {
 
   final isDialOpen = ValueNotifier(false);
 
+  late Size media;
+  late AppLocalizations lang;
+  late String lang2;
+
+  TextStyle? theme;
+
+  late bool themeMode;
+
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
+    media = MediaQuery.of(context).size;
 
-    final lang = AppLocalizations.of(context)!;
-    final lang2 = Provider.of<LocaleProvider>(context).locale.languageCode;
-    final theme = Theme.of(context).textTheme.bodyLarge;
+    lang = AppLocalizations.of(context)!;
+    lang2 = Provider.of<LocaleProvider>(context).locale.languageCode;
+    theme = Theme.of(context).textTheme.bodyLarge;
 
-    bool themeMode =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    themeMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return DefaultTabController(
       length: 6,

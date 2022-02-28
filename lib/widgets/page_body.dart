@@ -1,28 +1,35 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:my_quotes/screens/home_page.dart';
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/widgets/my_card.dart';
 
+import '../screens/my_home.dart';
 import '../services/utils.dart';
 import 'carousal_screen.dart';
 
 const int maxFailedLoadAttempt = 3;
 
 class PageBody extends StatefulWidget {
-  const PageBody({
-    Key? key,
-    required this.quotes,
-    required this.media,
-    required this.bannerId,
-    required this.inlineId,
-  }) : super(key: key);
+  PageBody(
+      {Key? key,
+      required this.quotes,
+      required this.media,
+      required this.bannerId,
+      required this.inlineId,
+      this.widId = ""})
+      : super(key: key);
 
   final String bannerId;
   final String inlineId;
+
+  String widId;
 
   final Stream<QuerySnapshot<Map<String, dynamic>>> quotes;
   final Size media;
@@ -32,6 +39,27 @@ class PageBody extends StatefulWidget {
 }
 
 class _PageBodyState extends State<PageBody> {
+  String? userId;
+  UserCredential? userCredential;
+
+  getUserId() async {
+    userCredential = await FirebaseAuth.instance.signInAnonymously();
+    userId = userCredential!.user!.uid;
+  }
+
+  initialMessage() async {
+    final message = FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MyHomePage(),
+          ));
+    }
+  }
+
+  Locale? locale;
+
   late BannerAd homeBanner;
   late BannerAd inlineBanner;
 
@@ -95,8 +123,15 @@ class _PageBodyState extends State<PageBody> {
 
   @override
   void initState() {
+    getUserId();
     createHomeBanner();
     createInlineBanner();
+    FirebaseMessaging.onMessage.listen((message) {
+      // LocalNotificationService.display(message);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {});
+    Utils.getToken();
+
     super.initState();
   }
 
@@ -271,11 +306,7 @@ class _PageBodyState extends State<PageBody> {
                         }),
                   ),
                 ),
-                widget.quotes ==
-                        FirebaseFirestore.instance
-                            .collection("quotes")
-                            .orderBy("time", descending: true)
-                            .snapshots()
+                widget.widId == "home"
                     ? SizedBox(
                         height: height * 0.15,
                         child: Sliders(
