@@ -6,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:my_quotes/screens/home_page.dart';
+import 'package:my_quotes/providers/locale_provider.dart';
 import 'package:my_quotes/screens/quote.dart';
 import 'package:my_quotes/widgets/my_card.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/my_home.dart';
 import '../services/utils.dart';
 import 'carousal_screen.dart';
+import 'speed_dial.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const int maxFailedLoadAttempt = 3;
 
@@ -149,8 +152,16 @@ class _PageBodyState extends State<PageBody> {
   double width = 0;
   double height = 0;
 
+  final isDialOpen = ValueNotifier(false);
+
+  late Size media;
+  late AppLocalizations lang;
+  late String lang2;
+
   @override
   Widget build(BuildContext context) {
+    lang = AppLocalizations.of(context)!;
+    lang2 = Provider.of<LocaleProvider>(context).locale.languageCode;
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
 
@@ -202,104 +213,107 @@ class _PageBodyState extends State<PageBody> {
                             String quoteId =
                                 snapshot.data.docs[getListvItemIndx(index)].id;
 
-                            return Slidable(
-                              key: UniqueKey(),
-                              endActionPane: ActionPane(
-                                dismissible: DismissiblePane(
-                                  onDismissed: () async {
-                                    // Remove this Slidable from the widget tree.
-                                  },
-                                ),
-                                motion: const DrawerMotion(),
-                                extentRatio: 0.25,
-                                children: [
-                                  SlidableAction(
-                                    label: 'Download',
-                                    backgroundColor: Colors.amber,
-                                    icon: Icons.delete,
-                                    onPressed: (context) {
-                                      Utils.save(
-                                          snapshot.data
-                                                  .docs[getListvItemIndx(index)]
-                                              ["imgUrl"],
-                                          context);
-                                    },
-                                  ),
-                                  // !  Admin
-                                  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            return
 
-                                  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                ],
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  try {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => QuoteImage(
-                                          content: content,
-                                          imgUrl: snapshot.data
-                                                  .docs[getListvItemIndx(index)]
-                                              ["imgUrl"],
-                                          docId: quoteId,
-                                          index: getListvItemIndx(index),
-                                          imgs: snapshot,
-                                        ),
-                                      ),
-                                    );
-                                  } on Exception catch (e) {
-                                    debugPrint(e.toString());
-                                  }
-                                },
-                                child: SizedBox(
-                                  width: widget.media.width,
-                                  height: widget.media.height * 0.2,
-                                  child: Stack(children: [
-                                    Positioned(
-                                      child: MyCard(
-                                          details: snapshot.data
-                                                  .docs[getListvItemIndx(index)]
-                                              ["content"]),
-                                    ),
-                                    Positioned(
-                                      top: 5,
-                                      child: CachedNetworkImage(
-                                        imageUrl: snapshot.data
+                                //  Slidable(
+                                //   key: UniqueKey(),
+                                //   endActionPane: ActionPane(
+                                //     dismissible: DismissiblePane(
+                                //       onDismissed: () async {
+                                //         // Remove this Slidable from the widget tree.
+                                //       },
+                                //     ),
+                                //     motion: const DrawerMotion(),
+                                //     extentRatio: 0.25,
+                                //     children: [
+                                //       SlidableAction(
+                                //         label: 'Download',
+                                //         backgroundColor: Colors.amber,
+                                //         icon: Icons.delete,
+                                //         onPressed: (context) {
+                                //           // Utils.save(
+                                //           //     snapshot.data
+                                //           //             .docs[getListvItemIndx(index)]
+                                //           //         ["imgUrl"],
+                                //           //     context);
+                                //         },
+                                //       ),
+                                //       // !  Admin
+                                //       // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                                //       // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                //     ],
+                                //   ),
+                                // child:
+
+                                InkWell(
+                              onTap: () {
+                                try {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => QuoteImage(
+                                        content: content,
+                                        imgUrl: snapshot.data
                                                 .docs[getListvItemIndx(index)]
                                             ["imgUrl"],
-                                        imageBuilder: (_, p) {
-                                          return Container(
-                                            height: height * 0.2,
-                                            width: height * 0.2,
-                                            decoration: BoxDecoration(
-                                              boxShadow: const [
-                                                BoxShadow(blurRadius: 2)
-                                              ],
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: p,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        progressIndicatorBuilder:
-                                            (context, url, progress) {
-                                          return Container(
-                                            width: width / 2,
-                                            height: height / 2,
-                                            color: Colors.grey.withOpacity(.4),
-                                            child: const Center(
-                                                child: SpinKitThreeBounce(
-                                                    size: 30,
-                                                    color: Colors.pink)),
-                                          );
-                                        },
+                                        docId: quoteId,
+                                        index: getListvItemIndx(index),
+                                        imgs: snapshot,
                                       ),
                                     ),
-                                  ]),
-                                ),
+                                  );
+                                } on Exception catch (e) {
+                                  debugPrint(e.toString());
+                                }
+                              },
+                              child: SizedBox(
+                                width: widget.media.width,
+                                height: widget.media.height * 0.2,
+                                child: Stack(children: [
+                                  Positioned(
+                                    child: MyCard(
+                                        details: snapshot.data
+                                                .docs[getListvItemIndx(index)]
+                                            ["content"]),
+                                  ),
+                                  Positioned(
+                                    top: 5,
+                                    child: CachedNetworkImage(
+                                      imageUrl: snapshot.data
+                                              .docs[getListvItemIndx(index)]
+                                          ["imgUrl"],
+                                      imageBuilder: (_, p) {
+                                        return Container(
+                                          height: height * 0.2,
+                                          width: height * 0.2,
+                                          decoration: BoxDecoration(
+                                            boxShadow: const [
+                                              BoxShadow(blurRadius: 2)
+                                            ],
+                                            shape: BoxShape.circle,
+                                            image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: p,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      progressIndicatorBuilder:
+                                          (context, url, progress) {
+                                        return Container(
+                                          width: width / 2,
+                                          height: height / 2,
+                                          color: Colors.grey.withOpacity(.4),
+                                          child: const Center(
+                                              child: SpinKitThreeBounce(
+                                                  size: 30,
+                                                  color: Colors.pink)),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ]),
                               ),
                             );
                           }
@@ -319,6 +333,11 @@ class _PageBodyState extends State<PageBody> {
           },
         ),
       ),
+      floatingActionButton: CustomSpeedDial(isDialOpen: isDialOpen, lang: lang),
+      floatingActionButtonLocation:
+          lang2 == "ar" || lang2 == "fa" || lang2 == "ur"
+              ? FloatingActionButtonLocation.startFloat
+              : FloatingActionButtonLocation.endFloat,
     );
   }
 }

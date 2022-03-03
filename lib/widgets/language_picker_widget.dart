@@ -42,7 +42,6 @@ class LangPickWidget extends StatelessWidget {
           );
         }).toList(),
         onChanged: (_) {},
-        borderRadius: BorderRadius.circular(15),
         style: const TextStyle(fontWeight: FontWeight.bold),
         focusColor: Colors.pink,
         underline: const Divider(),

@@ -103,28 +103,32 @@ class _MyDrawerState extends State<MyDrawer> {
       onClick: () {
         // LangPickWidget();
       },
-      content: Container(
-        padding: const EdgeInsets.only(
-          left: 10,
-        ),
-        child: FittedBox(
-          child: Text(
-            appLoc!.chooseLanguage,
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(fontFamily: "LimeLihgt"),
+      content: FittedBox(
+        child: Container(
+          padding: const EdgeInsets.only(
+            left: 10,
+            //  right: 10
+          ),
+          child: Row(
+            children: [
+              Text(
+                appLoc!.chooseLanguage,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontFamily: "LimeLihgt"),
+              ),
+              LangPickWidget(),
+            ],
           ),
         ),
       ),
-      trailing: const FittedBox(child: LangPickWidget()),
-//
 //       ),
     );
   }
 
   MLMenuItem mLMitem(
-      Size media, String txt, IconData icn, Color clr, VoidCallback fun) {
+      Size media, String txt, IconData icn, Color clr, Function fun) {
     return MLMenuItem(
       onClick: () async {
         await fun();

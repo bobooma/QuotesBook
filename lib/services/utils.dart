@@ -27,6 +27,23 @@ class Utils {
     }
   }
 
+  // screenCapture(Function setStat, String capImage,
+  //     ScreenshotController screenshotController) async {
+  //   await Permission.storage.request();
+  //   final img = await screenshotController.capture();
+
+  //   if (img == null) return;
+  //   setStat(capImage);
+
+  //   // setState(() {
+  //   //   captureImg = img;
+  //   // });
+
+  //   final result = await ImageGallerySaver.saveImage(Uint8List.fromList(img),
+  //       quality: 60, name: DateTime.now().toString());
+  //   return result["filePath"];
+  // }
+
   static Future<void> shareFile(
       BuildContext context, String img, String content) async {
     Navigator.of(context).pop();

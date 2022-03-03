@@ -109,17 +109,25 @@ class _HomeDrawerState extends State<HomeDrawer> {
       },
       content: FittedBox(
         child: Container(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          child: Text(
-            appLoc!.chooseLanguage,
-            style: Theme.of(context)
-                .textTheme
-                .headline5!
-                .copyWith(fontFamily: "LimeLihgt"),
+          padding: const EdgeInsets.only(
+            left: 10,
+            //  right: 10
+          ),
+          child: Row(
+            children: [
+              Text(
+                appLoc!.chooseLanguage,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5!
+                    .copyWith(fontFamily: "LimeLihgt"),
+              ),
+              LangPickWidget(),
+            ],
           ),
         ),
       ),
-      trailing: FittedBox(child: LangPickWidget()),
+      // trailing: FittedBox(child: LangPickWidget()),
     );
 //
 //       ),

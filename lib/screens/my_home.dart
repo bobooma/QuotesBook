@@ -55,103 +55,131 @@ class MyHomePage extends StatelessWidget {
           }
         },
         child: Scaffold(
-          drawer: const HomeDrawer(),
-          appBar: AppBar(
-            titleSpacing: 0,
-            flexibleSpace: !themeMode
-                ? Container(
-                    decoration: BoxDecoration(
-                        // borderRadius: BorderRadius.circular(15),
-                        gradient: LinearGradient(colors: [
-                      Colors.white60,
-                      kPrimaryColor.withBlue(255)
-                    ])),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                        // borderRadius: BorderRadius.circular(15),
-                        gradient: LinearGradient(
-                      colors: [Colors.black87, kPrimaryColor.withRed(255)],
-                    )),
+          body: NestedScrollView(
+            headerSliverBuilder: (context, value) {
+              return [
+                SliverAppBar(
+                  pinned: true,
+                  floating: true,
+                  titleSpacing: 0,
+                  flexibleSpace: !themeMode
+                      ? customGradientShader(
+                          img: const AssetImage(
+                              "assets/WhatsApp Image 2022-02-28 at 12.19.13 PM.jpeg"),
+                          clr1: kPrimaryColor.withBlue(255),
+                          clr2: Colors.white,
+                          blend: BlendMode.dstOver)
+                      : customGradientShader(
+                          img: const AssetImage(
+                              "assets/WhatsApp Image 2022-02-28 at 12.19.13 PM.jpeg"),
+                          clr1: Colors.black87,
+                          clr2: kPrimaryColor.withRed(255).withAlpha(60),
+                          blend: BlendMode.multiply),
+                  bottom: TabBar(isScrollable: true, tabs: [
+                    Tab(
+                      icon: Icon(
+                        Icons.home,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                    ),
+                    Tab(
+                      child: Text(lang.funny, style: theme),
+                    ),
+                    Tab(
+                      child: Text(
+                        lang.favorites,
+                        style: theme,
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        lang.health,
+                        style: theme,
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        lang.inspiring,
+                        style: theme,
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        lang.blessings,
+                        style: theme,
+                      ),
+                    ),
+                  ]),
+                  toolbarHeight: media.height * 0.07,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      SizedBox(
+                        width: media.width * .35,
+                        child: CustomHeader(themeMode: themeMode, media: media),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.newQuote,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(
+                                  fontFamily: "RobotoCondensed",
+                                  fontSize: media.width * .032,
+                                  fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
                   ),
-            bottom: TabBar(isScrollable: true, tabs: [
-              Tab(
-                icon: Icon(
-                  Icons.home,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              Tab(
-                child: Text(lang.funny, style: theme),
-              ),
-              Tab(
-                child: Text(
-                  lang.favorites,
-                  style: theme,
-                ),
-              ),
-              Tab(
-                child: Text(
-                  lang.health,
-                  style: theme,
-                ),
-              ),
-              Tab(
-                child: Text(
-                  lang.inspiring,
-                  style: theme,
-                ),
-              ),
-              Tab(
-                child: Text(
-                  lang.blessings,
-                  style: theme,
-                ),
-              ),
-            ]),
-            toolbarHeight: media.height * 0.05,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+                  actions: const [
+                    ChangeTheme()
+
+                    //
+                  ],
+                )
+              ];
+            },
+            body: TabBarView(
               children: [
-                SizedBox(
-                  width: media.width * .35,
-                  child: CustomHeader(themeMode: themeMode, media: media),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                  child: Text(
-                    AppLocalizations.of(context)!.newQuote,
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                        fontFamily: "RobotoCondensed",
-                        fontSize: media.width * .032,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
+                HomePage(),
+                FunnyPage(),
+                const FavScreen(),
+                HealthScreen(),
+                Inspiration(),
+                Blessings(),
               ],
             ),
-            actions: const [
-              ChangeTheme()
-
-              //
-            ],
           ),
-          floatingActionButton:
-              CustomSpeedDial(isDialOpen: isDialOpen, lang: lang),
-          floatingActionButtonLocation:
-              lang2 == "ar" || lang2 == "fa" || lang2 == "ur"
-                  ? FloatingActionButtonLocation.startFloat
-                  : FloatingActionButtonLocation.endFloat,
-          body: TabBarView(
-            children: [
-              HomePage(),
-              FunnyPage(),
-              const FavScreen(),
-              HealthScreen(),
-              Inspiration(),
-              Blessings(),
-            ],
+          drawer: HomeDrawer(),
+        ),
+      ),
+    );
+  }
+
+  ShaderMask customGradientShader(
+      {required Color clr1,
+      required Color clr2,
+      required BlendMode blend,
+      required ImageProvider img}) {
+    return ShaderMask(
+      shaderCallback: (bounds) => LinearGradient(
+        colors: [clr1, clr2],
+        // stops: const [0.5, 0.7],
+        // begin: Alignment.topCenter, end: Alignment.bottomCenter
+      ).createShader(bounds),
+      blendMode: blend,
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: img,
+            fit: BoxFit.fill,
           ),
         ),
       ),
@@ -191,8 +219,10 @@ class CustomHeader extends StatelessWidget {
         : Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                gradient: LinearGradient(
-                    colors: [Colors.black45, kPrimaryColor.withRed(255)])),
+                gradient: LinearGradient(colors: [
+                  kPrimaryColor.withBlue(255),
+                  Colors.black12,
+                ])),
             child: FittedBox(
               child: Text(
                 'QuotesBook',
