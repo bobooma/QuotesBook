@@ -28,7 +28,7 @@ class _SlidersState extends State<Sliders> {
 
   void _createInterstitialAd() {
     InterstitialAd.load(
-      adUnitId: AdState.interstatialAdUnitId,
+      adUnitId: AdState.interstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {

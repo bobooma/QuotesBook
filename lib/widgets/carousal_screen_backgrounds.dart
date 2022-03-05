@@ -8,8 +8,8 @@ import '../services/ad_helper.dart';
 
 const int maxFailedLoadAttempt = 3;
 
-class BackgrounSliders extends StatefulWidget {
-  const BackgrounSliders({
+class BackgroundSliders extends StatefulWidget {
+  const BackgroundSliders({
     Key? key,
     required this.imgs,
   }) : super(key: key);
@@ -17,26 +17,62 @@ class BackgrounSliders extends StatefulWidget {
   final AsyncSnapshot imgs;
 
   @override
-  State<BackgrounSliders> createState() => _BackgrounSlidersState();
+  State<BackgroundSliders> createState() => _BackgroundSlidersState();
 }
 
-class _BackgrounSlidersState extends State<BackgrounSliders> {
+class _BackgroundSlidersState extends State<BackgroundSliders> {
+  late BannerAd inlineBanner;
+
+  final inlineIndex = 3;
+  bool isInlineLoaded = false;
+
+  int getListvItemIndx(int index) {
+    if (index >= inlineIndex && isInlineLoaded) {
+      return index - 1;
+    } else {
+      return index;
+    }
+  }
+
+  void createInlineBanner() {
+    try {
+      inlineBanner = BannerAd(
+          size: AdSize.mediumRectangle,
+          adUnitId: AdState.inline,
+          listener: BannerAdListener(
+            onAdLoaded: (_) {
+              setState(() {
+                isInlineLoaded = true;
+              });
+            },
+            onAdFailedToLoad: (ad, error) {
+              ad.dispose();
+            },
+          ),
+          request: const AdRequest());
+
+      inlineBanner.load();
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+  }
+
   InterstitialAd? interstitialAd;
-  int interstatilLoadAttempt = 0;
+  int interstitialLoadAttempt = 0;
 
   void _createInterstitialAd() {
     InterstitialAd.load(
-      adUnitId: AdState.interstatialAdUnitId,
+      adUnitId: AdState.interstitialAdUnitId,
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
           interstitialAd = ad;
-          interstatilLoadAttempt = 0;
+          interstitialLoadAttempt = 0;
         },
         onAdFailedToLoad: (LoadAdError error) {
-          interstatilLoadAttempt += 1;
+          interstitialLoadAttempt += 1;
           interstitialAd = null;
-          if (interstatilLoadAttempt >= maxFailedLoadAttempt) {
+          if (interstitialLoadAttempt >= maxFailedLoadAttempt) {
             _createInterstitialAd();
           }
         },
@@ -63,12 +99,14 @@ class _BackgrounSlidersState extends State<BackgrounSliders> {
   @override
   void initState() {
     _createInterstitialAd();
+    createInlineBanner();
     super.initState();
   }
 
   @override
   void dispose() {
     interstitialAd?.dispose();
+    inlineBanner.dispose();
     super.dispose();
   }
 
@@ -86,43 +124,57 @@ class _BackgrounSlidersState extends State<BackgrounSliders> {
         : Expanded(
             child: Center(
               child: CarouselSlider.builder(
-                  itemCount: widget.imgs.data.docs.length,
+                  itemCount: widget.imgs.data.docs.length +
+                      (isInlineLoaded && widget.imgs.data.docs.length >= 3
+                          ? 1
+                          : 0),
                   itemBuilder: (ctx, i, _) {
-                    return InkWell(
-                      onTap: () {
-                        _showInterstitialAd();
-                        Navigator.of(context)
-                            .pop(widget.imgs.data.docs[i]["b"]);
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: widget.imgs.data.docs[i]["b"],
-                        imageBuilder: (_, p) {
-                          return Container(
-                            margin: const EdgeInsets.all(1),
-                            // width: width / 3,
-                            height: height / 2,
-                            decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(
-                                      blurRadius: 3.0, offset: Offset(0.0, 2)),
-                                ],
-                                borderRadius: BorderRadius.circular(15),
-                                image: DecorationImage(
-                                    image: p, fit: BoxFit.fill)),
-                          );
+                    if (isInlineLoaded && i == inlineIndex) {
+                      return Container(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        width: inlineBanner.size.width.toDouble(),
+                        height: inlineBanner.size.height.toDouble(),
+                        child: AdWidget(ad: inlineBanner),
+                      );
+                    } else {
+                      return InkWell(
+                        onTap: () {
+                          _showInterstitialAd();
+                          Navigator.of(context).pop(
+                              widget.imgs.data.docs[getListvItemIndx(i)]["b"]);
                         },
-                        progressIndicatorBuilder: (context, url, progress) {
-                          return Container(
-                            width: width / 2,
-                            height: height / 2,
-                            color: Colors.grey.withOpacity(.4),
-                            child: const Center(
-                                child: SpinKitThreeBounce(
-                                    size: 30, color: Colors.pink)),
-                          );
-                        },
-                      ),
-                    );
+                        child: CachedNetworkImage(
+                          imageUrl: widget.imgs.data.docs[getListvItemIndx(i)]
+                              ["b"],
+                          imageBuilder: (_, p) {
+                            return Container(
+                              margin: const EdgeInsets.all(1),
+                              // width: width / 3,
+                              height: height / 2,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 3.0,
+                                        offset: Offset(0.0, 2)),
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: DecorationImage(
+                                      image: p, fit: BoxFit.fill)),
+                            );
+                          },
+                          progressIndicatorBuilder: (context, url, progress) {
+                            return Container(
+                              width: width / 2,
+                              height: height / 2,
+                              color: Colors.grey.withOpacity(.4),
+                              child: const Center(
+                                  child: SpinKitThreeBounce(
+                                      size: 30, color: Colors.pink)),
+                            );
+                          },
+                        ),
+                      );
+                    }
                   },
                   options: CarouselOptions(
                       height: 600,

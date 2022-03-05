@@ -20,8 +20,8 @@ const kContentColorLightTheme = Colors.black;
 const kContentColorDarkTheme = Color(0xFFF5FCF9);
 const kWarninngColor = Color(0xFFF3BB1C);
 const kErrorColor = Color(0xFFF03738);
-Color? kErrorColor2 = Color.fromRGBO(255, 165, 245, 1);
-Color? kErrorColor3 = Color.fromRGBO(187, 222, 251, 1);
+Color? kErrorColor2 = const Color.fromRGBO(255, 165, 245, 1);
+Color? kErrorColor3 = const Color.fromRGBO(187, 222, 251, 1);
 Color? kErrorColor4 = Colors.blue;
 
 const kDefaultPadding = 20.0;

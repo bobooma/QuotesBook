@@ -5,13 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
+import 'package:my_quotes/widgets/upload_screen.dart';
 
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../services/constants.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class CustomSpeedDial extends StatelessWidget {
+import '../services/ad_helper.dart';
+
+const int maxFailedLoadAttempt = 3;
+
+class CustomSpeedDial extends StatefulWidget {
   const CustomSpeedDial({
     Key? key,
     required this.isDialOpen,
@@ -20,6 +26,62 @@ class CustomSpeedDial extends StatelessWidget {
 
   final ValueNotifier<bool> isDialOpen;
   final AppLocalizations lang;
+
+  @override
+  State<CustomSpeedDial> createState() => _CustomSpeedDialState();
+}
+
+class _CustomSpeedDialState extends State<CustomSpeedDial> {
+  InterstitialAd? interstitialAd;
+  int interstitialLoadAttempt = 0;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdState.interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          interstitialAd = ad;
+          interstitialLoadAttempt = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          interstitialLoadAttempt += 1;
+          interstitialAd = null;
+          if (interstitialLoadAttempt >= maxFailedLoadAttempt) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (interstitialAd != null) {
+      interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      interstitialAd!.show();
+    }
+  }
+
+  @override
+  void initState() {
+    _createInterstitialAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    interstitialAd?.dispose();
+    super.dispose();
+  }
 
   Future<void> launchApp() async {
     const url =
@@ -32,7 +94,7 @@ class CustomSpeedDial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpeedDial(
-      openCloseDial: isDialOpen,
+      openCloseDial: widget.isDialOpen,
       overlayColor: Colors.white10,
       animatedIcon: AnimatedIcons.add_event,
       animatedIconTheme: const IconThemeData(size: 40),
@@ -40,10 +102,22 @@ class CustomSpeedDial extends StatelessWidget {
         SpeedDialChild(
             backgroundColor: kPrimaryColor300,
             child: const Icon(
+              Icons.update,
+              size: 40,
+            ),
+            label: "upload",
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const UploadScreen()));
+            }),
+        SpeedDialChild(
+            backgroundColor: kPrimaryColor300,
+            child: const Icon(
               Icons.app_registration_outlined,
               size: 40,
             ),
-            label: lang.myApps,
+            label: widget.lang.myApps,
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             onTap: () {
               launchApp();
@@ -54,7 +128,7 @@ class CustomSpeedDial extends StatelessWidget {
               Icons.share,
               size: 40,
             ),
-            label: lang.shareApp,
+            label: widget.lang.shareApp,
             labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             onTap: () {
               Share.share(
@@ -66,23 +140,10 @@ class CustomSpeedDial extends StatelessWidget {
             Icons.imagesearch_roller,
             size: 40,
           ),
-          label: lang.makeQuote,
+          label: widget.lang.makeQuote,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
           onTap: () async {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => StoriesEditor(
-            //       giphyKey: '[HERE YOUR API KEY]',
-            //       //fontFamilyList: ['Shizuru'],
-            //       //isCustomFontList: true,
-            //       onDone: (uri) {
-            //         debugPrint(uri);
-            //         Share.shareFiles([uri]);
-            //       },
-            //     ),
-            //   ),
-            // );
+            _showInterstitialAd();
 
             final ByteData bytes =
                 await rootBundle.load("assets/ic_launcher.png");
@@ -102,13 +163,6 @@ class CustomSpeedDial extends StatelessWidget {
               debugPrint(e.toString());
               // TODO
             }
-
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => MakeQuote()
-            //       //  MakeQuote()
-            //       ),
-            // );
           },
         ),
       ],

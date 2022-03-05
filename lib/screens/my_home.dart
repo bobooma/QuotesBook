@@ -8,7 +8,6 @@ import 'package:my_quotes/services/constants.dart';
 
 import 'package:my_quotes/widgets/change_theme.dart';
 import 'package:my_quotes/widgets/home_drawer.dart';
-import 'package:my_quotes/widgets/speed_dial.dart';
 import 'package:provider/provider.dart';
 
 import '../services/themes.dart';
@@ -109,6 +108,12 @@ class MyHomePage extends StatelessWidget {
                         style: theme,
                       ),
                     ),
+                    // Tab(
+                    //   child: Text(
+                    //     lang.backgrounds,
+                    //     style: theme,
+                    //   ),
+                    // ),
                   ]),
                   toolbarHeight: media.height * 0.07,
                   title: Row(
@@ -154,6 +159,7 @@ class MyHomePage extends StatelessWidget {
                 HealthScreen(),
                 Inspiration(),
                 Blessings(),
+                // const Backgrounds(),
               ],
             ),
           ),
