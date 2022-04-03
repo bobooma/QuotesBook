@@ -119,14 +119,6 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     File(path).writeAsBytesSync(bytes);
     // ! revision
     Share.shareFiles([path], subject: widget.content, text: widget.content);
-
-    // await _save();
-    // final result = await FilePicker.platform.pickFiles(
-    //   allowMultiple: false,
-    // );
-    // if (result == null) return;
-    // path = result.files.single.path!;
-    // setState(() => file = File(path));
   }
 
   screenCapture() async {
@@ -145,16 +137,17 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
   }
 
   Future<void> shareScreen() async {
-    // String content = await widget.content;
-    //  final path = await screenCapture();
-    if (captureImg == null) {
-      await screenCapture();
-    }
+    final captureImg2 = await screenshotController.capture();
+
+    if (captureImg2 == null) return;
+    // if (captureImg2 == null) {
+    //   await screenCapture();
+    // }
 
     final dir = await getApplicationDocumentsDirectory();
     final img = File("${dir.path}/flutter.png");
 
-    img.writeAsBytesSync(captureImg!);
+    img.writeAsBytesSync(captureImg2);
     Share.shareFiles([img.path], subject: widget.content, text: widget.content);
     // Navigator.of(context).pop();
   }
@@ -191,6 +184,8 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
         .where("quoteId", isEqualTo: newDocId)
         .get()
         .then((value) => value.docs.isNotEmpty);
+
+    // !!!!!!!!!!!!!!!!!!! SETSTATE IF MOUNTED
 
     void setStateIfMounted(f) {
       if (mounted) setState(f);
@@ -256,16 +251,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     createHomeBanner();
 
     super.initState();
-    // getStr(widget.content);
   }
-
-  // getStr(Future<String> content) async {
-  //   await content.then((value) {
-  //     setState(() {
-  //       str = value;
-  //     });
-  //   });
-  // }
 
   @override
   void dispose() {
@@ -276,30 +262,21 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<String> getLang(content) async {
-    return await Provider.of<LocaleProvider>(context).langSwitch(
-      content,
-      context,
-    );
-  }
-
   var doc;
   late Size media;
   late String lang;
   late int newLength;
   late int length;
-  // late Future<String> content2;
+
   late Future<String> content;
 
   String str = "";
 
   @override
   Widget build(BuildContext context) {
-    // isFavFun();
     media = MediaQuery.of(context).size;
-    // final content = getLang();
 
-    final content = Provider.of<LocaleProvider>(context)
+    content = Provider.of<LocaleProvider>(context)
         .langSwitch(widget.content, context);
     lang = Provider.of<LocaleProvider>(context).locale.languageCode;
     return Scaffold(
@@ -333,11 +310,10 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
         body: Provider.of<LocaleProvider>(context).locale.languageCode == "en"
             ? PageView.builder(
                 controller: pgController,
-                // allowImplicitScrolling: true,
                 itemCount: widget.imgs.data.docs.length,
                 itemBuilder: (context, i) {
-                  newLength = widget.imgs.data.docs.length - widget.index;
                   length = widget.imgs.data.docs.length;
+                  newLength = length - widget.index;
 
                   doc = widget.imgs.data.docs[(i + widget.index) > length - 1
                       ? i - newLength
@@ -345,26 +321,116 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
 
                   isFavFun(doc.id);
 
-                  return Column(
+                  return Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InteractiveViewer(
+                            transformationController: controller,
+                            maxScale: 7,
+                            onInteractionEnd: (details) => resetZoom(),
+                            child: CachedNetworkImage(
+                                imageUrl: doc["imgUrl"],
+                                imageBuilder: (_, p) {
+                                  return Image(
+                                    image: p,
+                                    // height: media.height * 0.9,
+                                    width: double.infinity,
+                                    //  MediaQuery.of(context).size.height * 1.4,
+                                    fit: BoxFit.fitWidth,
+                                  );
+                                }),
+                          ),
+                          // Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: SizedBox(
+                              height: media.height * 0.05,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        widget.docId = doc.id;
+
+                                        addRemoveUser(
+                                          doc["imgUrl"],
+                                          doc.id,
+                                          doc["content"],
+                                        );
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Provider.of<QuoteModelProvider>(context,
+                                                      listen: false)
+                                                  .isFav ==
+                                              true
+                                          ? Icons.favorite
+                                          : Icons.favorite_border_outlined,
+                                      color: Colors.pink,
+                                      size: 30,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Utils.shareFile(context, doc["imgUrl"],
+                                          doc["content"]);
+                                    },
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Builder(builder: (context) {
+                isFavFun(widget.docId);
+
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: InteractiveViewer(
-                          transformationController: controller,
-                          maxScale: 7,
-                          onInteractionEnd: (details) => resetZoom(),
-                          child: CachedNetworkImage(
-                              imageUrl: doc["imgUrl"],
-                              imageBuilder: (_, p) {
-                                return Image(
-                                  image: p,
-                                  // height: media.height * 0.9,
-                                  width: double.infinity,
-                                  //  MediaQuery.of(context).size.height * 1.4,
-                                  fit: BoxFit.fitWidth,
-                                );
-                              }),
+                      Screenshot(
+                        controller: screenshotController,
+                        child: Column(
+                          children: [
+                            FutureBuilder(
+                                future: content,
+                                builder:
+                                    (context, AsyncSnapshot<String> snapshot) {
+                                  return TranslationCard(
+                                      media: media,
+                                      data: snapshot.data ?? widget.content);
+                                }),
+                            InteractiveViewer(
+                              transformationController: controller,
+                              maxScale: 7,
+                              onInteractionEnd: (details) => resetZoom(),
+                              child: CachedNetworkImage(
+                                  imageUrl: widget.imgUrl,
+                                  imageBuilder: (_, p) {
+                                    return Image(
+                                      image: p,
+                                      width: double.infinity,
+                                      fit: BoxFit.fitWidth,
+                                    );
+                                  }),
+                            ),
+                          ],
                         ),
                       ),
+
                       // Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
@@ -376,13 +442,10 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
                               IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    widget.docId = doc.id;
+                                    // widget.docId = doc.id;
 
-                                    addRemoveUser(
-                                      doc["imgUrl"],
-                                      doc.id,
-                                      doc["content"],
-                                    );
+                                    addRemoveUser(widget.imgUrl, widget.docId,
+                                        widget.content);
                                   });
                                 },
                                 icon: Icon(
@@ -397,10 +460,9 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
                                 ),
                               ),
                               IconButton(
-                                onPressed: () {
-                                  Utils.shareFile(
-                                      context, doc["imgUrl"], doc["content"]);
-                                },
+                                onPressed: () => shareScreen()
+                                // getStr());
+                                ,
                                 icon: const Icon(
                                   Icons.share,
                                   color: Colors.white,
@@ -411,97 +473,7 @@ class _QuoteImageState extends State<QuoteImage> with TickerProviderStateMixin {
                         ),
                       ),
                     ],
-                  );
-                },
-              )
-            : Builder(builder: (context) {
-                isFavFun(widget.docId);
-
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // SizedBox(
-                    //   height: 150,
-                    //   child:
-                    Screenshot(
-                      controller: screenshotController,
-                      child: Column(
-                        children: [
-                          FutureBuilder(
-                              future: content,
-                              builder:
-                                  (context, AsyncSnapshot<String> snapshot) {
-                                return TranslationCard(
-                                    media: media,
-                                    data: snapshot.data ?? widget.content);
-                              }),
-                          InteractiveViewer(
-                            transformationController: controller,
-                            maxScale: 7,
-                            onInteractionEnd: (details) => resetZoom(),
-                            child: CachedNetworkImage(
-                                imageUrl: widget.imgUrl,
-                                imageBuilder: (_, p) {
-                                  return Image(
-                                    image: p,
-                                    // height: media.height * 0.9,
-                                    width: double.infinity,
-                                    //  MediaQuery.of(context).size.height * 1.4,
-                                    fit: BoxFit.fill,
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: SizedBox(
-                        height: media.height * 0.05,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  // widget.docId = doc.id;
-
-                                  addRemoveUser(widget.imgUrl, widget.docId,
-                                      widget.content
-                                      // getStr(widget.content)
-                                      // doc["imgUrl"],
-                                      // doc.id,
-                                      // doc["content"],
-                                      );
-                                });
-                              },
-                              icon: Icon(
-                                Provider.of<QuoteModelProvider>(context,
-                                                listen: false)
-                                            .isFav ==
-                                        true
-                                    ? Icons.favorite
-                                    : Icons.favorite_border_outlined,
-                                color: Colors.pink,
-                                size: 30,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () => shareScreen()
-                              // getStr());
-                              ,
-                              icon: const Icon(
-                                Icons.share,
-                                color: Colors.white,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 );
               }));
   }
