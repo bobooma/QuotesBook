@@ -33,11 +33,15 @@ class _HomeDrawerState extends State<HomeDrawer> {
     }
   }
 
+  late Size media;
+  late ThemeProvider themeProvider;
+  late ThemeProvider provider;
+
   @override
   Widget build(BuildContext context) {
-    final media = MediaQuery.of(context).size;
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final provider = Provider.of<ThemeProvider>(context, listen: false);
+    media = MediaQuery.of(context).size;
+    themeProvider = Provider.of<ThemeProvider>(context);
+    provider = Provider.of<ThemeProvider>(context, listen: false);
 
     final appLoc = AppLocalizations.of(context);
     return MultiLevelDrawer(
@@ -68,8 +72,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
             "${AppLocalizations.of(context)!.shareApp} ✅",
             Icons.share,
             kSecondaryColor,
-            () => Share.share(
-                "https://play.google.com/store/apps/details?id=com.DrHamaida.QuotesBook"),
+            () => Share.share("https://bit.ly/QB137 "),
           ),
 
           mLMitem(
